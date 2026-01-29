@@ -13,14 +13,17 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN || '',
 });
 
-// Cache TTL in seconds (6 hours - odds don't change that fast)
-const CACHE_TTL = 6 * 60 * 60;
+// Cache TTL in seconds
+const ANALYSIS_CACHE_TTL = 6 * 60 * 60; // 6 hours for analysis
+const ODDS_CACHE_TTL = 5 * 60; // 5 minutes for odds (they change more frequently)
 
 // Cache key prefixes
 const KEYS = {
   GAME_ANALYSIS: 'analysis:game:',
   BATCH_ANALYSIS: 'analysis:batch:',
   PROPS_ANALYSIS: 'analysis:props:',
+  ODDS: 'odds:',
+  PLAYER_PROPS: 'props:',
 };
 
 /**
@@ -28,6 +31,66 @@ const KEYS = {
  */
 export function isRedisConfigured(): boolean {
   return !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+}
+
+/**
+ * Get cached odds for a sport
+ */
+export async function getCachedOdds(sport: string) {
+  if (!isRedisConfigured()) return null;
+  
+  try {
+    const key = `${KEYS.ODDS}${sport}`;
+    const cached = await redis.get(key);
+    return cached;
+  } catch (error) {
+    console.error('Redis get error:', error);
+    return null;
+  }
+}
+
+/**
+ * Cache odds for a sport
+ */
+export async function cacheOdds(sport: string, data: unknown) {
+  if (!isRedisConfigured()) return;
+  
+  try {
+    const key = `${KEYS.ODDS}${sport}`;
+    await redis.set(key, JSON.stringify(data), { ex: ODDS_CACHE_TTL });
+  } catch (error) {
+    console.error('Redis set error:', error);
+  }
+}
+
+/**
+ * Get cached player props for a game
+ */
+export async function getCachedPlayerProps(gameId: string) {
+  if (!isRedisConfigured()) return null;
+  
+  try {
+    const key = `${KEYS.PLAYER_PROPS}${gameId}`;
+    const cached = await redis.get(key);
+    return cached;
+  } catch (error) {
+    console.error('Redis get error:', error);
+    return null;
+  }
+}
+
+/**
+ * Cache player props for a game
+ */
+export async function cachePlayerProps(gameId: string, data: unknown) {
+  if (!isRedisConfigured()) return;
+  
+  try {
+    const key = `${KEYS.PLAYER_PROPS}${gameId}`;
+    await redis.set(key, JSON.stringify(data), { ex: ODDS_CACHE_TTL });
+  } catch (error) {
+    console.error('Redis set error:', error);
+  }
 }
 
 /**
@@ -54,7 +117,7 @@ export async function cacheGameAnalysis(gameId: string, sport: string, data: unk
   
   try {
     const key = `${KEYS.GAME_ANALYSIS}${sport}:${gameId}`;
-    await redis.set(key, JSON.stringify(data), { ex: CACHE_TTL });
+    await redis.set(key, JSON.stringify(data), { ex: ANALYSIS_CACHE_TTL });
   } catch (error) {
     console.error('Redis set error:', error);
   }
@@ -84,7 +147,7 @@ export async function cacheBatchAnalysis(sport: string, data: unknown) {
   
   try {
     const key = `${KEYS.BATCH_ANALYSIS}${sport}`;
-    await redis.set(key, JSON.stringify(data), { ex: CACHE_TTL });
+    await redis.set(key, JSON.stringify(data), { ex: ANALYSIS_CACHE_TTL });
   } catch (error) {
     console.error('Redis set error:', error);
   }
@@ -114,7 +177,7 @@ export async function cachePropsAnalysis(gameId: string, data: unknown) {
   
   try {
     const key = `${KEYS.PROPS_ANALYSIS}${gameId}`;
-    await redis.set(key, JSON.stringify(data), { ex: CACHE_TTL });
+    await redis.set(key, JSON.stringify(data), { ex: ANALYSIS_CACHE_TTL });
   } catch (error) {
     console.error('Redis set error:', error);
   }

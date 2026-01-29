@@ -1,6 +1,7 @@
 /**
  * API Route: GET /api/odds/nhl/props
  * Fetches NHL player props (goal scorers) from The Odds API
+ * Results are cached for 5 minutes to reduce API calls
  * 
  * Query params:
  * - eventId: REQUIRED - the game ID to fetch props for
@@ -9,6 +10,7 @@
 
 import { NextResponse } from 'next/server';
 import { createOddsApiClient } from '@/lib/api/odds';
+import { getCachedPlayerProps, cachePlayerProps, isRedisConfigured } from '@/lib/cache/redis';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -32,6 +34,17 @@ export async function GET(request: Request) {
       { error: 'eventId is required for player props' },
       { status: 400 }
     );
+  }
+
+  // Check cache first
+  const cacheKey = `${eventId}:${marketParam || 'all'}`;
+  const cached = await getCachedPlayerProps(cacheKey);
+  if (cached) {
+    const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
+    return NextResponse.json({
+      ...cachedData,
+      fromCache: true,
+    });
   }
 
   // Determine which markets to fetch
@@ -60,7 +73,7 @@ export async function GET(request: Request) {
     const normalizedGame = client.normalizePlayerProps(game);
     const quota = client.getQuota();
 
-    return NextResponse.json({
+    const responseData = {
       game: normalizedGame,
       meta: {
         sport: 'NHL',
@@ -68,6 +81,15 @@ export async function GET(request: Request) {
         fetchedAt: new Date().toISOString(),
         quota,
       },
+    };
+
+    // Cache the result
+    await cachePlayerProps(cacheKey, responseData);
+
+    return NextResponse.json({
+      ...responseData,
+      fromCache: false,
+      cacheEnabled: isRedisConfigured(),
     });
   } catch (error) {
     console.error('Error fetching NHL player props:', error);
