@@ -2,7 +2,7 @@
  * API Route: POST /api/analyze/batch
  * 
  * Quick analysis of all games for a sport.
- * Returns winner picks and best bets for each game.
+ * Results are cached to avoid repeated API calls.
  * 
  * Request body:
  * {
@@ -13,6 +13,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createOddsApiClient } from '@/lib/api/odds';
 import { createAnalysisClient } from '@/lib/analysis/claude';
+import { getCachedBatchAnalysis, cacheBatchAnalysis, isRedisConfigured } from '@/lib/cache/redis';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120; // Allow up to 2 minutes for batch analysis
@@ -44,6 +45,16 @@ export async function POST(request: NextRequest) {
         { error: 'sport is required' },
         { status: 400 }
       );
+    }
+
+    // Check cache first
+    const cached = await getCachedBatchAnalysis(sport);
+    if (cached) {
+      const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
+      return NextResponse.json({
+        ...cachedData,
+        fromCache: true,
+      });
     }
 
     // Fetch all games with odds
@@ -82,7 +93,7 @@ export async function POST(request: NextRequest) {
       },
     }));
 
-    return NextResponse.json({
+    const responseData = {
       sport,
       predictions: enrichedPredictions,
       meta: {
@@ -90,6 +101,15 @@ export async function POST(request: NextRequest) {
         gamesAnalyzed: games.length,
         analyzedAt: new Date().toISOString(),
       },
+    };
+
+    // Cache the result
+    await cacheBatchAnalysis(sport, responseData);
+
+    return NextResponse.json({
+      ...responseData,
+      fromCache: false,
+      cacheEnabled: isRedisConfigured(),
     });
   } catch (error) {
     console.error('Batch analysis error:', error);

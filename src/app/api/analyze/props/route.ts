@@ -2,6 +2,7 @@
  * API Route: POST /api/analyze/props
  * 
  * Analyzes NHL goal scorer props using Claude.
+ * Results are cached to avoid repeated API calls.
  * 
  * Request body:
  * {
@@ -12,6 +13,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createOddsApiClient } from '@/lib/api/odds';
 import { createAnalysisClient } from '@/lib/analysis/claude';
+import { getCachedPropsAnalysis, cachePropsAnalysis, isRedisConfigured } from '@/lib/cache/redis';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // Allow up to 60 seconds for Claude analysis
@@ -43,6 +45,16 @@ export async function POST(request: NextRequest) {
         { error: 'gameId is required' },
         { status: 400 }
       );
+    }
+
+    // Check cache first
+    const cached = await getCachedPropsAnalysis(gameId);
+    if (cached) {
+      const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
+      return NextResponse.json({
+        ...cachedData,
+        fromCache: true,
+      });
     }
 
     // Fetch current player props for the game (uses event-specific endpoint)
@@ -81,7 +93,7 @@ export async function POST(request: NextRequest) {
     const analysisClient = createAnalysisClient({ apiKey: anthropicApiKey });
     const { analysis, meta } = await analysisClient.analyzeGoalScorers(normalizedGame);
 
-    return NextResponse.json({
+    const responseData = {
       analysis,
       playerProps: {
         firstGoalScorers: normalizedGame.firstGoalScorers.slice(0, 30),
@@ -89,6 +101,15 @@ export async function POST(request: NextRequest) {
       },
       meta,
       oddsUpdatedAt: new Date().toISOString(),
+    };
+
+    // Cache the result
+    await cachePropsAnalysis(gameId, responseData);
+
+    return NextResponse.json({
+      ...responseData,
+      fromCache: false,
+      cacheEnabled: isRedisConfigured(),
     });
   } catch (error) {
     console.error('Props analysis error:', error);

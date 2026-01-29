@@ -2,6 +2,7 @@
  * API Route: POST /api/analyze
  * 
  * Analyzes a game using Claude and returns predictions.
+ * Results are cached to avoid repeated API calls.
  * 
  * Request body:
  * {
@@ -13,6 +14,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createOddsApiClient } from '@/lib/api/odds';
 import { createAnalysisClient } from '@/lib/analysis/claude';
+import { getCachedGameAnalysis, cacheGameAnalysis, isRedisConfigured } from '@/lib/cache/redis';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // Allow up to 60 seconds for Claude analysis
@@ -46,6 +48,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check cache first
+    const cached = await getCachedGameAnalysis(gameId, sport);
+    if (cached) {
+      const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
+      return NextResponse.json({
+        ...cachedData,
+        fromCache: true,
+      });
+    }
+
     // Fetch current odds for the game
     const oddsClient = createOddsApiClient({ apiKey: oddsApiKey });
     const sportKey = sport === 'NHL' ? 'icehockey_nhl' : 'basketball_nba';
@@ -69,10 +81,19 @@ export async function POST(request: NextRequest) {
     const analysisClient = createAnalysisClient({ apiKey: anthropicApiKey });
     const { prediction, meta } = await analysisClient.analyzeGame(normalizedGame, sport);
 
-    return NextResponse.json({
+    const responseData = {
       prediction,
       meta,
       oddsUpdatedAt: new Date().toISOString(),
+    };
+
+    // Cache the result
+    await cacheGameAnalysis(gameId, sport, responseData);
+
+    return NextResponse.json({
+      ...responseData,
+      fromCache: false,
+      cacheEnabled: isRedisConfigured(),
     });
   } catch (error) {
     console.error('Analysis error:', error);
