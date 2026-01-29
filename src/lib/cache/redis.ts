@@ -15,7 +15,7 @@ const redis = new Redis({
 
 // Cache TTL in seconds
 const ANALYSIS_CACHE_TTL = 6 * 60 * 60; // 6 hours for analysis
-const ODDS_CACHE_TTL = 5 * 60; // 5 minutes for odds (they change more frequently)
+const ODDS_CACHE_TTL = 6 * 60 * 60; // 6 hours for odds (extended for demo)
 
 // Cache key prefixes
 const KEYS = {
