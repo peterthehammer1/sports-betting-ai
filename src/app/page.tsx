@@ -69,7 +69,6 @@ export default function Dashboard() {
   
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
-  const [quota, setQuota] = useState<{ remaining: number; used: number } | null>(null);
 
   // Fetch odds
   const fetchOdds = async () => {
@@ -87,10 +86,6 @@ export default function Dashboard() {
       const data: OddsResponse = await res.json();
       setGames(data.games);
       setLastFetch(new Date(data.meta.fetchedAt));
-      setQuota({
-        remaining: data.meta.quota.requestsRemaining,
-        used: data.meta.quota.requestsUsed,
-      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -203,7 +198,7 @@ export default function Dashboard() {
           {/* Title and Sport Toggle Row */}
           <div className="flex items-center justify-between gap-3">
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white whitespace-nowrap">
-              🎯 Sports Betting AI
+              🎯 AI Sports Picks
             </h1>
             
             {/* Sport Toggle */}
@@ -266,9 +261,6 @@ export default function Dashboard() {
           <div className="hidden sm:flex mt-2 gap-4 text-sm text-gray-500 dark:text-gray-400">
             {lastFetch && (
               <span>Updated: {lastFetch.toLocaleTimeString()}</span>
-            )}
-            {quota && (
-              <span>API: {quota.remaining} requests left</span>
             )}
             <button
               onClick={fetchOdds}
