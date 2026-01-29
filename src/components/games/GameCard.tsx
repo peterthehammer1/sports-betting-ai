@@ -31,11 +31,11 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
 
   return (
     <div 
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow cursor-pointer"
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-shadow cursor-pointer active:scale-[0.98] touch-manipulation"
       onClick={() => onSelect?.(game.gameId)}
     >
       {/* Header */}
-      <div className="flex justify-between items-center mb-3">
+      <div className="flex justify-between items-center mb-2 sm:mb-3">
         <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
           {sport}
         </span>
@@ -46,9 +46,9 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
       </div>
 
       {/* Teams and Odds Grid */}
-      <div className="space-y-2">
+      <div className="space-y-1.5 sm:space-y-2">
         {/* Header Row */}
-        <div className="grid grid-cols-4 gap-2 text-xs text-gray-500 dark:text-gray-400 font-medium">
+        <div className="grid grid-cols-4 gap-1 sm:gap-2 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">
           <div></div>
           <div className="text-center">ML</div>
           <div className="text-center">Spread</div>
@@ -56,8 +56,8 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
         </div>
 
         {/* Away Team Row */}
-        <div className="grid grid-cols-4 gap-2 items-center">
-          <div className="font-medium text-gray-900 dark:text-white truncate">
+        <div className="grid grid-cols-4 gap-1 sm:gap-2 items-center">
+          <div className="font-medium text-xs sm:text-sm text-gray-900 dark:text-white truncate pr-1">
             {game.awayTeam}
           </div>
           <OddsCell 
@@ -78,8 +78,8 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
         </div>
 
         {/* Home Team Row */}
-        <div className="grid grid-cols-4 gap-2 items-center">
-          <div className="font-medium text-gray-900 dark:text-white truncate">
+        <div className="grid grid-cols-4 gap-1 sm:gap-2 items-center">
+          <div className="font-medium text-xs sm:text-sm text-gray-900 dark:text-white truncate pr-1">
             {game.homeTeam}
           </div>
           <OddsCell 
@@ -100,10 +100,10 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
         </div>
       </div>
 
-      {/* Implied Probabilities */}
+      {/* Implied Probabilities - Hidden on very small screens */}
       {homeML && awayML && (
-        <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+        <div className="hidden xs:block mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex justify-between text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
             <span>
               {game.awayTeam}: {formatProbability(awayML.impliedProbability)}
             </span>
@@ -116,13 +116,13 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
 
       {/* Goal Scorers Button (NHL only) */}
       {sport === 'NHL' && onPropsSelect && (
-        <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+        <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-100 dark:border-gray-700">
           <button
             onClick={(e) => {
               e.stopPropagation();
               onPropsSelect(game.gameId);
             }}
-            className="w-full py-2 px-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all"
+            className="w-full py-2.5 sm:py-2 px-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs sm:text-sm font-medium rounded-lg hover:from-amber-600 hover:to-orange-600 active:scale-[0.98] transition-all touch-manipulation"
           >
             🥅 Analyze Goal Scorers
           </button>
@@ -141,20 +141,20 @@ interface OddsCellProps {
 
 function OddsCell({ odds, point, label, book }: OddsCellProps) {
   if (odds === undefined) {
-    return <div className="text-center text-gray-400">—</div>;
+    return <div className="text-center text-gray-400 text-xs sm:text-sm">—</div>;
   }
 
   const formattedOdds = formatAmericanOdds(odds);
   const isPositive = odds > 0;
 
   return (
-    <div className="text-center" title={book ? `Best odds at ${book}` : undefined}>
+    <div className="text-center flex flex-col sm:flex-row sm:justify-center sm:items-center" title={book ? `Best odds at ${book}` : undefined}>
       {point !== undefined && (
-        <span className="text-xs text-gray-500 dark:text-gray-400 mr-1">
+        <span className="text-[9px] sm:text-xs text-gray-500 dark:text-gray-400 sm:mr-1 leading-tight">
           {label}{point > 0 ? `+${point}` : point}
         </span>
       )}
-      <span className={`font-mono text-sm ${
+      <span className={`font-mono text-xs sm:text-sm leading-tight ${
         isPositive 
           ? 'text-green-600 dark:text-green-400' 
           : 'text-gray-900 dark:text-white'

@@ -197,65 +197,61 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                🎯 Sports Betting AI
-              </h1>
-            </div>
+      {/* Header - Sticky on mobile */}
+      <header className="bg-white dark:bg-gray-800 shadow sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-3 py-3 sm:px-6 sm:py-4 lg:px-8">
+          {/* Title and Sport Toggle Row */}
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white whitespace-nowrap">
+              🎯 Sports Betting AI
+            </h1>
             
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Sport Toggle */}
-              <div className="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-                {(['NHL', 'NBA'] as Sport[]).map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setSport(s)}
-                    className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                      sport === s
-                        ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow'
-                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-
+            {/* Sport Toggle */}
+            <div className="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+              {(['NHL', 'NBA'] as Sport[]).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSport(s)}
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md font-medium text-sm sm:text-base transition-colors ${
+                    sport === s
+                      ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* View Tabs */}
-          <div className="mt-4 flex gap-4 border-b border-gray-200 dark:border-gray-700">
+          {/* View Tabs - Scrollable on mobile */}
+          <div className="mt-3 sm:mt-4 flex gap-1 sm:gap-4 border-b border-gray-200 dark:border-gray-700 overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0">
             <button
               onClick={() => setView('games')}
-              className={`pb-2 px-1 font-medium text-sm border-b-2 transition-colors ${
+              className={`pb-2 px-2 sm:px-1 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
                 view === 'games'
                   ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
               }`}
             >
-              📊 Games & Odds
+              📊 Games
             </button>
             <button
               onClick={() => setView('analysis')}
               disabled={!selectedPrediction}
-              className={`pb-2 px-1 font-medium text-sm border-b-2 transition-colors disabled:opacity-50 ${
+              className={`pb-2 px-2 sm:px-1 font-medium text-xs sm:text-sm border-b-2 transition-colors disabled:opacity-50 whitespace-nowrap ${
                 view === 'analysis'
                   ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
               }`}
             >
-              🔍 Deep Analysis
+              🔍 Analysis
             </button>
             {sport === 'NHL' && (
               <button
                 onClick={() => setView('props')}
                 disabled={!selectedPropsAnalysis}
-                className={`pb-2 px-1 font-medium text-sm border-b-2 transition-colors disabled:opacity-50 ${
+                className={`pb-2 px-2 sm:px-1 font-medium text-xs sm:text-sm border-b-2 transition-colors disabled:opacity-50 whitespace-nowrap ${
                   view === 'props'
                     ? 'border-amber-600 text-amber-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
@@ -266,8 +262,8 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* Meta info */}
-          <div className="mt-2 flex gap-4 text-sm text-gray-500 dark:text-gray-400">
+          {/* Meta info - Hidden on mobile, shown on larger screens */}
+          <div className="hidden sm:flex mt-2 gap-4 text-sm text-gray-500 dark:text-gray-400">
             {lastFetch && (
               <span>Updated: {lastFetch.toLocaleTimeString()}</span>
             )}
@@ -286,33 +282,33 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
         {/* Error State */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <p className="text-red-700 dark:text-red-400">{error}</p>
+          <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p className="text-sm sm:text-base text-red-700 dark:text-red-400">{error}</p>
           </div>
         )}
 
         {/* Loading State */}
         {loadingOdds && games.length === 0 && (
-          <div className="flex justify-center items-center py-12">
+          <div className="flex flex-col justify-center items-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-3 text-gray-600 dark:text-gray-400">
+            <span className="mt-3 text-gray-600 dark:text-gray-400">
               Loading {sport} games...
             </span>
           </div>
         )}
 
-        {/* Analysis Loading Overlay */}
+        {/* Analysis Loading Overlay - Better mobile experience */}
         {(loadingAnalysis || loadingProps) && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-8 text-center">
-              <div className={`animate-spin rounded-full h-12 w-12 border-b-2 mx-auto ${loadingProps ? 'border-amber-600' : 'border-blue-600'}`}></div>
-              <p className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
-                {loadingProps ? 'Analyzing goal scorers with Claude...' : 'Analyzing game with Claude...'}
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 sm:p-8 text-center max-w-sm w-full mx-4">
+              <div className={`animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 mx-auto ${loadingProps ? 'border-amber-600' : 'border-blue-600'}`}></div>
+              <p className="mt-4 text-base sm:text-lg font-medium text-gray-900 dark:text-white">
+                {loadingProps ? 'Analyzing goal scorers...' : 'Analyzing game...'}
               </p>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 This may take 10-20 seconds
               </p>
             </div>
@@ -322,16 +318,16 @@ export default function Dashboard() {
         {/* Games View */}
         {view === 'games' && games.length > 0 && (
           <>
-            <div className="mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <div className="mb-3 sm:mb-4">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                 {sport} Games Today ({games.length})
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Click any game for detailed AI analysis
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                Tap any game for AI analysis
               </p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
               {games.map((game) => (
                 <GameCard
                   key={game.gameId}
@@ -389,7 +385,7 @@ export default function Dashboard() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+      <footer className="mt-auto py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400 px-4">
         <p>⚠️ For entertainment purposes only. Please gamble responsibly.</p>
       </footer>
     </div>
