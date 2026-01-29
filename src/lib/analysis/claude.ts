@@ -1,0 +1,361 @@
+/**
+ * Claude API Client for Sports Betting Analysis
+ * 
+ * Uses Anthropic's Claude API to analyze games and generate predictions.
+ */
+
+import type { 
+  GameAnalysisRequest, 
+  GamePrediction, 
+  AnalysisMeta,
+  GoalScorerAnalysis,
+  GoalScorerPick,
+} from '@/types/prediction';
+import type { NormalizedOdds, GameWithPlayerProps } from '@/types/odds';
+import { 
+  ANALYST_SYSTEM_PROMPT, 
+  GOAL_SCORER_SYSTEM_PROMPT,
+  buildGameAnalysisPrompt,
+  buildBatchAnalysisPrompt,
+  buildGoalScorerAnalysisPrompt,
+} from './prompts';
+
+const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+
+interface ClaudeApiConfig {
+  apiKey: string;
+  model?: string;
+  maxTokens?: number;
+}
+
+interface ClaudeResponse {
+  id: string;
+  type: string;
+  role: string;
+  content: Array<{
+    type: string;
+    text: string;
+  }>;
+  model: string;
+  usage: {
+    input_tokens: number;
+    output_tokens: number;
+  };
+}
+
+/**
+ * Create Claude analysis client
+ */
+export function createAnalysisClient(config: ClaudeApiConfig) {
+  const { 
+    apiKey, 
+    model = 'claude-sonnet-4-20250514',
+    maxTokens = 4096 
+  } = config;
+
+  /**
+   * Make a request to Claude API
+   */
+  async function callClaude(
+    systemPrompt: string,
+    userPrompt: string
+  ): Promise<{ text: string; usage: { input: number; output: number } }> {
+    const startTime = Date.now();
+
+    const response = await fetch(ANTHROPIC_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: maxTokens,
+        system: systemPrompt,
+        messages: [
+          { role: 'user', content: userPrompt }
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || 'Claude API request failed');
+    }
+
+    const data: ClaudeResponse = await response.json();
+    const text = data.content[0]?.text || '';
+
+    return {
+      text,
+      usage: {
+        input: data.usage.input_tokens,
+        output: data.usage.output_tokens,
+      },
+    };
+  }
+
+  /**
+   * Parse JSON from Claude's response
+   * Handles markdown code blocks and extra text
+   */
+  function parseJsonResponse<T>(text: string): T {
+    let cleaned = text.trim();
+    
+    // Try to extract JSON from markdown code blocks
+    const jsonBlockMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (jsonBlockMatch) {
+      cleaned = jsonBlockMatch[1].trim();
+    }
+    
+    // If no code block, try to find JSON object directly
+    if (!cleaned.startsWith('{') && !cleaned.startsWith('[')) {
+      const jsonStart = Math.min(
+        cleaned.indexOf('{') === -1 ? Infinity : cleaned.indexOf('{'),
+        cleaned.indexOf('[') === -1 ? Infinity : cleaned.indexOf('[')
+      );
+      const jsonEndBrace = cleaned.lastIndexOf('}');
+      const jsonEndBracket = cleaned.lastIndexOf(']');
+      const jsonEnd = Math.max(jsonEndBrace, jsonEndBracket);
+      
+      if (jsonStart !== Infinity && jsonEnd !== -1) {
+        cleaned = cleaned.slice(jsonStart, jsonEnd + 1);
+      }
+    }
+    
+    try {
+      return JSON.parse(cleaned);
+    } catch (e) {
+      console.error('Failed to parse Claude response:', text);
+      throw new Error('Invalid JSON response from Claude');
+    }
+  }
+
+  /**
+   * Convert normalized odds to analysis request format
+   */
+  function prepareAnalysisRequest(
+    game: NormalizedOdds,
+    sport: 'NHL' | 'NBA'
+  ): GameAnalysisRequest {
+    // Calculate averages from all bookmakers
+    const homeMLPrices = game.moneyline.home.map(o => o.price);
+    const awayMLPrices = game.moneyline.away.map(o => o.price);
+    
+    const avgHomeML = homeMLPrices.reduce((a, b) => a + b, 0) / homeMLPrices.length;
+    const avgAwayML = awayMLPrices.reduce((a, b) => a + b, 0) / awayMLPrices.length;
+    
+    // Get consensus spread line
+    const spreadLine = game.spread.consensusLine || -1.5;
+    const homeSpreadOdds = game.spread.home.find(s => s.point === spreadLine);
+    const awaySpreadOdds = game.spread.away.find(s => Math.abs(s.point) === Math.abs(spreadLine));
+    
+    // Get consensus total line
+    const totalLine = game.total.consensusLine || (sport === 'NHL' ? 6.0 : 220);
+    const overOdds = game.total.over.find(t => t.point === totalLine);
+    const underOdds = game.total.under.find(t => t.point === totalLine);
+
+    return {
+      sport,
+      gameId: game.gameId,
+      homeTeam: game.homeTeam,
+      awayTeam: game.awayTeam,
+      commenceTime: game.commenceTime.toISOString(),
+      odds: {
+        moneyline: {
+          home: {
+            best: game.moneyline.bestHome?.price || avgHomeML,
+            average: avgHomeML,
+            impliedProb: 1 / avgHomeML,
+          },
+          away: {
+            best: game.moneyline.bestAway?.price || avgAwayML,
+            average: avgAwayML,
+            impliedProb: 1 / avgAwayML,
+          },
+        },
+        spread: {
+          line: spreadLine,
+          home: {
+            price: homeSpreadOdds?.price || 1.91,
+            impliedProb: homeSpreadOdds ? 1 / homeSpreadOdds.price : 0.5,
+          },
+          away: {
+            price: awaySpreadOdds?.price || 1.91,
+            impliedProb: awaySpreadOdds ? 1 / awaySpreadOdds.price : 0.5,
+          },
+        },
+        total: {
+          line: totalLine,
+          over: {
+            price: overOdds?.price || 1.91,
+            impliedProb: overOdds ? 1 / overOdds.price : 0.5,
+          },
+          under: {
+            price: underOdds?.price || 1.91,
+            impliedProb: underOdds ? 1 / underOdds.price : 0.5,
+          },
+        },
+      },
+    };
+  }
+
+  /**
+   * Analyze a single game
+   */
+  async function analyzeGame(
+    game: NormalizedOdds,
+    sport: 'NHL' | 'NBA'
+  ): Promise<{ prediction: GamePrediction; meta: AnalysisMeta }> {
+    const startTime = Date.now();
+    
+    const request = prepareAnalysisRequest(game, sport);
+    const prompt = buildGameAnalysisPrompt(request);
+    
+    const { text, usage } = await callClaude(ANALYST_SYSTEM_PROMPT, prompt);
+    const analysisResult = parseJsonResponse<Omit<GamePrediction, 'gameId' | 'sport' | 'homeTeam' | 'awayTeam' | 'analyzedAt'>>(text);
+    
+    const prediction: GamePrediction = {
+      gameId: game.gameId,
+      sport,
+      homeTeam: game.homeTeam,
+      awayTeam: game.awayTeam,
+      analyzedAt: new Date().toISOString(),
+      ...analysisResult,
+    };
+
+    const meta: AnalysisMeta = {
+      model,
+      tokensUsed: usage.input + usage.output,
+      analysisTime: Date.now() - startTime,
+      dataQuality: 'ODDS_ONLY', // Will be 'FULL' when we add stats
+    };
+
+    return { prediction, meta };
+  }
+
+  /**
+   * Quick analysis of multiple games (batch mode)
+   */
+  async function analyzeGames(
+    games: NormalizedOdds[],
+    sport: 'NHL' | 'NBA'
+  ): Promise<{
+    predictions: Array<{
+      gameIndex: number;
+      homeTeam: string;
+      awayTeam: string;
+      winnerPick: string;
+      winnerConfidence: number;
+      bestBet: {
+        type: string;
+        pick: string;
+        confidence: number;
+      };
+      quickTake: string;
+    }>;
+    meta: AnalysisMeta;
+  }> {
+    const startTime = Date.now();
+    
+    const requests = games.map(g => prepareAnalysisRequest(g, sport));
+    const prompt = buildBatchAnalysisPrompt(requests);
+    
+    const { text, usage } = await callClaude(ANALYST_SYSTEM_PROMPT, prompt);
+    const predictions = parseJsonResponse<Array<{
+      gameIndex: number;
+      homeTeam: string;
+      awayTeam: string;
+      winnerPick: string;
+      winnerConfidence: number;
+      bestBet: {
+        type: string;
+        pick: string;
+        confidence: number;
+      };
+      quickTake: string;
+    }>>(text);
+
+    const meta: AnalysisMeta = {
+      model,
+      tokensUsed: usage.input + usage.output,
+      analysisTime: Date.now() - startTime,
+      dataQuality: 'ODDS_ONLY',
+    };
+
+    return { predictions, meta };
+  }
+
+  /**
+   * Analyze NHL goal scorer props
+   */
+  async function analyzeGoalScorers(
+    game: GameWithPlayerProps
+  ): Promise<{ analysis: GoalScorerAnalysis; meta: AnalysisMeta }> {
+    const startTime = Date.now();
+
+    // Prepare data for prompt
+    const firstGoalScorers = game.firstGoalScorers.map((p) => ({
+      playerName: p.playerName,
+      team: p.team,
+      bestOdds: p.bestOdds?.americanOdds || 0,
+      averageImpliedProb: p.averageImpliedProb,
+    }));
+
+    const anytimeGoalScorers = game.anytimeGoalScorers.map((p) => ({
+      playerName: p.playerName,
+      team: p.team,
+      bestOdds: p.bestOdds?.americanOdds || 0,
+      averageImpliedProb: p.averageImpliedProb,
+    }));
+
+    const prompt = buildGoalScorerAnalysisPrompt(
+      game.homeTeam,
+      game.awayTeam,
+      game.commenceTime.toISOString(),
+      firstGoalScorers,
+      anytimeGoalScorers
+    );
+
+    const { text, usage } = await callClaude(GOAL_SCORER_SYSTEM_PROMPT, prompt);
+    
+    const analysisResult = parseJsonResponse<{
+      firstGoalPicks: GoalScorerPick[];
+      anytimeGoalPicks: GoalScorerPick[];
+      topValueBets: GoalScorerPick[];
+      analysisNotes: string[];
+    }>(text);
+
+    const analysis: GoalScorerAnalysis = {
+      gameId: game.gameId,
+      homeTeam: game.homeTeam,
+      awayTeam: game.awayTeam,
+      analyzedAt: new Date().toISOString(),
+      ...analysisResult,
+    };
+
+    const meta: AnalysisMeta = {
+      model,
+      tokensUsed: usage.input + usage.output,
+      analysisTime: Date.now() - startTime,
+      dataQuality: 'ODDS_ONLY',
+    };
+
+    return { analysis, meta };
+  }
+
+  return {
+    analyzeGame,
+    analyzeGames,
+    analyzeGoalScorers,
+    prepareAnalysisRequest,
+  };
+}
+
+/**
+ * Default client using environment variable
+ */
+export const analysisClient = createAnalysisClient({
+  apiKey: process.env.ANTHROPIC_API_KEY || '',
+});
