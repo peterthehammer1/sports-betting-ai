@@ -124,8 +124,18 @@ export interface PlayerPropOutcome {
   point?: number; // For over/under props
 }
 
+// NHL Goal Scorer market types
+export type NhlPlayerPropMarketKey = 'player_goal_scorer_first' | 'player_goal_scorer_anytime' | 'player_goal_scorer_last';
+
 export interface PlayerPropMarket {
-  key: 'player_goal_scorer_first' | 'player_goal_scorer_anytime' | 'player_goal_scorer_last';
+  key: NhlPlayerPropMarketKey;
+  last_update: string;
+  outcomes: PlayerPropOutcome[];
+}
+
+// Generic player props market (works for both NHL and NBA)
+export interface GenericPlayerPropMarket {
+  key: string;
   last_update: string;
   outcomes: PlayerPropOutcome[];
 }
@@ -141,7 +151,7 @@ export interface PlayerPropsResponse {
     key: string;
     title: string;
     last_update: string;
-    markets: PlayerPropMarket[];
+    markets: GenericPlayerPropMarket[];
   }>;
 }
 
