@@ -201,26 +201,16 @@ export default function Dashboard() {
       {/* Header */}
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#0a0f1a]/80 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
-          {/* Top Row - Logo and Sport Toggle */}
+          {/* Top Row - Title and Sport Toggle */}
           <div className="flex items-center justify-between gap-4">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/25">
-                  <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-[#0a0f1a] pulse-glow" />
-              </div>
-              <div>
-                <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                  AI Sports Picks
-                </h1>
-                <p className="text-[10px] sm:text-xs text-cyan-400 font-medium tracking-wider uppercase">
-                  Powered by AI
-                </p>
-              </div>
+            {/* Title */}
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                Sports Picks
+              </h1>
+              <p className="text-[10px] sm:text-xs text-cyan-400 font-medium tracking-wider uppercase">
+                Powered by AI
+              </p>
             </div>
             
             {/* Sport Toggle */}
@@ -436,7 +426,7 @@ export default function Dashboard() {
               ⚠️ For entertainment purposes only. Please gamble responsibly.
             </p>
             <div className="flex items-center gap-4 text-xs text-gray-500">
-              <span>© 2026 AI Sports Picks</span>
+              <span>© 2026 Sports Picks</span>
             </div>
           </div>
         </div>

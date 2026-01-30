@@ -13,25 +13,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Sports Picks",
+  title: "Sports Picks",
   description: "AI-powered sports betting analysis for NHL and NBA. Get smart picks, value bets, and goal scorer predictions.",
   keywords: ["sports betting", "AI picks", "NHL betting", "NBA betting", "sports analysis", "betting predictions"],
-  authors: [{ name: "AI Sports Picks" }],
+  authors: [{ name: "Sports Picks" }],
   openGraph: {
-    title: "AI Sports Picks",
+    title: "Sports Picks",
     description: "AI-powered sports betting analysis for NHL and NBA. Get smart picks, value bets, and goal scorer predictions.",
     type: "website",
     locale: "en_US",
-    siteName: "AI Sports Picks",
+    siteName: "Sports Picks",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Sports Picks",
+    title: "Sports Picks",
     description: "AI-powered sports betting analysis for NHL and NBA. Get smart picks, value bets, and goal scorer predictions.",
   },
   appleWebApp: {
     capable: true,
-    title: "AI Sports Picks",
+    title: "Sports Picks",
     statusBarStyle: "black-translucent",
   },
   formatDetection: {
