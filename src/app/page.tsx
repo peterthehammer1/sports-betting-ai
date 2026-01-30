@@ -6,6 +6,9 @@ import { PredictionCard } from '@/components/predictions/PredictionCard';
 import { QuickPicks } from '@/components/predictions/QuickPicks';
 import { PlayerPropsCard } from '@/components/predictions/PlayerPropsCard';
 import { NbaPlayerPropsCard } from '@/components/predictions/NbaPlayerPropsCard';
+import { OddsCompare } from '@/components/tools/OddsCompare';
+import { BetCalculator } from '@/components/tools/BetCalculator';
+import { ParlayBuilder } from '@/components/tools/ParlayBuilder';
 import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
 import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
 
@@ -45,7 +48,7 @@ interface QuickPick {
 }
 
 type Sport = 'NHL' | 'NBA';
-type View = 'games' | 'picks' | 'analysis' | 'props';
+type View = 'games' | 'picks' | 'analysis' | 'props' | 'tools';
 
 interface PlayerPropsData {
   analysis: GoalScorerAnalysis;
@@ -78,6 +81,7 @@ export default function Dashboard() {
   const [loadingPicks, setLoadingPicks] = useState(false);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
   const [loadingProps, setLoadingProps] = useState(false);
+  const [selectedTool, setSelectedTool] = useState<'compare' | 'calculator' | 'parlay'>('compare');
   
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
@@ -339,6 +343,12 @@ export default function Dashboard() {
                 accent
               />
             )}
+            <NavTab 
+              active={view === 'tools'} 
+              onClick={() => setView('tools')}
+              icon="🧮"
+              label="Tools"
+            />
           </div>
 
           {/* Live indicator */}
@@ -491,6 +501,62 @@ export default function Dashboard() {
                 setView('games');
               }}
             />
+          </div>
+        )}
+
+        {/* Tools View */}
+        {view === 'tools' && (
+          <div className="animate-slide-up space-y-6">
+            {/* Tool Selector */}
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+              <button
+                onClick={() => setSelectedTool('compare')}
+                className={`px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
+                  selectedTool === 'compare'
+                    ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                📈 Line Shopping
+              </button>
+              <button
+                onClick={() => setSelectedTool('calculator')}
+                className={`px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
+                  selectedTool === 'calculator'
+                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                🧮 Bet Calculator
+              </button>
+              <button
+                onClick={() => setSelectedTool('parlay')}
+                className={`px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
+                  selectedTool === 'parlay'
+                    ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
+                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                🎰 Parlay Builder
+              </button>
+            </div>
+
+            {/* Selected Tool */}
+            {selectedTool === 'compare' && (
+              <OddsCompare 
+                games={games} 
+                onClose={() => setView('games')} 
+              />
+            )}
+            {selectedTool === 'calculator' && (
+              <BetCalculator onClose={() => setView('games')} />
+            )}
+            {selectedTool === 'parlay' && (
+              <ParlayBuilder 
+                games={games} 
+                onClose={() => setView('games')} 
+              />
+            )}
           </div>
         )}
 
