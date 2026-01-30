@@ -1,21 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0f1a;
-  --background-secondary: #111827;
-  --background-card: #1a2234;
-  --background-elevated: #243049;
-  --foreground: #f8fafc;
+  /* Professional dark theme - cleaner, more conservative */
+  --background: #0f172a;
+  --background-secondary: #1e293b;
+  --background-card: #1e293b;
+  --background-elevated: #334155;
+  --foreground: #f1f5f9;
   --foreground-muted: #94a3b8;
-  --accent-primary: #00d4ff;
-  --accent-primary-dim: #00a8cc;
-  --accent-secondary: #8b5cf6;
-  --accent-gold: #fbbf24;
-  --accent-green: #22c55e;
+  --accent-primary: #3b82f6;
+  --accent-primary-dim: #2563eb;
+  --accent-secondary: #6366f1;
+  --accent-gold: #f59e0b;
+  --accent-green: #10b981;
   --accent-red: #ef4444;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --glow-primary: rgba(0, 212, 255, 0.3);
-  --glow-gold: rgba(251, 191, 36, 0.3);
+  --border-color: rgba(148, 163, 184, 0.1);
   /* Safe area insets for notched phones */
   --safe-area-inset-top: env(safe-area-inset-top, 0px);
   --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
@@ -31,43 +30,40 @@
 }
 
 html {
-  /* Prevent content from jumping when scrollbar appears/disappears */
   overflow-y: scroll;
-  /* Enable smooth scrolling */
   scroll-behavior: smooth;
-  /* Prevent iOS tap highlight */
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  /* Prevent text size adjustment on orientation change */
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  /* Add safe area padding for notched phones */
   padding-left: var(--safe-area-inset-left);
   padding-right: var(--safe-area-inset-right);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Premium scrollbar */
+/* Clean scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background-secondary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--background-elevated);
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-primary-dim);
+  background: #475569;
 }
 
 /* Hide scrollbar for horizontal scroll areas */
@@ -80,67 +76,45 @@ body {
   display: none;
 }
 
-/* Glassmorphism card */
+/* Professional card style - clean and minimal */
 .glass-card {
-  background: linear-gradient(135deg, rgba(26, 34, 52, 0.9) 0%, rgba(17, 24, 39, 0.95) 100%);
-  backdrop-filter: blur(20px);
+  background: var(--background-card);
   border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
-/* Glow effects */
-.glow-primary {
-  box-shadow: 0 0 20px var(--glow-primary), 0 0 40px rgba(0, 212, 255, 0.1);
+.glass-card:hover {
+  border-color: rgba(148, 163, 184, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
-.glow-gold {
-  box-shadow: 0 0 20px var(--glow-gold), 0 0 40px rgba(251, 191, 36, 0.1);
-}
-
-/* Animated gradient border */
-.gradient-border {
-  position: relative;
-}
-
-.gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-gold));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-}
-
-/* Pulse animation for live indicators */
+/* Subtle pulse for live indicators */
 @keyframes pulse-glow {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.6; }
 }
 
 .pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
-/* Shimmer effect for loading */
+/* Loading shimmer */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
 .shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
-/* Slide up animation */
+/* Subtle fade-in animation */
 @keyframes slide-up {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -149,7 +123,7 @@ body {
 }
 
 .animate-slide-up {
-  animation: slide-up 0.3s ease-out;
+  animation: slide-up 0.2s ease-out;
 }
 
 /* Touch manipulation for better mobile tap response */
@@ -214,44 +188,43 @@ button,
 /* Stats number styling */
 .stat-number {
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
-/* Premium button styles */
+/* Professional button styles */
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-dim) 100%);
-  color: #000;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  background: var(--accent-primary);
+  color: #fff;
+  font-weight: 500;
+  transition: all 0.15s ease;
 }
 
 .btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px var(--glow-primary);
+  background: var(--accent-primary-dim);
 }
 
 .btn-primary:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 /* Value indicator badges */
 .value-high {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%);
-  border: 1px solid rgba(34, 197, 94, 0.3);
-  color: #22c55e;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #10b981;
 }
 
 .value-medium {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 212, 255, 0.1) 100%);
-  border: 1px solid rgba(0, 212, 255, 0.3);
-  color: #00d4ff;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
 }
 
 /* Odds display styling */
 .odds-positive {
-  color: #22c55e;
+  color: #10b981;
 }
 
 .odds-negative {
-  color: #f8fafc;
+  color: #f1f5f9;
 }

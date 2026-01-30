@@ -41,132 +41,80 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
 
   return (
     <div 
-      className="group relative glass-card rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-cyan-500/10 active:scale-[0.98] touch-manipulation"
+      className="bg-slate-800 border border-slate-700/50 rounded-lg overflow-hidden cursor-pointer transition-all hover:border-slate-600 active:scale-[0.99] touch-manipulation"
       onClick={() => onSelect?.(game.gameId)}
     >
-      {/* Gradient border effect on hover */}
-      <div className="absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-        <div className="absolute inset-0 rounded-xl sm:rounded-2xl p-[1px] bg-gradient-to-br from-cyan-500/50 via-blue-500/50 to-purple-500/50" />
-      </div>
-
       {/* Card Content */}
-      <div className="relative p-3 sm:p-5">
-        {/* Header - Time and Live indicator */}
-        <div className="flex items-center justify-between mb-3 sm:mb-4">
-          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
-            <span className="text-[10px] sm:text-xs font-bold text-cyan-400 tracking-wider uppercase flex-shrink-0">
-              {sport}
-            </span>
-            <span className="w-1 h-1 bg-gray-600 rounded-full flex-shrink-0" />
-            <span className="text-[10px] sm:text-xs text-gray-400 truncate">
-              {isToday ? 'Today' : gameTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-            </span>
-          </div>
+      <div className="p-4">
+        {/* Header - Time and Status */}
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs text-slate-400">
+            {isToday ? 'Today' : gameTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+          </span>
           {score?.isLive ? (
-            <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-red-500/10 border border-red-500/20 flex-shrink-0">
-              <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
-              <span className="text-[9px] sm:text-[10px] font-semibold text-red-400 uppercase tracking-wider">Live</span>
-            </div>
+            <span className="flex items-center gap-1.5 text-xs font-medium text-red-400">
+              <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+              Live
+            </span>
           ) : score?.isCompleted ? (
-            <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-gray-500/10 border border-gray-500/20 flex-shrink-0">
-              <span className="text-[9px] sm:text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Final</span>
-            </div>
+            <span className="text-xs font-medium text-slate-500">Final</span>
           ) : (
-            <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-green-500/10 border border-green-500/20 flex-shrink-0">
-              <div className="w-1.5 h-1.5 bg-green-400 rounded-full pulse-glow" />
-              <span className="text-[9px] sm:text-[10px] font-semibold text-green-400 uppercase tracking-wider">Odds</span>
-            </div>
+            <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-400">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+              Open
+            </span>
           )}
         </div>
 
-        {/* Matchup with Logos */}
-        <div className="mb-4">
+        {/* Matchup */}
+        <div className="mb-4 space-y-2">
           {/* Away Team */}
-          <div className="flex items-center gap-3 py-2">
+          <div className="flex items-center gap-3">
             <TeamLogo url={awayLogoUrl} teamName={game.awayTeam} />
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className={`text-base font-semibold ${homeFavorite === false ? 'text-white' : 'text-gray-300'}`}>
-                  {game.awayTeam}
-                </span>
-                {homeFavorite === false && (
-                  <span className="px-1.5 py-0.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 rounded uppercase">
-                    Fav
-                  </span>
-                )}
-              </div>
-              {awayML && (
-                <span className="text-xs text-gray-500">
-                  {formatProbability(awayML.impliedProbability)} implied
-                </span>
-              )}
+              <span className={`text-sm font-medium ${homeFavorite === false ? 'text-white' : 'text-slate-300'}`}>
+                {game.awayTeam}
+              </span>
             </div>
-            {/* Live Score */}
             {score && score.awayScore !== null && (
-              <div className={`text-2xl font-bold stat-number ${
-                score.isLive ? 'text-white' : score.isCompleted ? 'text-gray-400' : ''
-              }`}>
+              <span className={`text-lg font-semibold tabular-nums ${score.isLive ? 'text-white' : 'text-slate-400'}`}>
                 {score.awayScore}
-              </div>
+              </span>
             )}
           </div>
 
-          {/* VS Divider */}
-          <div className="flex items-center gap-3 py-1">
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            <span className="text-[10px] font-bold text-gray-600">@</span>
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-          </div>
-
           {/* Home Team */}
-          <div className="flex items-center gap-3 py-2">
+          <div className="flex items-center gap-3">
             <TeamLogo url={homeLogoUrl} teamName={game.homeTeam} />
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className={`text-base font-semibold ${homeFavorite === true ? 'text-white' : 'text-gray-300'}`}>
-                  {game.homeTeam}
-                </span>
-                <span className="px-1.5 py-0.5 text-[9px] font-bold text-gray-500 bg-white/5 rounded uppercase">
-                  Home
-                </span>
-                {homeFavorite === true && (
-                  <span className="px-1.5 py-0.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 rounded uppercase">
-                    Fav
-                  </span>
-                )}
-              </div>
-              {homeML && (
-                <span className="text-xs text-gray-500">
-                  {formatProbability(homeML.impliedProbability)} implied
-                </span>
-              )}
+              <span className={`text-sm font-medium ${homeFavorite === true ? 'text-white' : 'text-slate-300'}`}>
+                {game.homeTeam}
+              </span>
+              <span className="ml-2 text-[10px] text-slate-500 uppercase">Home</span>
             </div>
-            {/* Live Score */}
             {score && score.homeScore !== null && (
-              <div className={`text-2xl font-bold stat-number ${
-                score.isLive ? 'text-white' : score.isCompleted ? 'text-gray-400' : ''
-              }`}>
+              <span className={`text-lg font-semibold tabular-nums ${score.isLive ? 'text-white' : 'text-slate-400'}`}>
                 {score.homeScore}
-              </div>
+              </span>
             )}
           </div>
         </div>
 
         {/* Odds Table */}
-        <div className="bg-white/5 rounded-lg sm:rounded-xl overflow-hidden mb-3 sm:mb-4">
+        <div className="bg-slate-900/50 rounded-lg overflow-hidden mb-4">
           {/* Table Header */}
-          <div className="grid grid-cols-4 gap-0.5 sm:gap-1 px-2 sm:px-3 py-1.5 sm:py-2 bg-white/5 border-b border-white/5">
-            <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider">Team</div>
-            <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">ML</div>
-            <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">Sprd</div>
-            <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">O/U</div>
+          <div className="grid grid-cols-4 gap-1 px-3 py-2 border-b border-slate-700/50">
+            <div className="text-[10px] font-medium text-slate-500 uppercase">Team</div>
+            <div className="text-[10px] font-medium text-slate-500 uppercase text-center">ML</div>
+            <div className="text-[10px] font-medium text-slate-500 uppercase text-center">Spread</div>
+            <div className="text-[10px] font-medium text-slate-500 uppercase text-center">Total</div>
           </div>
           
           {/* Away Team Row */}
-          <div className="grid grid-cols-4 gap-0.5 sm:gap-1 px-2 sm:px-3 py-2 sm:py-2.5 border-b border-white/5 items-center">
-            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+          <div className="grid grid-cols-4 gap-1 px-3 py-2 border-b border-slate-700/30 items-center">
+            <div className="flex items-center gap-2 min-w-0">
               <TeamLogo url={awayLogoUrl} teamName={game.awayTeam} size="sm" />
-              <span className="text-xs sm:text-sm text-gray-300 font-medium truncate">
+              <span className="text-xs text-slate-300 font-medium truncate">
                 {getShortName(game.awayTeam)}
               </span>
             </div>
@@ -176,10 +124,10 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
           </div>
           
           {/* Home Team Row */}
-          <div className="grid grid-cols-4 gap-0.5 sm:gap-1 px-2 sm:px-3 py-2 sm:py-2.5 items-center">
-            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+          <div className="grid grid-cols-4 gap-1 px-3 py-2 items-center">
+            <div className="flex items-center gap-2 min-w-0">
               <TeamLogo url={homeLogoUrl} teamName={game.homeTeam} size="sm" />
-              <span className="text-xs sm:text-sm text-gray-300 font-medium truncate">
+              <span className="text-xs text-slate-300 font-medium truncate">
                 {getShortName(game.homeTeam)}
               </span>
             </div>
@@ -196,14 +144,9 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
               e.stopPropagation();
               onSelect?.(game.gameId);
             }}
-            className="flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 touch-manipulation"
+            className="flex-1 py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors"
           >
-            <span className="flex items-center justify-center gap-1.5 sm:gap-2">
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-              <span className="hidden xs:inline">AI</span> Analysis
-            </span>
+            AI Analysis
           </button>
           
           {onPropsSelect && (
@@ -212,14 +155,10 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
                 e.stopPropagation();
                 onPropsSelect(game.gameId);
               }}
-              className={`py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-white text-sm font-semibold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 touch-manipulation ${
-                sport === 'NHL' 
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 shadow-amber-500/25 hover:shadow-amber-500/40'
-                  : 'bg-gradient-to-r from-orange-500 to-red-500 shadow-orange-500/25 hover:shadow-orange-500/40'
-              }`}
+              className="py-2.5 px-4 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium transition-colors"
               title={sport === 'NHL' ? 'Goal Scorer Props' : 'Player Props'}
             >
-              {sport === 'NHL' ? '🥅' : '📊'}
+              {sport === 'NHL' ? 'Goals' : 'Props'}
             </button>
           )}
         </div>
@@ -230,14 +169,13 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
 
 // Team Logo Component
 function TeamLogo({ url, teamName, size = 'md' }: { url: string | null; teamName: string; size?: 'sm' | 'md' }) {
-  const sizeClasses = size === 'sm' ? 'w-5 h-5' : 'w-10 h-10';
+  const sizeClasses = size === 'sm' ? 'w-5 h-5' : 'w-8 h-8';
   
   if (!url) {
-    // Fallback to initials
     const initials = teamName.split(' ').map(w => w[0]).join('').substring(0, 2);
     return (
-      <div className={`${sizeClasses} rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0`}>
-        <span className={`font-bold text-gray-400 ${size === 'sm' ? 'text-[8px]' : 'text-xs'}`}>
+      <div className={`${sizeClasses} rounded bg-slate-700 flex items-center justify-center flex-shrink-0`}>
+        <span className={`font-medium text-slate-400 ${size === 'sm' ? 'text-[8px]' : 'text-xs'}`}>
           {initials}
         </span>
       </div>
@@ -274,7 +212,7 @@ function OddsCell({
   prefix?: string;
 }) {
   if (value === undefined) {
-    return <div className="text-center text-xs sm:text-sm text-gray-600">—</div>;
+    return <div className="text-center text-xs text-slate-600">—</div>;
   }
 
   const formattedOdds = formatAmericanOdds(value);
@@ -283,11 +221,11 @@ function OddsCell({
   return (
     <div className="text-center">
       {point !== undefined && (
-        <span className="text-[8px] sm:text-[10px] text-gray-400 mr-0.5 block sm:inline">
+        <span className="text-[10px] text-slate-500 mr-0.5">
           {prefix}{point > 0 ? `+${point}` : point}
         </span>
       )}
-      <span className={`font-mono text-[11px] sm:text-sm font-semibold stat-number ${isPositive ? 'text-green-400' : 'text-white'}`}>
+      <span className={`font-mono text-xs font-medium ${isPositive ? 'text-emerald-400' : 'text-slate-200'}`}>
         {formattedOdds}
       </span>
     </div>

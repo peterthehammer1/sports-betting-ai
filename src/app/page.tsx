@@ -265,49 +265,37 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0f1a]">
+    <div className="min-h-screen bg-slate-900">
       {/* FanDuel Promo Banner */}
       <FanDuelBanner />
 
-      {/* Ambient background effect */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-radial from-cyan-500/10 via-transparent to-transparent blur-3xl" />
-        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-radial from-purple-500/10 via-transparent to-transparent blur-3xl" />
-      </div>
-
       {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#0a0f1a]/80 border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-3 py-2.5 sm:px-6 sm:py-4 lg:px-8">
+      <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700/50">
+        <div className="max-w-6xl mx-auto px-4 py-3 sm:px-6 sm:py-4">
           {/* Top Row - Title and Sport Toggle */}
-          <div className="flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center justify-between gap-3">
             {/* Title */}
-            <div className="min-w-0 flex-1">
-              <h1 className="text-base sm:text-2xl font-bold text-white tracking-tight truncate">
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-xl font-semibold text-white truncate">
                 Pete&apos;s AI Sports Picks
               </h1>
-              <p className="text-[9px] sm:text-xs text-cyan-400 font-medium tracking-wider uppercase">
-                Powered by AI
-              </p>
             </div>
             
             {/* Sport Toggle */}
-            <div className="flex p-0.5 sm:p-1 bg-white/5 rounded-lg sm:rounded-xl border border-white/10 flex-shrink-0">
+            <div className="flex bg-slate-800 rounded-lg p-0.5 flex-shrink-0">
               {(['NHL', 'NBA'] as Sport[]).map((s) => (
                 <button
                   key={s}
                   onClick={() => setSport(s)}
-                  className={`relative px-3 sm:px-6 py-1.5 sm:py-2 rounded-md sm:rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 ${
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
                     sport === s
-                      ? 'text-white'
-                      : 'text-gray-400 hover:text-white'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  {sport === s && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-md sm:rounded-lg shadow-lg shadow-cyan-500/25" />
-                  )}
-                  <span className="relative z-10 flex items-center gap-1 sm:gap-2">
+                  <span className="flex items-center gap-1.5">
                     {s === 'NHL' ? '🏒' : '🏀'}
-                    <span className="hidden xs:inline">{s}</span>
+                    {s}
                   </span>
                 </button>
               ))}
@@ -315,18 +303,16 @@ export default function Dashboard() {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="mt-3 sm:mt-4 flex gap-1 overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0 pb-1">
+          <div className="mt-3 flex gap-1 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
             <NavTab 
               active={view === 'games'} 
               onClick={() => setView('games')}
-              icon="📊"
               label="Games"
             />
             <NavTab 
               active={view === 'analysis'} 
               onClick={() => setView('analysis')}
               disabled={!selectedPrediction}
-              icon="🎯"
               label="Analysis"
             />
             {sport === 'NHL' && (
@@ -334,9 +320,7 @@ export default function Dashboard() {
                 active={view === 'props'} 
                 onClick={() => setView('props')}
                 disabled={!selectedPropsAnalysis}
-                icon="🥅"
-                label="Goals"
-                accent
+                label="Goal Scorers"
               />
             )}
             {sport === 'NBA' && (
@@ -344,27 +328,24 @@ export default function Dashboard() {
                 active={view === 'props'} 
                 onClick={() => setView('props')}
                 disabled={!selectedNbaPropsAnalysis}
-                icon="📊"
-                label="Props"
-                accent
+                label="Player Props"
               />
             )}
             <NavTab 
               active={view === 'tools'} 
               onClick={() => setView('tools')}
-              icon="🧮"
               label="Tools"
             />
           </div>
 
-          {/* Live indicator */}
-          <div className="mt-2 sm:mt-3 flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-gray-400">
+          {/* Status bar */}
+          <div className="mt-2 flex items-center gap-3 text-xs text-slate-500">
             <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full pulse-glow" />
-              <span>Live Odds</span>
+              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full pulse-glow" />
+              <span>Live</span>
             </div>
             {lastFetch && (
-              <span className="text-gray-500">
+              <span>
                 Updated {lastFetch.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
               </span>
             )}
@@ -373,14 +354,12 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <main className="max-w-6xl mx-auto px-4 py-6 sm:px-6">
         {/* Error State */}
         {error && (
-          <div className="mb-6 p-4 glass-card rounded-xl border-red-500/30 animate-slide-up">
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg animate-slide-up">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
-                <span className="text-red-400">⚠️</span>
-              </div>
+              <span className="text-red-400">⚠️</span>
               <p className="text-sm text-red-400">{error}</p>
             </div>
           </div>
@@ -389,11 +368,8 @@ export default function Dashboard() {
         {/* Loading State */}
         {loadingOdds && games.length === 0 && (
           <div className="flex flex-col justify-center items-center py-20">
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full border-2 border-cyan-500/30 border-t-cyan-400 animate-spin" />
-              <div className="absolute inset-2 rounded-full border-2 border-purple-500/30 border-b-purple-400 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-            </div>
-            <span className="mt-6 text-gray-400 font-medium">
+            <div className="w-8 h-8 border-2 border-slate-600 border-t-blue-500 rounded-full animate-spin" />
+            <span className="mt-4 text-slate-400 text-sm">
               Loading {sport} games...
             </span>
           </div>
@@ -401,24 +377,15 @@ export default function Dashboard() {
 
         {/* Analysis Loading Overlay */}
         {(loadingAnalysis || loadingProps) && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="glass-card rounded-2xl p-8 text-center max-w-sm w-full animate-slide-up">
-              <div className="relative mx-auto w-20 h-20">
-                <div className={`absolute inset-0 rounded-full border-2 ${loadingProps ? 'border-amber-500/30 border-t-amber-400' : 'border-cyan-500/30 border-t-cyan-400'} animate-spin`} />
-                <div className={`absolute inset-3 rounded-full border-2 ${loadingProps ? 'border-orange-500/30 border-b-orange-400' : 'border-blue-500/30 border-b-blue-400'} animate-spin`} style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-2xl">{loadingProps ? '🥅' : '🎯'}</span>
-                </div>
-              </div>
-              <p className="mt-6 text-lg font-semibold text-white">
-                {loadingProps ? 'Analyzing Goal Scorers' : 'Running AI Analysis'}
+          <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 text-center max-w-sm w-full animate-slide-up">
+              <div className="w-10 h-10 mx-auto border-2 border-slate-600 border-t-blue-500 rounded-full animate-spin" />
+              <p className="mt-4 font-medium text-white">
+                {loadingProps ? 'Analyzing Player Props' : 'Running AI Analysis'}
               </p>
-              <p className="mt-2 text-sm text-gray-400">
-                Our AI is crunching the numbers...
+              <p className="mt-1 text-sm text-slate-400">
+                This may take a few seconds...
               </p>
-              <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
-                <div className={`h-full ${loadingProps ? 'bg-gradient-to-r from-amber-500 to-orange-500' : 'bg-gradient-to-r from-cyan-500 to-blue-500'} shimmer`} style={{ width: '60%' }} />
-              </div>
             </div>
           </div>
         )}
@@ -426,34 +393,27 @@ export default function Dashboard() {
         {/* Games View */}
         {view === 'games' && games.length > 0 && (
           <div className="animate-slide-up">
-            <div className="mb-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-white">
-                    {sport} Games
-                  </h2>
-                  <p className="text-sm text-gray-400 mt-1">
-                    {games.length} games available • Tap for AI insights
-                  </p>
-                </div>
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20">
-                  <div className="w-2 h-2 bg-cyan-400 rounded-full pulse-glow" />
-                  <span className="text-xs font-medium text-cyan-400">LIVE</span>
-                </div>
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  {sport} Games
+                </h2>
+                <p className="text-sm text-slate-400">
+                  {games.length} games with odds available
+                </p>
               </div>
             </div>
 
-            <div className="grid gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {games.map((game, index) => (
-                <div key={game.gameId} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
-                  <GameCard
-                    game={game}
-                    sport={sport}
-                    score={scores[game.gameId]}
-                    onSelect={handleGameSelect}
-                    onPropsSelect={sport === 'NHL' ? fetchPlayerPropsAnalysis : fetchNbaPlayerPropsAnalysis}
-                  />
-                </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {games.map((game) => (
+                <GameCard
+                  key={game.gameId}
+                  game={game}
+                  sport={sport}
+                  score={scores[game.gameId]}
+                  onSelect={handleGameSelect}
+                  onPropsSelect={sport === 'NHL' ? fetchPlayerPropsAnalysis : fetchNbaPlayerPropsAnalysis}
+                />
               ))}
             </div>
           </div>
@@ -512,59 +472,28 @@ export default function Dashboard() {
 
         {/* Tools View */}
         {view === 'tools' && (
-          <div className="animate-slide-up space-y-4 sm:space-y-6">
+          <div className="animate-slide-up space-y-5">
             {/* Tool Selector */}
-            <div className="flex gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0 pb-1">
-              <button
-                onClick={() => setSelectedTool('betnow')}
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap transition-all touch-manipulation ${
-                  selectedTool === 'betnow'
-                    ? 'bg-gradient-to-r from-blue-500/20 to-indigo-500/20 text-blue-400 border border-blue-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10 active:bg-white/15'
-                }`}
-              >
-                🎁 <span className="hidden xs:inline">Bet Now -</span> $150
-              </button>
-              <button
-                onClick={() => setSelectedTool('compare')}
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap transition-all touch-manipulation ${
-                  selectedTool === 'compare'
-                    ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10 active:bg-white/15'
-                }`}
-              >
-                📈 <span className="hidden xs:inline">Line</span> Shop
-              </button>
-              <button
-                onClick={() => setSelectedTool('calculator')}
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap transition-all touch-manipulation ${
-                  selectedTool === 'calculator'
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10 active:bg-white/15'
-                }`}
-              >
-                🧮 Calc
-              </button>
-              <button
-                onClick={() => setSelectedTool('parlay')}
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap transition-all touch-manipulation ${
-                  selectedTool === 'parlay'
-                    ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10 active:bg-white/15'
-                }`}
-              >
-                🎰 Parlay
-              </button>
-              <button
-                onClick={() => setSelectedTool('guide')}
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap transition-all touch-manipulation ${
-                  selectedTool === 'guide'
-                    ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10 active:bg-white/15'
-                }`}
-              >
-                📚 Guide
-              </button>
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+              {[
+                { id: 'betnow', label: 'Bet Now' },
+                { id: 'compare', label: 'Line Shopping' },
+                { id: 'calculator', label: 'Calculator' },
+                { id: 'parlay', label: 'Parlay Builder' },
+                { id: 'guide', label: 'Guide' },
+              ].map((tool) => (
+                <button
+                  key={tool.id}
+                  onClick={() => setSelectedTool(tool.id as typeof selectedTool)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                    selectedTool === tool.id
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {tool.label}
+                </button>
+              ))}
             </div>
 
             {/* Selected Tool */}
@@ -594,14 +523,12 @@ export default function Dashboard() {
 
         {/* Empty State */}
         {!loadingOdds && games.length === 0 && !error && (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/5 flex items-center justify-center">
-              <span className="text-4xl">{sport === 'NHL' ? '🏒' : '🏀'}</span>
-            </div>
-            <p className="text-gray-400 text-lg">
-              No {sport} games scheduled for today
+          <div className="text-center py-16">
+            <div className="text-4xl mb-4">{sport === 'NHL' ? '🏒' : '🏀'}</div>
+            <p className="text-slate-300 font-medium">
+              No {sport} games available
             </p>
-            <p className="text-gray-500 text-sm mt-2">
+            <p className="text-slate-500 text-sm mt-1">
               Check back later for upcoming matchups
             </p>
           </div>
@@ -609,15 +536,13 @@ export default function Dashboard() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 mt-auto py-4 sm:py-6 border-t border-white/5 safe-area-bottom">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
-            <p className="text-[10px] sm:text-xs text-gray-500 text-center sm:text-left">
-              ⚠️ For entertainment only. Gamble responsibly.
+      <footer className="mt-auto py-6 border-t border-slate-800 safe-area-bottom">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <p>
+              For entertainment purposes only. Please gamble responsibly.
             </p>
-            <div className="flex items-center gap-4 text-[10px] sm:text-xs text-gray-500">
-              <span>© 2026 Pete&apos;s AI Sports Picks</span>
-            </div>
+            <p>© 2026 Pete&apos;s AI Sports Picks</p>
           </div>
         </div>
       </footer>
@@ -630,36 +555,24 @@ function NavTab({
   active, 
   onClick, 
   disabled, 
-  icon, 
-  label, 
-  accent 
+  label
 }: { 
   active: boolean; 
   onClick: () => void; 
   disabled?: boolean; 
-  icon: string; 
   label: string;
-  accent?: boolean;
 }) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`relative px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed touch-manipulation ${
+      className={`px-3 sm:px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed touch-manipulation border-b-2 -mb-[1px] ${
         active
-          ? accent 
-            ? 'text-amber-400' 
-            : 'text-cyan-400'
-          : 'text-gray-400 hover:text-white hover:bg-white/5 active:bg-white/10'
+          ? 'text-blue-400 border-blue-400'
+          : 'text-slate-400 border-transparent hover:text-slate-300'
       }`}
     >
-      {active && (
-        <div className={`absolute inset-0 rounded-lg sm:rounded-xl ${accent ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-cyan-500/10 border border-cyan-500/20'}`} />
-      )}
-      <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
-        <span className="text-sm sm:text-base">{icon}</span>
-        <span>{label}</span>
-      </span>
+      {label}
     </button>
   );
 }
