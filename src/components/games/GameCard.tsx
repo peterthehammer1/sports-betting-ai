@@ -30,7 +30,7 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
   const under = game.total.under.find((t) => t.point === game.total.consensusLine);
 
   // Determine favorite
-  const homeFavorite = homeML && awayML && homeML.americanOdds < awayML.americanOdds;
+  const homeFavorite = homeML && awayML ? homeML.americanOdds < awayML.americanOdds : undefined;
 
   return (
     <div 
@@ -73,7 +73,7 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
             totalOdds={over?.americanOdds}
             totalLabel="O"
             probability={awayML?.impliedProbability}
-            isFavorite={!homeFavorite}
+            isFavorite={homeFavorite === undefined ? undefined : !homeFavorite}
           />
 
           {/* VS Divider */}
