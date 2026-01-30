@@ -1,6 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import { formatAmericanOdds, formatProbability } from '@/lib/utils/odds';
+import { getTeamLogoUrl } from '@/lib/utils/teamLogos';
 import type { NormalizedOdds } from '@/types/odds';
 
 interface GameCardProps {
@@ -32,6 +34,10 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
   // Determine favorite
   const homeFavorite = homeML && awayML ? homeML.americanOdds < awayML.americanOdds : undefined;
 
+  // Get team logos
+  const awayLogoUrl = getTeamLogoUrl(game.awayTeam, sport);
+  const homeLogoUrl = getTeamLogoUrl(game.homeTeam, sport);
+
   return (
     <div 
       className="group relative glass-card rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-cyan-500/10 active:scale-[0.98] touch-manipulation"
@@ -61,54 +67,60 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
           </div>
         </div>
 
-        {/* Matchup - Full Team Names */}
+        {/* Matchup with Logos */}
         <div className="mb-4">
           {/* Away Team */}
-          <div className="flex items-center justify-between py-2">
-            <div className="flex items-center gap-2">
-              <span className={`text-base font-semibold ${homeFavorite === false ? 'text-white' : 'text-gray-300'}`}>
-                {game.awayTeam}
-              </span>
-              {homeFavorite === false && (
-                <span className="px-1.5 py-0.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 rounded uppercase">
-                  Fav
+          <div className="flex items-center gap-3 py-2">
+            <TeamLogo url={awayLogoUrl} teamName={game.awayTeam} />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`text-base font-semibold ${homeFavorite === false ? 'text-white' : 'text-gray-300'}`}>
+                  {game.awayTeam}
+                </span>
+                {homeFavorite === false && (
+                  <span className="px-1.5 py-0.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 rounded uppercase">
+                    Fav
+                  </span>
+                )}
+              </div>
+              {awayML && (
+                <span className="text-xs text-gray-500">
+                  {formatProbability(awayML.impliedProbability)} implied
                 </span>
               )}
             </div>
-            {awayML && (
-              <span className="text-xs text-gray-500">
-                {formatProbability(awayML.impliedProbability)}
-              </span>
-            )}
           </div>
 
           {/* VS Divider */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 py-1">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
             <span className="text-[10px] font-bold text-gray-600">@</span>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </div>
 
           {/* Home Team */}
-          <div className="flex items-center justify-between py-2">
-            <div className="flex items-center gap-2">
-              <span className={`text-base font-semibold ${homeFavorite === true ? 'text-white' : 'text-gray-300'}`}>
-                {game.homeTeam}
-              </span>
-              <span className="px-1.5 py-0.5 text-[9px] font-bold text-gray-500 bg-white/5 rounded uppercase">
-                Home
-              </span>
-              {homeFavorite === true && (
-                <span className="px-1.5 py-0.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 rounded uppercase">
-                  Fav
+          <div className="flex items-center gap-3 py-2">
+            <TeamLogo url={homeLogoUrl} teamName={game.homeTeam} />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`text-base font-semibold ${homeFavorite === true ? 'text-white' : 'text-gray-300'}`}>
+                  {game.homeTeam}
+                </span>
+                <span className="px-1.5 py-0.5 text-[9px] font-bold text-gray-500 bg-white/5 rounded uppercase">
+                  Home
+                </span>
+                {homeFavorite === true && (
+                  <span className="px-1.5 py-0.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 rounded uppercase">
+                    Fav
+                  </span>
+                )}
+              </div>
+              {homeML && (
+                <span className="text-xs text-gray-500">
+                  {formatProbability(homeML.impliedProbability)} implied
                 </span>
               )}
             </div>
-            {homeML && (
-              <span className="text-xs text-gray-500">
-                {formatProbability(homeML.impliedProbability)}
-              </span>
-            )}
           </div>
         </div>
 
@@ -123,9 +135,12 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
           </div>
           
           {/* Away Team Row */}
-          <div className="grid grid-cols-4 gap-1 px-3 py-2.5 border-b border-white/5">
-            <div className="text-sm text-gray-300 font-medium truncate pr-1">
-              {getShortName(game.awayTeam)}
+          <div className="grid grid-cols-4 gap-1 px-3 py-2.5 border-b border-white/5 items-center">
+            <div className="flex items-center gap-2">
+              <TeamLogo url={awayLogoUrl} teamName={game.awayTeam} size="sm" />
+              <span className="text-sm text-gray-300 font-medium">
+                {getShortName(game.awayTeam)}
+              </span>
             </div>
             <OddsCell value={awayML?.americanOdds} />
             <OddsCell value={awaySpread?.americanOdds} point={awaySpread?.point} />
@@ -133,9 +148,12 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
           </div>
           
           {/* Home Team Row */}
-          <div className="grid grid-cols-4 gap-1 px-3 py-2.5">
-            <div className="text-sm text-gray-300 font-medium truncate pr-1">
-              {getShortName(game.homeTeam)}
+          <div className="grid grid-cols-4 gap-1 px-3 py-2.5 items-center">
+            <div className="flex items-center gap-2">
+              <TeamLogo url={homeLogoUrl} teamName={game.homeTeam} size="sm" />
+              <span className="text-sm text-gray-300 font-medium">
+                {getShortName(game.homeTeam)}
+              </span>
             </div>
             <OddsCell value={homeML?.americanOdds} />
             <OddsCell value={homeSpread?.americanOdds} point={homeSpread?.point} />
@@ -173,6 +191,35 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+// Team Logo Component
+function TeamLogo({ url, teamName, size = 'md' }: { url: string | null; teamName: string; size?: 'sm' | 'md' }) {
+  const sizeClasses = size === 'sm' ? 'w-5 h-5' : 'w-10 h-10';
+  
+  if (!url) {
+    // Fallback to initials
+    const initials = teamName.split(' ').map(w => w[0]).join('').substring(0, 2);
+    return (
+      <div className={`${sizeClasses} rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0`}>
+        <span className={`font-bold text-gray-400 ${size === 'sm' ? 'text-[8px]' : 'text-xs'}`}>
+          {initials}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${sizeClasses} relative flex-shrink-0`}>
+      <Image
+        src={url}
+        alt={teamName}
+        fill
+        className="object-contain"
+        unoptimized
+      />
     </div>
   );
 }
