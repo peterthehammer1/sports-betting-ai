@@ -9,6 +9,7 @@ import { NbaPlayerPropsCard } from '@/components/predictions/NbaPlayerPropsCard'
 import { OddsCompare } from '@/components/tools/OddsCompare';
 import { BetCalculator } from '@/components/tools/BetCalculator';
 import { ParlayBuilder } from '@/components/tools/ParlayBuilder';
+import { BettingGuide } from '@/components/education/BettingGuide';
 import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
 import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
 
@@ -81,7 +82,7 @@ export default function Dashboard() {
   const [loadingPicks, setLoadingPicks] = useState(false);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
   const [loadingProps, setLoadingProps] = useState(false);
-  const [selectedTool, setSelectedTool] = useState<'compare' | 'calculator' | 'parlay'>('compare');
+  const [selectedTool, setSelectedTool] = useState<'compare' | 'calculator' | 'parlay' | 'guide'>('compare');
   
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
@@ -539,6 +540,16 @@ export default function Dashboard() {
               >
                 🎰 Parlay Builder
               </button>
+              <button
+                onClick={() => setSelectedTool('guide')}
+                className={`px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
+                  selectedTool === 'guide'
+                    ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                📚 Guide
+              </button>
             </div>
 
             {/* Selected Tool */}
@@ -556,6 +567,9 @@ export default function Dashboard() {
                 games={games} 
                 onClose={() => setView('games')} 
               />
+            )}
+            {selectedTool === 'guide' && (
+              <BettingGuide onClose={() => setView('games')} />
             )}
           </div>
         )}
