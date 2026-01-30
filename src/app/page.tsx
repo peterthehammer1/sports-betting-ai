@@ -283,7 +283,7 @@ export default function Dashboard() {
             {/* Title */}
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                Sports Picks
+                Pete&apos;s AI Sports Picks
               </h1>
               <p className="text-[10px] sm:text-xs text-cyan-400 font-medium tracking-wider uppercase">
                 Powered by AI
@@ -616,7 +616,7 @@ export default function Dashboard() {
               ⚠️ For entertainment purposes only. Please gamble responsibly.
             </p>
             <div className="flex items-center gap-4 text-xs text-gray-500">
-              <span>© 2026 Sports Picks</span>
+              <span>© 2026 Pete&apos;s AI Sports Picks</span>
             </div>
           </div>
         </div>
