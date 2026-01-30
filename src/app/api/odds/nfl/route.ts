@@ -1,6 +1,7 @@
 /**
  * API Route: GET /api/odds/nfl
  * Fetches current NFL odds (Super Bowl) from The Odds API
+ * With Redis caching for when API quota is exceeded
  */
 
 import { NextResponse } from 'next/server';
@@ -24,10 +25,12 @@ export async function GET() {
     // Check cache first
     const cached = await getCachedOdds('NFL');
     if (cached) {
+      console.log('Returning cached NFL odds');
       const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
       return NextResponse.json({
         ...cachedData,
         fromCache: true,
+        cacheEnabled: true,
       });
     }
 
@@ -51,6 +54,7 @@ export async function GET() {
 
     // Cache the result
     await cacheOdds('NFL', responseData);
+    console.log('Cached NFL odds, games:', normalizedGames.length);
 
     return NextResponse.json({
       ...responseData,
@@ -59,6 +63,20 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Error fetching NFL odds:', error);
+    
+    // On error (including quota exceeded), try to return cached data
+    const fallbackCached = await getCachedOdds('NFL');
+    if (fallbackCached) {
+      console.log('API error, returning cached NFL odds');
+      const cachedData = typeof fallbackCached === 'string' ? JSON.parse(fallbackCached) : fallbackCached;
+      return NextResponse.json({
+        ...cachedData,
+        fromCache: true,
+        cacheEnabled: true,
+        message: 'API quota may be exceeded, showing cached data',
+      });
+    }
+    
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to fetch odds' },
       { status: 500 }

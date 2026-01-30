@@ -1,7 +1,16 @@
+/**
+ * API Route: GET /api/odds/nba/props
+ * Fetches NBA player props from The Odds API
+ * With Redis caching for when API quota is exceeded
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { oddsApi } from '@/lib/api/odds';
-import { getCachedPlayerProps, cachePlayerProps } from '@/lib/cache/redis';
-import type { NbaPlayerPropMarket, NormalizedNbaPlayerProp } from '@/types/odds';
+import { getCachedPlayerProps, cachePlayerProps, isRedisConfigured } from '@/lib/cache/redis';
+import type { NbaPlayerPropMarket } from '@/types/odds';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -31,18 +40,22 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  // Cache key
+  const cacheKey = `nba-props-${eventId}`;
+
   try {
     // Check cache first
-    const cacheKey = `nba-props-${eventId}`;
     const cached = await getCachedPlayerProps(cacheKey) as {
       meta: Record<string, unknown>;
       [key: string]: unknown;
     } | null;
     
     if (cached) {
+      console.log('Returning cached NBA props for:', eventId);
       return NextResponse.json({
         ...cached,
         meta: { ...cached.meta, fromCache: true },
+        cacheEnabled: true,
       });
     }
 
@@ -56,6 +69,19 @@ export async function GET(request: NextRequest) {
     const propsData = await oddsApi.getNbaPlayerProps(eventId, markets);
     
     if (!propsData) {
+      // Check for cached fallback
+      const fallbackCached = await getCachedPlayerProps(cacheKey) as {
+        meta: Record<string, unknown>;
+        [key: string]: unknown;
+      } | null;
+      if (fallbackCached) {
+        console.log('No fresh data, returning cached NBA props for:', eventId);
+        return NextResponse.json({
+          ...fallbackCached,
+          meta: { ...fallbackCached.meta, fromCache: true },
+          message: 'Props not currently available from API, showing cached data',
+        });
+      }
       return NextResponse.json(
         { error: 'No player props found for this game' },
         { status: 404 }
@@ -92,10 +118,30 @@ export async function GET(request: NextRequest) {
 
     // Cache the response
     await cachePlayerProps(cacheKey, response);
+    console.log('Cached NBA props for:', eventId);
 
-    return NextResponse.json(response);
+    return NextResponse.json({
+      ...response,
+      cacheEnabled: isRedisConfigured(),
+    });
   } catch (error) {
     console.error('NBA Props API error:', error);
+    
+    // On error, try to return cached data
+    const fallbackCached = await getCachedPlayerProps(cacheKey) as {
+      meta: Record<string, unknown>;
+      [key: string]: unknown;
+    } | null;
+    if (fallbackCached) {
+      console.log('API error, returning cached NBA props for:', eventId);
+      return NextResponse.json({
+        ...fallbackCached,
+        meta: { ...fallbackCached.meta, fromCache: true },
+        cacheEnabled: true,
+        message: 'API quota may be exceeded, showing cached data',
+      });
+    }
+    
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to fetch NBA player props' },
       { status: 500 }

@@ -1,7 +1,7 @@
 /**
  * API Route: GET /api/odds/nba
  * Fetches current NBA odds from The Odds API
- * Results are cached for 5 minutes to reduce API calls
+ * With Redis caching for when API quota is exceeded
  */
 
 import { NextResponse } from 'next/server';
@@ -25,10 +25,12 @@ export async function GET() {
     // Check cache first
     const cached = await getCachedOdds('NBA');
     if (cached) {
+      console.log('Returning cached NBA odds');
       const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
       return NextResponse.json({
         ...cachedData,
         fromCache: true,
+        cacheEnabled: true,
       });
     }
 
@@ -51,6 +53,7 @@ export async function GET() {
 
     // Cache the result
     await cacheOdds('NBA', responseData);
+    console.log('Cached NBA odds, games:', normalizedGames.length);
 
     return NextResponse.json({
       ...responseData,
@@ -59,6 +62,20 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Error fetching NBA odds:', error);
+    
+    // On error (including quota exceeded), try to return cached data
+    const fallbackCached = await getCachedOdds('NBA');
+    if (fallbackCached) {
+      console.log('API error, returning cached NBA odds');
+      const cachedData = typeof fallbackCached === 'string' ? JSON.parse(fallbackCached) : fallbackCached;
+      return NextResponse.json({
+        ...cachedData,
+        fromCache: true,
+        cacheEnabled: true,
+        message: 'API quota may be exceeded, showing cached data',
+      });
+    }
+    
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to fetch odds' },
       { status: 500 }

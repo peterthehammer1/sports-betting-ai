@@ -1,10 +1,12 @@
 /**
  * API Route: GET /api/odds/nfl/props
  * Fetches NFL (Super Bowl) player props from The Odds API
+ * With Redis caching for when API quota is exceeded
  */
 
 import { NextResponse } from 'next/server';
 import { createOddsApiClient } from '@/lib/api/odds';
+import { getCachedPlayerProps, cachePlayerProps, isRedisConfigured } from '@/lib/cache/redis';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -58,27 +60,46 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const eventId = searchParams.get('eventId');
 
-  try {
-    const client = createOddsApiClient({ apiKey });
+  // Need eventId for props
+  if (!eventId) {
+    return NextResponse.json({
+      error: 'eventId parameter is required',
+      message: 'Provide eventId parameter to get player props',
+    }, { status: 400 });
+  }
 
-    // If no eventId provided, return available NFL events
-    if (!eventId) {
-      const games = await client.getNflOdds(['h2h']);
+  const cacheKey = `nfl-props-${eventId}`;
+
+  try {
+    // Check cache first
+    const cached = await getCachedPlayerProps(cacheKey);
+    if (cached) {
+      console.log('Returning cached NFL props for:', eventId);
+      const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
       return NextResponse.json({
-        events: games.map(g => ({
-          id: g.id,
-          homeTeam: g.home_team,
-          awayTeam: g.away_team,
-          commenceTime: g.commence_time,
-        })),
-        message: 'Provide eventId parameter to get player props',
+        ...cachedData,
+        fromCache: true,
+        cacheEnabled: true,
       });
     }
+
+    const client = createOddsApiClient({ apiKey });
 
     // Fetch player props for the specified event
     const propsData = await client.getNflPlayerProps(eventId, NFL_PROP_MARKETS);
     
     if (!propsData) {
+      // If no props from API, check if we have any cached data to return
+      const fallbackCached = await getCachedPlayerProps(cacheKey);
+      if (fallbackCached) {
+        const cachedData = typeof fallbackCached === 'string' ? JSON.parse(fallbackCached) : fallbackCached;
+        return NextResponse.json({
+          ...cachedData,
+          fromCache: true,
+          message: 'Props not currently available from API, showing cached data',
+        });
+      }
+      
       return NextResponse.json({
         error: 'Player props not available for this event',
         eventId,
@@ -131,17 +152,41 @@ export async function GET(request: Request) {
       }
     }
 
-    return NextResponse.json({
+    const responseData = {
       eventId,
       homeTeam: propsData.home_team,
       awayTeam: propsData.away_team,
       commenceTime: propsData.commence_time,
       propsByMarket,
       availableMarkets: Object.keys(propsByMarket),
-      quota: client.getQuota(),
+      fetchedAt: new Date().toISOString(),
+    };
+
+    // Cache the result (for 12 hours since props don't change as frequently)
+    await cachePlayerProps(cacheKey, responseData);
+    console.log('Cached NFL props for:', eventId);
+
+    return NextResponse.json({
+      ...responseData,
+      fromCache: false,
+      cacheEnabled: isRedisConfigured(),
     });
   } catch (error) {
     console.error('Error fetching NFL props:', error);
+    
+    // On error (including quota exceeded), try to return cached data
+    const fallbackCached = await getCachedPlayerProps(cacheKey);
+    if (fallbackCached) {
+      console.log('API error, returning cached NFL props for:', eventId);
+      const cachedData = typeof fallbackCached === 'string' ? JSON.parse(fallbackCached) : fallbackCached;
+      return NextResponse.json({
+        ...cachedData,
+        fromCache: true,
+        cacheEnabled: true,
+        message: 'API quota may be exceeded, showing cached data',
+      });
+    }
+    
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to fetch props' },
       { status: 500 }

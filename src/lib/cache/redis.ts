@@ -14,8 +14,10 @@ const redis = new Redis({
 });
 
 // Cache TTL in seconds
-const ANALYSIS_CACHE_TTL = 6 * 60 * 60; // 6 hours for analysis
-const ODDS_CACHE_TTL = 6 * 60 * 60; // 6 hours for odds (extended for demo)
+// Extended TTLs to ensure data persists when API quota is exceeded
+const ANALYSIS_CACHE_TTL = 7 * 24 * 60 * 60; // 7 days for analysis
+const ODDS_CACHE_TTL = 7 * 24 * 60 * 60; // 7 days for odds (persists even with quota exceeded)
+const PROPS_CACHE_TTL = 7 * 24 * 60 * 60; // 7 days for player props
 
 // Cache key prefixes
 const KEYS = {
@@ -91,7 +93,7 @@ export async function cachePlayerProps(gameId: string, data: unknown) {
   
   try {
     const key = `${KEYS.PLAYER_PROPS}${gameId}`;
-    await redis.set(key, JSON.stringify(data), { ex: ODDS_CACHE_TTL });
+    await redis.set(key, JSON.stringify(data), { ex: PROPS_CACHE_TTL });
   } catch (error) {
     console.error('Redis set error:', error);
   }
