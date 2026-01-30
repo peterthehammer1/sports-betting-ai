@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import type { NormalizedOdds } from '@/types/odds';
 
 interface OddsCompareProps {
@@ -8,14 +9,66 @@ interface OddsCompareProps {
   onClose?: () => void;
 }
 
-export function OddsCompare({ games, onClose }: OddsCompareProps) {
+// Sportsbook logo/branding info
+const SPORTSBOOK_LOGOS: Record<string, { logo: string; color: string; shortName: string }> = {
+  'FanDuel': { 
+    logo: '/FanDuel Logos/Sportsbook/Secondary/fanduel_sportsbook_logo_vert_blue.svg', 
+    color: '#1493FF',
+    shortName: 'FanDuel'
+  },
+  'DraftKings': { 
+    logo: '', // Will use text fallback
+    color: '#53D337',
+    shortName: 'DraftKings'
+  },
+  'BetMGM': { 
+    logo: '',
+    color: '#BFA26D',
+    shortName: 'BetMGM'
+  },
+  'Caesars': { 
+    logo: '',
+    color: '#1B365D',
+    shortName: 'Caesars'
+  },
+  'PointsBet': { 
+    logo: '',
+    color: '#E53238',
+    shortName: 'PointsBet'
+  },
+  'BetRivers': { 
+    logo: '',
+    color: '#1A1A1A',
+    shortName: 'BetRivers'
+  },
+  'Bet365': { 
+    logo: '',
+    color: '#027B5B',
+    shortName: 'Bet365'
+  },
+  'Unibet': { 
+    logo: '',
+    color: '#147B45',
+    shortName: 'Unibet'
+  },
+};
+
+function getSportsbookInfo(name: string) {
+  // Try to match by partial name
+  const key = Object.keys(SPORTSBOOK_LOGOS).find(k => 
+    name.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(name.toLowerCase())
+  );
+  return key ? SPORTSBOOK_LOGOS[key] : null;
+}
+
+export function OddsCompare({ games }: OddsCompareProps) {
   const [selectedGame, setSelectedGame] = useState<NormalizedOdds | null>(games[0] || null);
   const [selectedMarket, setSelectedMarket] = useState<'moneyline' | 'spread' | 'total'>('moneyline');
 
   if (!selectedGame) {
     return (
-      <div className="glass-card rounded-2xl p-6 text-center">
-        <p className="text-gray-400">No games available for comparison</p>
+      <div className="bg-slate-800 border border-slate-700/50 rounded-lg p-6 text-center">
+        <p className="text-slate-400">No games available for comparison</p>
       </div>
     );
   }
@@ -26,7 +79,6 @@ export function OddsCompare({ games, onClose }: OddsCompareProps) {
         const homeML = selectedGame.moneyline.home;
         const awayML = selectedGame.moneyline.away;
         
-        // Combine bookmakers
         const mlBooks = new Set([
           ...homeML.map(o => o.bookmakerTitle),
           ...awayML.map(o => o.bookmakerTitle)
@@ -89,7 +141,6 @@ export function OddsCompare({ games, onClose }: OddsCompareProps) {
 
   const bookmakerData = getBookmakerData();
   
-  // Find best odds
   const bestHomeIdx = bookmakerData.reduce((best, curr, idx) => 
     (curr.homeValue || -9999) > (bookmakerData[best]?.homeValue || -9999) ? idx : best
   , 0);
@@ -104,58 +155,27 @@ export function OddsCompare({ games, onClose }: OddsCompareProps) {
   };
 
   return (
-    <div className="glass-card rounded-2xl overflow-hidden">
+    <div className="bg-slate-800 border border-slate-700/50 rounded-lg overflow-hidden">
       {/* Header */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-600" />
-        <div className="relative px-5 sm:px-6 py-5 sm:py-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-2 py-1 text-[10px] font-bold text-white/80 bg-white/10 rounded-full uppercase tracking-wider">
-                  Tools
-                </span>
-                <span className="px-2 py-1 text-[10px] font-bold text-purple-200 bg-purple-400/20 rounded-full uppercase tracking-wider">
-                  Odds Compare
-                </span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-white">
-                Line Shopping
-              </h2>
-              <p className="text-sm text-white/60 mt-0.5">
-                Compare odds across sportsbooks
-              </p>
-            </div>
-            {onClose && (
-              <button
-                onClick={onClose}
-                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
-          </div>
-        </div>
+      <div className="px-4 py-3 border-b border-slate-700/50">
+        <h3 className="text-white font-medium">Line Shopping</h3>
+        <p className="text-xs text-slate-400 mt-0.5">Compare odds across sportsbooks</p>
       </div>
 
-      <div className="p-5 sm:p-6 space-y-6">
+      <div className="p-4 space-y-4">
         {/* Game Selector */}
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-            Select Game
-          </label>
+          <label className="block text-xs text-slate-400 mb-1.5">Select Game</label>
           <select
             value={selectedGame.gameId}
             onChange={(e) => {
               const game = games.find(g => g.gameId === e.target.value);
               if (game) setSelectedGame(game);
             }}
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none"
+            className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-sm focus:border-blue-500 outline-none"
           >
             {games.map(game => (
-              <option key={game.gameId} value={game.gameId} className="bg-gray-900">
+              <option key={game.gameId} value={game.gameId}>
                 {game.awayTeam} @ {game.homeTeam}
               </option>
             ))}
@@ -163,15 +183,15 @@ export function OddsCompare({ games, onClose }: OddsCompareProps) {
         </div>
 
         {/* Market Tabs */}
-        <div className="flex gap-2">
+        <div className="flex bg-slate-900 rounded-lg p-0.5">
           {(['moneyline', 'spread', 'total'] as const).map(market => (
             <button
               key={market}
               onClick={() => setSelectedMarket(market)}
-              className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 selectedMarket === market
-                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                  : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               {market === 'moneyline' ? 'Moneyline' : market === 'spread' ? 'Spread' : 'Total'}
@@ -180,101 +200,120 @@ export function OddsCompare({ games, onClose }: OddsCompareProps) {
         </div>
 
         {/* Comparison Table */}
-        <div className="overflow-x-auto -mx-5 sm:mx-0">
-          <div className="min-w-[500px] mx-5 sm:mx-0">
-            <div className="overflow-hidden rounded-xl border border-white/5">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-white/5">
-                    <th className="px-4 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                      Sportsbook
-                    </th>
-                    <th className="px-4 py-3 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                      {selectedMarket === 'total' ? 'Over' : selectedGame.awayTeam.split(' ').pop()}
-                    </th>
-                    <th className="px-4 py-3 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                      {selectedMarket === 'total' ? 'Under' : selectedGame.homeTeam.split(' ').pop()}
-                    </th>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-700/50">
+                <th className="px-3 py-2 text-left text-xs font-medium text-slate-400">
+                  Sportsbook
+                </th>
+                <th className="px-3 py-2 text-center text-xs font-medium text-slate-400">
+                  {selectedMarket === 'total' ? 'Over' : selectedGame.awayTeam.split(' ').pop()}
+                </th>
+                <th className="px-3 py-2 text-center text-xs font-medium text-slate-400">
+                  {selectedMarket === 'total' ? 'Under' : selectedGame.homeTeam.split(' ').pop()}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-700/30">
+              {bookmakerData.map((row, idx) => {
+                const sportsbookInfo = getSportsbookInfo(row.bookmaker);
+                return (
+                  <tr key={idx} className="hover:bg-slate-700/20 transition-colors">
+                    <td className="px-3 py-2.5">
+                      <div className="flex items-center gap-2">
+                        {sportsbookInfo?.logo ? (
+                          <div className="w-6 h-6 rounded bg-white p-0.5 flex-shrink-0">
+                            <Image
+                              src={sportsbookInfo.logo}
+                              alt={row.bookmaker}
+                              width={20}
+                              height={20}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                        ) : (
+                          <div 
+                            className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0 text-[8px] font-bold text-white"
+                            style={{ backgroundColor: sportsbookInfo?.color || '#374151' }}
+                          >
+                            {row.bookmaker.substring(0, 2).toUpperCase()}
+                          </div>
+                        )}
+                        <span className="text-sm text-white font-medium">
+                          {sportsbookInfo?.shortName || row.bookmaker}
+                        </span>
+                      </div>
+                    </td>
+                    <td className={`px-3 py-2.5 text-center font-mono text-sm ${
+                      idx === bestAwayIdx ? 'text-emerald-400 font-semibold' : 'text-slate-300'
+                    }`}>
+                      {selectedMarket === 'spread' && (row as { awayPoint?: number }).awayPoint !== undefined && (
+                        <span className="text-slate-500 mr-1 text-xs">
+                          {(row as { awayPoint?: number }).awayPoint! > 0 ? '+' : ''}{(row as { awayPoint?: number }).awayPoint}
+                        </span>
+                      )}
+                      {selectedMarket === 'total' && (row as { line?: number }).line && (
+                        <span className="text-slate-500 mr-1 text-xs">
+                          O{(row as { line?: number }).line}
+                        </span>
+                      )}
+                      {formatOdds(row.awayValue)}
+                      {idx === bestAwayIdx && <span className="ml-1 text-emerald-400">★</span>}
+                    </td>
+                    <td className={`px-3 py-2.5 text-center font-mono text-sm ${
+                      idx === bestHomeIdx ? 'text-emerald-400 font-semibold' : 'text-slate-300'
+                    }`}>
+                      {selectedMarket === 'spread' && (row as { homePoint?: number }).homePoint !== undefined && (
+                        <span className="text-slate-500 mr-1 text-xs">
+                          {(row as { homePoint?: number }).homePoint! > 0 ? '+' : ''}{(row as { homePoint?: number }).homePoint}
+                        </span>
+                      )}
+                      {selectedMarket === 'total' && (row as { line?: number }).line && (
+                        <span className="text-slate-500 mr-1 text-xs">
+                          U{(row as { line?: number }).line}
+                        </span>
+                      )}
+                      {formatOdds(row.homeValue)}
+                      {idx === bestHomeIdx && <span className="ml-1 text-emerald-400">★</span>}
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {bookmakerData.map((row, idx) => (
-                    <tr key={idx} className="hover:bg-white/5 transition-colors">
-                      <td className="px-4 py-3 text-sm text-white font-medium">
-                        {row.bookmaker}
-                      </td>
-                      <td className={`px-4 py-3 text-center font-mono text-sm stat-number ${
-                        idx === bestAwayIdx ? 'text-green-400 font-bold' : 'text-gray-300'
-                      }`}>
-                        {selectedMarket === 'spread' && (row as { awayPoint?: number }).awayPoint !== undefined && (
-                          <span className="text-gray-500 mr-1 text-xs">
-                            {(row as { awayPoint?: number }).awayPoint! > 0 ? '+' : ''}{(row as { awayPoint?: number }).awayPoint}
-                          </span>
-                        )}
-                        {selectedMarket === 'total' && (row as { line?: number }).line && (
-                          <span className="text-gray-500 mr-1 text-xs">
-                            O{(row as { line?: number }).line}
-                          </span>
-                        )}
-                        {formatOdds(row.awayValue)}
-                        {idx === bestAwayIdx && <span className="ml-1 text-[10px]">✓</span>}
-                      </td>
-                      <td className={`px-4 py-3 text-center font-mono text-sm stat-number ${
-                        idx === bestHomeIdx ? 'text-green-400 font-bold' : 'text-gray-300'
-                      }`}>
-                        {selectedMarket === 'spread' && (row as { homePoint?: number }).homePoint !== undefined && (
-                          <span className="text-gray-500 mr-1 text-xs">
-                            {(row as { homePoint?: number }).homePoint! > 0 ? '+' : ''}{(row as { homePoint?: number }).homePoint}
-                          </span>
-                        )}
-                        {selectedMarket === 'total' && (row as { line?: number }).line && (
-                          <span className="text-gray-500 mr-1 text-xs">
-                            U{(row as { line?: number }).line}
-                          </span>
-                        )}
-                        {formatOdds(row.homeValue)}
-                        {idx === bestHomeIdx && <span className="ml-1 text-[10px]">✓</span>}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
 
         {/* Best Odds Summary */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 rounded-xl bg-green-500/5 border border-green-500/20">
-            <p className="text-xs text-gray-400 mb-1">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+            <p className="text-xs text-slate-400 mb-1">
               Best {selectedMarket === 'total' ? 'Over' : selectedGame.awayTeam.split(' ').pop()}
             </p>
-            <p className="text-xl font-bold text-green-400 stat-number">
+            <p className="text-lg font-semibold text-emerald-400 tabular-nums">
               {formatOdds(bookmakerData[bestAwayIdx]?.awayValue)}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-slate-500">
               {bookmakerData[bestAwayIdx]?.bookmaker}
             </p>
           </div>
-          <div className="p-4 rounded-xl bg-green-500/5 border border-green-500/20">
-            <p className="text-xs text-gray-400 mb-1">
+          <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+            <p className="text-xs text-slate-400 mb-1">
               Best {selectedMarket === 'total' ? 'Under' : selectedGame.homeTeam.split(' ').pop()}
             </p>
-            <p className="text-xl font-bold text-green-400 stat-number">
+            <p className="text-lg font-semibold text-emerald-400 tabular-nums">
               {formatOdds(bookmakerData[bestHomeIdx]?.homeValue)}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-slate-500">
               {bookmakerData[bestHomeIdx]?.bookmaker}
             </p>
           </div>
         </div>
 
         {/* Tip */}
-        <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/20">
-          <p className="text-sm text-purple-300">
-            💡 <strong>Pro Tip:</strong> Always shop for the best odds. Even small differences can significantly impact your long-term profits.
-          </p>
-        </div>
+        <p className="text-xs text-slate-500 text-center">
+          ★ indicates best available odds for each selection
+        </p>
       </div>
     </div>
   );
