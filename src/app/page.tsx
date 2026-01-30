@@ -15,8 +15,10 @@ import { FanDuelBanner } from '@/components/promo/FanDuelBanner';
 import { SuperBowlCard } from '@/components/superbowl/SuperBowlCard';
 import { PerformanceDashboard } from '@/components/tracker/PerformanceDashboard';
 import { OddsMovementChart } from '@/components/tracker/OddsMovementChart';
+import { InjuryReport } from '@/components/injuries/InjuryReport';
 import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
 import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
+import type { SportInjuries, TeamInjuries } from '@/types/injuries';
 
 interface OddsResponse {
   games: NormalizedOdds[];
@@ -93,8 +95,52 @@ export default function Dashboard() {
   const [superBowlGame, setSuperBowlGame] = useState<NormalizedOdds | null>(null);
   const [loadingSuperBowl, setLoadingSuperBowl] = useState(false);
   
+  // Injuries state
+  const [injuryCount, setInjuryCount] = useState<number>(0);
+  const [injuries, setInjuries] = useState<SportInjuries | null>(null);
+  
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
+
+  // Fetch injuries for current sport
+  const fetchInjuries = async () => {
+    try {
+      const res = await fetch(`/api/injuries?sport=${sport}`);
+      if (res.ok) {
+        const data = await res.json();
+        setInjuries(data);
+        setInjuryCount(data.totalInjuries || 0);
+      }
+    } catch (err) {
+      console.error('Failed to fetch injuries:', err);
+    }
+  };
+
+  // Helper to get injury info for a specific game
+  const getGameInjuryInfo = (homeTeam: string, awayTeam: string) => {
+    if (!injuries?.teams) return undefined;
+    
+    const findTeam = (teamName: string) => 
+      injuries.teams.find((t: TeamInjuries) => 
+        t.teamName.toLowerCase().includes(teamName.toLowerCase()) ||
+        teamName.toLowerCase().includes(t.teamName.split(' ').pop()?.toLowerCase() || '')
+      );
+    
+    const home = findTeam(homeTeam);
+    const away = findTeam(awayTeam);
+    
+    const homeCount = home?.injuries.length || 0;
+    const awayCount = away?.injuries.length || 0;
+    const totalCount = homeCount + awayCount;
+    
+    const hasKeyPlayersOut = 
+      (home?.injuries.some(i => i.severity === 'high' && (i.status === 'Out' || i.status === 'Injured Reserve')) || false) ||
+      (away?.injuries.some(i => i.severity === 'high' && (i.status === 'Out' || i.status === 'Injured Reserve')) || false);
+    
+    if (totalCount === 0) return undefined;
+    
+    return { totalCount, homeCount, awayCount, hasKeyPlayersOut };
+  };
 
   // Fetch odds and scores
   const fetchOdds = async () => {
@@ -278,11 +324,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchOdds();
+    fetchInjuries(); // Fetch injuries for the current sport
     setQuickPicks([]); // Clear picks when sport changes
     setSelectedPrediction(null);
     setSelectedPropsAnalysis(null);
     setSelectedNbaPropsAnalysis(null);
     setScores({});
+    setInjuries(null);
+    setInjuryCount(0);
     setView('games');
   }, [sport]);
 
@@ -444,8 +493,21 @@ export default function Dashboard() {
                 </h2>
                 <p className="text-sm text-slate-400">
                   {games.length} games with odds available
+                  {injuryCount > 0 && (
+                    <span className="ml-2 text-yellow-500">
+                      • 🏥 {injuryCount} players injured
+                    </span>
+                  )}
                 </p>
               </div>
+            </div>
+
+            {/* Injury Report Panel */}
+            <div className="mb-6">
+              <InjuryReport 
+                sport={sport} 
+                onInjuryCountChange={(count) => setInjuryCount(count)}
+              />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -455,6 +517,7 @@ export default function Dashboard() {
                   game={game}
                   sport={sport}
                   score={scores[game.gameId]}
+                  injuries={getGameInjuryInfo(game.homeTeam, game.awayTeam)}
                   onSelect={handleGameSelect}
                   onPropsSelect={sport === 'NHL' ? fetchPlayerPropsAnalysis : fetchNbaPlayerPropsAnalysis}
                 />

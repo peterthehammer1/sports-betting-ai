@@ -5,15 +5,23 @@ import { formatAmericanOdds, formatProbability } from '@/lib/utils/odds';
 import { getTeamLogoUrl } from '@/lib/utils/teamLogos';
 import type { NormalizedOdds, NormalizedScore } from '@/types/odds';
 
+interface InjuryInfo {
+  totalCount: number;
+  homeCount: number;
+  awayCount: number;
+  hasKeyPlayersOut: boolean;
+}
+
 interface GameCardProps {
   game: NormalizedOdds;
   sport: 'NHL' | 'NBA';
   score?: NormalizedScore;
+  injuries?: InjuryInfo;
   onSelect?: (gameId: string) => void;
   onPropsSelect?: (gameId: string) => void;
 }
 
-export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCardProps) {
+export function GameCard({ game, sport, score, injuries, onSelect, onPropsSelect }: GameCardProps) {
   const gameTime = new Date(game.commenceTime);
   const isToday = gameTime.toDateString() === new Date().toDateString();
   
@@ -48,9 +56,24 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
       <div className="p-4">
         {/* Header - Time and Status */}
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs text-slate-400">
-            {isToday ? 'Today' : gameTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400">
+              {isToday ? 'Today' : gameTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+            </span>
+            {/* Injury Badge */}
+            {injuries && injuries.totalCount > 0 && (
+              <span 
+                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                  injuries.hasKeyPlayersOut 
+                    ? 'bg-red-500/20 text-red-400' 
+                    : 'bg-yellow-500/20 text-yellow-400'
+                }`}
+                title={`${injuries.totalCount} injured players (${injuries.awayCount} away, ${injuries.homeCount} home)`}
+              >
+                🏥 {injuries.totalCount}
+              </span>
+            )}
+          </div>
           {score?.isLive ? (
             <span className="flex items-center gap-1.5 text-xs font-medium text-[#9e7a7a]">
               <span className="w-1.5 h-1.5 bg-[#9e5a5a] rounded-full animate-pulse" />
@@ -71,10 +94,15 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
           {/* Away Team */}
           <div className="flex items-center gap-3">
             <TeamLogo url={awayLogoUrl} teamName={game.awayTeam} />
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 flex items-center gap-2">
               <span className={`text-sm font-medium ${homeFavorite === false ? 'text-white' : 'text-slate-300'}`}>
                 {game.awayTeam}
               </span>
+              {injuries && injuries.awayCount > 0 && (
+                <span className="text-[10px] text-yellow-500/70" title={`${injuries.awayCount} injured`}>
+                  🏥{injuries.awayCount}
+                </span>
+              )}
             </div>
             {score && score.awayScore !== null && (
               <span className={`text-lg font-semibold tabular-nums ${score.isLive ? 'text-white' : 'text-slate-400'}`}>
@@ -86,11 +114,16 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
           {/* Home Team */}
           <div className="flex items-center gap-3">
             <TeamLogo url={homeLogoUrl} teamName={game.homeTeam} />
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 flex items-center gap-2">
               <span className={`text-sm font-medium ${homeFavorite === true ? 'text-white' : 'text-slate-300'}`}>
                 {game.homeTeam}
               </span>
-              <span className="ml-2 text-[10px] text-slate-500 uppercase">Home</span>
+              <span className="text-[10px] text-slate-500 uppercase">Home</span>
+              {injuries && injuries.homeCount > 0 && (
+                <span className="text-[10px] text-yellow-500/70" title={`${injuries.homeCount} injured`}>
+                  🏥{injuries.homeCount}
+                </span>
+              )}
             </div>
             {score && score.homeScore !== null && (
               <span className={`text-lg font-semibold tabular-nums ${score.isLive ? 'text-white' : 'text-slate-400'}`}>

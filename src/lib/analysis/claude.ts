@@ -208,15 +208,19 @@ export function createAnalysisClient(config: ClaudeApiConfig) {
 
   /**
    * Analyze a single game
+   * @param game - Normalized game odds data
+   * @param sport - Sport type (NHL or NBA)
+   * @param injuryReport - Optional injury report string for context
    */
   async function analyzeGame(
     game: NormalizedOdds,
-    sport: 'NHL' | 'NBA'
+    sport: 'NHL' | 'NBA',
+    injuryReport?: string
   ): Promise<{ prediction: GamePrediction; meta: AnalysisMeta }> {
     const startTime = Date.now();
     
     const request = prepareAnalysisRequest(game, sport);
-    const prompt = buildGameAnalysisPrompt(request);
+    const prompt = buildGameAnalysisPrompt(request, injuryReport);
     
     const { text, usage } = await callClaude(ANALYST_SYSTEM_PROMPT, prompt);
     const analysisResult = parseJsonResponse<Omit<GamePrediction, 'gameId' | 'sport' | 'homeTeam' | 'awayTeam' | 'analyzedAt'>>(text);
@@ -234,7 +238,7 @@ export function createAnalysisClient(config: ClaudeApiConfig) {
       model,
       tokensUsed: usage.input + usage.output,
       analysisTime: Date.now() - startTime,
-      dataQuality: 'ODDS_ONLY', // Will be 'FULL' when we add stats
+      dataQuality: injuryReport ? 'ODDS_WITH_INJURIES' : 'ODDS_ONLY',
     };
 
     return { prediction, meta };

@@ -3,6 +3,7 @@
  * 
  * Analyzes a game using Claude and returns predictions.
  * Results are cached to avoid repeated API calls.
+ * Now includes injury data for better analysis.
  * 
  * Request body:
  * {
@@ -15,6 +16,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createOddsApiClient } from '@/lib/api/odds';
 import { createAnalysisClient } from '@/lib/analysis/claude';
 import { getCachedGameAnalysis, cacheGameAnalysis, isRedisConfigured } from '@/lib/cache/redis';
+import { fetchInjuries, getGameInjuries, formatInjuriesForAI } from '@/lib/api/injuries';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // Allow up to 60 seconds for Claude analysis
@@ -77,13 +79,43 @@ export async function POST(request: NextRequest) {
 
     const normalizedGame = oddsClient.normalizeGameOdds(game);
 
-    // Analyze with Claude
+    // Fetch injury data for context
+    let injuryReport = '';
+    let gameInjuryData = null;
+    try {
+      const sportInjuries = await fetchInjuries(sport);
+      const { home, away, impactLevel } = getGameInjuries(
+        sportInjuries,
+        normalizedGame.homeTeam,
+        normalizedGame.awayTeam
+      );
+      
+      injuryReport = formatInjuriesForAI(
+        normalizedGame.homeTeam,
+        normalizedGame.awayTeam,
+        home,
+        away
+      );
+      
+      gameInjuryData = {
+        homeTeam: home,
+        awayTeam: away,
+        impactLevel,
+        totalInjuries: (home?.injuries.length || 0) + (away?.injuries.length || 0),
+      };
+    } catch (injuryError) {
+      console.error('Failed to fetch injuries, continuing without:', injuryError);
+      injuryReport = 'INJURY REPORT: Injury data unavailable.';
+    }
+
+    // Analyze with Claude (now includes injury data)
     const analysisClient = createAnalysisClient({ apiKey: anthropicApiKey });
-    const { prediction, meta } = await analysisClient.analyzeGame(normalizedGame, sport);
+    const { prediction, meta } = await analysisClient.analyzeGame(normalizedGame, sport, injuryReport);
 
     const responseData = {
       prediction,
       meta,
+      injuries: gameInjuryData,
       oddsUpdatedAt: new Date().toISOString(),
     };
 

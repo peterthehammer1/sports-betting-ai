@@ -47,8 +47,10 @@ IMPORTANT: Always respond with valid JSON matching the exact structure requested
 
 /**
  * Build the analysis prompt for a specific game
+ * @param request - Game analysis request data
+ * @param injuryReportText - Optional pre-formatted injury report text
  */
-export function buildGameAnalysisPrompt(request: GameAnalysisRequest): string {
+export function buildGameAnalysisPrompt(request: GameAnalysisRequest, injuryReportText?: string): string {
   const { sport, homeTeam, awayTeam, commenceTime, odds, teamStats, injuries, headToHead } = request;
   
   let prompt = `Analyze this ${sport} game and provide betting predictions:
@@ -75,13 +77,19 @@ export function buildGameAnalysisPrompt(request: GameAnalysisRequest): string {
 - Under: ${formatOddsDisplay(odds.total.under.price)}
 `;
 
+  // Add pre-formatted injury report if provided (from ESPN data)
+  if (injuryReportText) {
+    prompt += `\n## ${injuryReportText}\n`;
+    prompt += `\n**IMPORTANT**: Factor these injuries into your analysis. Key players being OUT can significantly affect game outcomes, totals, and spreads. If a star player is out, consider how it impacts scoring, defense, and game pace.\n`;
+  }
+
   // Add team stats if available
   if (teamStats) {
     prompt += `\n## Team Statistics\n${JSON.stringify(teamStats, null, 2)}\n`;
   }
 
-  // Add injuries if available
-  if (injuries && injuries.length > 0) {
+  // Add legacy injuries if available (fallback)
+  if (!injuryReportText && injuries && injuries.length > 0) {
     prompt += `\n## Injury Report\n`;
     for (const injury of injuries) {
       prompt += `- ${injury.player} (${injury.team}): ${injury.status} - ${injury.injury}\n`;

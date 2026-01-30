@@ -189,7 +189,7 @@ export interface AnalysisMeta {
   model: string;
   tokensUsed: number;
   analysisTime: number; // ms
-  dataQuality: 'FULL' | 'ODDS_ONLY' | 'LIMITED';
+  dataQuality: 'FULL' | 'ODDS_ONLY' | 'ODDS_WITH_INJURIES' | 'LIMITED';
 }
 
 // NBA Player Props Analysis
