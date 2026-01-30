@@ -13,6 +13,8 @@ import { BettingGuide } from '@/components/education/BettingGuide';
 import { OddsWidget } from '@/components/widgets/OddsWidget';
 import { FanDuelBanner } from '@/components/promo/FanDuelBanner';
 import { SuperBowlCard } from '@/components/superbowl/SuperBowlCard';
+import { PerformanceDashboard } from '@/components/tracker/PerformanceDashboard';
+import { OddsMovementChart } from '@/components/tracker/OddsMovementChart';
 import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
 import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
 
@@ -52,7 +54,7 @@ interface QuickPick {
 }
 
 type Sport = 'NHL' | 'NBA';
-type View = 'games' | 'picks' | 'analysis' | 'props' | 'tools' | 'superbowl';
+type View = 'games' | 'picks' | 'analysis' | 'props' | 'tools' | 'superbowl' | 'tracker';
 
 interface PlayerPropsData {
   analysis: GoalScorerAnalysis;
@@ -361,6 +363,11 @@ export default function Dashboard() {
               />
             )}
             <NavTab 
+              active={view === 'tracker'} 
+              onClick={() => setView('tracker')}
+              label="📊 Tracker"
+            />
+            <NavTab 
               active={view === 'tools'} 
               onClick={() => setView('tools')}
               label="Tools"
@@ -554,6 +561,37 @@ export default function Dashboard() {
             )}
             {selectedTool === 'guide' && (
               <BettingGuide onClose={() => setView('games')} />
+            )}
+          </div>
+        )}
+
+        {/* Tracker View */}
+        {view === 'tracker' && (
+          <div className="animate-slide-up space-y-6">
+            <div className="mb-2">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                📊 Performance Tracker
+              </h2>
+              <p className="text-sm text-slate-400">
+                Track AI pick accuracy and ROI over time
+              </p>
+            </div>
+            
+            {/* Performance Dashboard */}
+            <PerformanceDashboard />
+            
+            {/* Odds Movement for selected game */}
+            {games.length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                  Line Movement
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {games.slice(0, 2).map(game => (
+                    <OddsMovementChart key={game.gameId} game={game} sport={sport} />
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         )}
