@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 
 interface OddsWidgetProps {
   sport?: 'icehockey_nhl' | 'basketball_nba';
@@ -21,23 +20,10 @@ export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: FANDUEL_NAVY }}>
-      {/* Header with FanDuel Branding */}
+      {/* Header */}
       <div className="px-5 sm:px-6 py-4 sm:py-5 border-b border-white/10">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            {/* FanDuel Logo */}
-            <div className="relative w-32 h-8 flex-shrink-0">
-              <Image
-                src="https://www.fanduel.com/static-assets/images/FanDuel-logos/FanDuel-Sportsbook-Logo-FullColor-Horizontal-White.svg"
-                alt="FanDuel Sportsbook"
-                fill
-                className="object-contain object-left"
-                unoptimized
-              />
-            </div>
-            <div className="hidden sm:block w-px h-8 bg-white/20" />
-            <span className="hidden sm:inline text-sm text-white/60">Live Odds</span>
-          </div>
+        <div className="flex items-center justify-between gap-4">
+          <h3 className="text-white font-semibold">Live Betting Odds</h3>
           
           {/* Sport Toggle */}
           <div className="flex p-1 rounded-lg" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
@@ -67,7 +53,7 @@ export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
         </div>
       </div>
 
-      {/* Promo Banner */}
+      {/* Promo Banner with FanDuel Logo */}
       <div className="mx-4 sm:mx-5 mt-4 sm:mt-5">
         <a 
           href="https://fndl.co/kt63uos"
@@ -80,25 +66,30 @@ export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
           }}
         >
           <div className="flex items-center gap-4">
+            {/* FanDuel Logo */}
             <div 
-              className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform"
-              style={{ backgroundColor: FANDUEL_BLUE, boxShadow: '0 4px 20px rgba(20, 147, 255, 0.4)' }}
+              className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-105 transition-transform p-2"
+              style={{ backgroundColor: '#fff', boxShadow: '0 4px 20px rgba(20, 147, 255, 0.3)' }}
             >
-              <span className="text-xl">🎁</span>
+              <svg viewBox="0 0 100 100" className="w-full h-full">
+                <rect fill="#1493FF" width="100" height="100" rx="12"/>
+                <text x="50" y="38" textAnchor="middle" fill="white" fontSize="24" fontWeight="bold" fontFamily="Arial">FAN</text>
+                <text x="50" y="68" textAnchor="middle" fill="white" fontSize="24" fontWeight="bold" fontFamily="Arial">DUEL</text>
+              </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-white">
+              <p className="font-bold text-white text-lg">
                 Get $150 in Bonus Bets!
               </p>
               <p className="text-sm" style={{ color: 'rgba(20, 147, 255, 0.9)' }}>
-                Sign up with our link. Terms apply.
+                Sign up on FanDuel Sportsbook. Terms apply.
               </p>
             </div>
             <div 
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold text-sm transition-all group-hover:brightness-110"
+              className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-lg text-white font-bold text-sm transition-all group-hover:brightness-110"
               style={{ backgroundColor: FANDUEL_BLUE }}
             >
-              Claim
+              Claim Offer
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>

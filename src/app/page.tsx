@@ -11,6 +11,7 @@ import { BetCalculator } from '@/components/tools/BetCalculator';
 import { ParlayBuilder } from '@/components/tools/ParlayBuilder';
 import { BettingGuide } from '@/components/education/BettingGuide';
 import { OddsWidget } from '@/components/widgets/OddsWidget';
+import { FanDuelBanner } from '@/components/promo/FanDuelBanner';
 import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
 import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
 
@@ -265,6 +266,9 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#0a0f1a]">
+      {/* FanDuel Promo Banner */}
+      <FanDuelBanner />
+
       {/* Ambient background effect */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-radial from-cyan-500/10 via-transparent to-transparent blur-3xl" />
