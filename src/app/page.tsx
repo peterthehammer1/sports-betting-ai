@@ -10,6 +10,7 @@ import { OddsCompare } from '@/components/tools/OddsCompare';
 import { BetCalculator } from '@/components/tools/BetCalculator';
 import { ParlayBuilder } from '@/components/tools/ParlayBuilder';
 import { BettingGuide } from '@/components/education/BettingGuide';
+import { OddsWidget } from '@/components/widgets/OddsWidget';
 import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
 import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
 
@@ -82,7 +83,7 @@ export default function Dashboard() {
   const [loadingPicks, setLoadingPicks] = useState(false);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
   const [loadingProps, setLoadingProps] = useState(false);
-  const [selectedTool, setSelectedTool] = useState<'compare' | 'calculator' | 'parlay' | 'guide'>('compare');
+  const [selectedTool, setSelectedTool] = useState<'compare' | 'calculator' | 'parlay' | 'guide' | 'betnow'>('betnow');
   
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
@@ -511,6 +512,16 @@ export default function Dashboard() {
             {/* Tool Selector */}
             <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
               <button
+                onClick={() => setSelectedTool('betnow')}
+                className={`px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
+                  selectedTool === 'betnow'
+                    ? 'bg-gradient-to-r from-blue-500/20 to-indigo-500/20 text-blue-400 border border-blue-500/30'
+                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                🎁 Bet Now - $150 Bonus
+              </button>
+              <button
                 onClick={() => setSelectedTool('compare')}
                 className={`px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
                   selectedTool === 'compare'
@@ -528,7 +539,7 @@ export default function Dashboard() {
                     : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
                 }`}
               >
-                🧮 Bet Calculator
+                🧮 Calculator
               </button>
               <button
                 onClick={() => setSelectedTool('parlay')}
@@ -538,7 +549,7 @@ export default function Dashboard() {
                     : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
                 }`}
               >
-                🎰 Parlay Builder
+                🎰 Parlay
               </button>
               <button
                 onClick={() => setSelectedTool('guide')}
@@ -553,6 +564,9 @@ export default function Dashboard() {
             </div>
 
             {/* Selected Tool */}
+            {selectedTool === 'betnow' && (
+              <OddsWidget sport={sport === 'NHL' ? 'icehockey_nhl' : 'basketball_nba'} />
+            )}
             {selectedTool === 'compare' && (
               <OddsCompare 
                 games={games} 
