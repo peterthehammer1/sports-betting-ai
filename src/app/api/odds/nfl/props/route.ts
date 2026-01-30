@@ -9,21 +9,40 @@ import { createOddsApiClient } from '@/lib/api/odds';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-// All available NFL player prop markets
+// All available NFL player prop markets from The Odds API
 const NFL_PROP_MARKETS = [
-  'player_pass_tds',
+  // Touchdown props
+  'player_anytime_td',
+  'player_1st_td',
+  'player_last_td',
+  // Passing props
   'player_pass_yds',
+  'player_pass_tds',
   'player_pass_completions',
   'player_pass_attempts',
   'player_pass_interceptions',
+  'player_pass_longest_completion',
+  // Rushing props
   'player_rush_yds',
   'player_rush_attempts',
+  'player_rush_longest',
+  'player_rush_tds',
+  // Receiving props
   'player_receptions',
   'player_reception_yds',
-  'player_anytime_td',
-  'player_first_td',
-  'player_last_td',
+  'player_reception_longest',
+  'player_reception_tds',
+  // Combined props
+  'player_pass_rush_yds',
+  'player_rush_reception_yds',
+  'player_rush_reception_tds',
+  // Kicking props
   'player_kicking_points',
+  'player_field_goals',
+  // Defense props
+  'player_sacks',
+  'player_tackles_assists',
+  'player_defensive_interceptions',
 ];
 
 export async function GET(request: Request) {
