@@ -61,45 +61,90 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
           </div>
         </div>
 
-        {/* Teams Section */}
-        <div className="space-y-3">
+        {/* Matchup - Full Team Names */}
+        <div className="mb-4">
           {/* Away Team */}
-          <TeamRow
-            team={game.awayTeam}
-            ml={awayML?.americanOdds}
-            spread={awaySpread?.point}
-            spreadOdds={awaySpread?.americanOdds}
-            total={over?.point}
-            totalOdds={over?.americanOdds}
-            totalLabel="O"
-            probability={awayML?.impliedProbability}
-            isFavorite={homeFavorite === undefined ? undefined : !homeFavorite}
-          />
+          <div className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-2">
+              <span className={`text-base font-semibold ${homeFavorite === false ? 'text-white' : 'text-gray-300'}`}>
+                {game.awayTeam}
+              </span>
+              {homeFavorite === false && (
+                <span className="px-1.5 py-0.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 rounded uppercase">
+                  Fav
+                </span>
+              )}
+            </div>
+            {awayML && (
+              <span className="text-xs text-gray-500">
+                {formatProbability(awayML.impliedProbability)}
+              </span>
+            )}
+          </div>
 
           {/* VS Divider */}
-          <div className="flex items-center gap-3 px-2">
+          <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            <span className="text-xs font-bold text-gray-500">VS</span>
+            <span className="text-[10px] font-bold text-gray-600">@</span>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </div>
 
           {/* Home Team */}
-          <TeamRow
-            team={game.homeTeam}
-            ml={homeML?.americanOdds}
-            spread={homeSpread?.point}
-            spreadOdds={homeSpread?.americanOdds}
-            total={under?.point}
-            totalOdds={under?.americanOdds}
-            totalLabel="U"
-            probability={homeML?.impliedProbability}
-            isFavorite={homeFavorite}
-            isHome
-          />
+          <div className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-2">
+              <span className={`text-base font-semibold ${homeFavorite === true ? 'text-white' : 'text-gray-300'}`}>
+                {game.homeTeam}
+              </span>
+              <span className="px-1.5 py-0.5 text-[9px] font-bold text-gray-500 bg-white/5 rounded uppercase">
+                Home
+              </span>
+              {homeFavorite === true && (
+                <span className="px-1.5 py-0.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 rounded uppercase">
+                  Fav
+                </span>
+              )}
+            </div>
+            {homeML && (
+              <span className="text-xs text-gray-500">
+                {formatProbability(homeML.impliedProbability)}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Odds Table */}
+        <div className="bg-white/5 rounded-xl overflow-hidden mb-4">
+          {/* Table Header */}
+          <div className="grid grid-cols-4 gap-1 px-3 py-2 bg-white/5 border-b border-white/5">
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Team</div>
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">ML</div>
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">Spread</div>
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">Total</div>
+          </div>
+          
+          {/* Away Team Row */}
+          <div className="grid grid-cols-4 gap-1 px-3 py-2.5 border-b border-white/5">
+            <div className="text-sm text-gray-300 font-medium truncate pr-1">
+              {getShortName(game.awayTeam)}
+            </div>
+            <OddsCell value={awayML?.americanOdds} />
+            <OddsCell value={awaySpread?.americanOdds} point={awaySpread?.point} />
+            <OddsCell value={over?.americanOdds} point={over?.point} prefix="O" />
+          </div>
+          
+          {/* Home Team Row */}
+          <div className="grid grid-cols-4 gap-1 px-3 py-2.5">
+            <div className="text-sm text-gray-300 font-medium truncate pr-1">
+              {getShortName(game.homeTeam)}
+            </div>
+            <OddsCell value={homeML?.americanOdds} />
+            <OddsCell value={homeSpread?.americanOdds} point={homeSpread?.point} />
+            <OddsCell value={under?.americanOdds} point={under?.point} prefix="U" />
+          </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-5 flex gap-2">
+        <div className="flex gap-2">
           <button 
             onClick={(e) => {
               e.stopPropagation();
@@ -132,103 +177,39 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
   );
 }
 
-// Team Row Component
-function TeamRow({ 
-  team, 
-  ml, 
-  spread, 
-  spreadOdds, 
-  total, 
-  totalOdds, 
-  totalLabel,
-  probability,
-  isFavorite,
-  isHome
-}: { 
-  team: string;
-  ml?: number;
-  spread?: number;
-  spreadOdds?: number;
-  total?: number;
-  totalOdds?: number;
-  totalLabel: string;
-  probability?: number;
-  isFavorite?: boolean;
-  isHome?: boolean;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      {/* Team Info */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className={`text-sm sm:text-base font-semibold truncate ${isFavorite ? 'text-white' : 'text-gray-300'}`}>
-            {team}
-          </span>
-          {isHome && (
-            <span className="px-1.5 py-0.5 text-[9px] font-bold text-gray-400 bg-white/5 rounded uppercase">
-              Home
-            </span>
-          )}
-          {isFavorite && (
-            <span className="px-1.5 py-0.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 rounded uppercase">
-              Fav
-            </span>
-          )}
-        </div>
-        {probability && (
-          <p className="text-xs text-gray-500 mt-0.5">
-            {formatProbability(probability)} implied
-          </p>
-        )}
-      </div>
-
-      {/* Odds Grid */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <OddsCell value={ml} label="ML" />
-        <OddsCell value={spreadOdds} point={spread} label="SPR" />
-        <OddsCell value={totalOdds} point={total} prefix={totalLabel} label="TOT" />
-      </div>
-    </div>
-  );
+// Get short team name (last word, usually the team name)
+function getShortName(fullName: string): string {
+  const parts = fullName.split(' ');
+  return parts[parts.length - 1];
 }
 
 // Odds Cell Component
 function OddsCell({ 
   value, 
   point, 
-  prefix,
-  label
+  prefix
 }: { 
   value?: number;
   point?: number;
   prefix?: string;
-  label: string;
 }) {
   if (value === undefined) {
-    return (
-      <div className="w-14 sm:w-16 text-center">
-        <p className="text-[9px] text-gray-500 uppercase tracking-wider mb-0.5">{label}</p>
-        <p className="text-sm text-gray-600">—</p>
-      </div>
-    );
+    return <div className="text-center text-sm text-gray-600">—</div>;
   }
 
   const formattedOdds = formatAmericanOdds(value);
   const isPositive = value > 0;
 
   return (
-    <div className="w-14 sm:w-16 text-center">
-      <p className="text-[9px] text-gray-500 uppercase tracking-wider mb-0.5">{label}</p>
-      <div className="flex flex-col items-center">
-        {point !== undefined && (
-          <span className="text-[10px] text-gray-400 leading-tight">
-            {prefix}{point > 0 ? `+${point}` : point}
-          </span>
-        )}
-        <span className={`font-mono text-sm font-semibold stat-number ${isPositive ? 'text-green-400' : 'text-white'}`}>
-          {formattedOdds}
+    <div className="text-center">
+      {point !== undefined && (
+        <span className="text-[10px] text-gray-400 mr-0.5">
+          {prefix}{point > 0 ? `+${point}` : point}
         </span>
-      </div>
+      )}
+      <span className={`font-mono text-sm font-semibold stat-number ${isPositive ? 'text-green-400' : 'text-white'}`}>
+        {formattedOdds}
+      </span>
     </div>
   );
 }
