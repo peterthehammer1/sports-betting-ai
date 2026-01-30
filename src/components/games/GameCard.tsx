@@ -41,40 +41,40 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
 
   return (
     <div 
-      className="group relative glass-card rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-cyan-500/10 active:scale-[0.98] touch-manipulation"
+      className="group relative glass-card rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-cyan-500/10 active:scale-[0.98] touch-manipulation"
       onClick={() => onSelect?.(game.gameId)}
     >
       {/* Gradient border effect on hover */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-        <div className="absolute inset-0 rounded-2xl p-[1px] bg-gradient-to-br from-cyan-500/50 via-blue-500/50 to-purple-500/50" />
+      <div className="absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        <div className="absolute inset-0 rounded-xl sm:rounded-2xl p-[1px] bg-gradient-to-br from-cyan-500/50 via-blue-500/50 to-purple-500/50" />
       </div>
 
       {/* Card Content */}
-      <div className="relative p-4 sm:p-5">
+      <div className="relative p-3 sm:p-5">
         {/* Header - Time and Live indicator */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-cyan-400 tracking-wider uppercase">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+            <span className="text-[10px] sm:text-xs font-bold text-cyan-400 tracking-wider uppercase flex-shrink-0">
               {sport}
             </span>
-            <span className="w-1 h-1 bg-gray-600 rounded-full" />
-            <span className="text-xs text-gray-400">
+            <span className="w-1 h-1 bg-gray-600 rounded-full flex-shrink-0" />
+            <span className="text-[10px] sm:text-xs text-gray-400 truncate">
               {isToday ? 'Today' : gameTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
             </span>
           </div>
           {score?.isLive ? (
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-red-500/10 border border-red-500/20">
+            <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-red-500/10 border border-red-500/20 flex-shrink-0">
               <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-semibold text-red-400 uppercase tracking-wider">Live</span>
+              <span className="text-[9px] sm:text-[10px] font-semibold text-red-400 uppercase tracking-wider">Live</span>
             </div>
           ) : score?.isCompleted ? (
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-gray-500/10 border border-gray-500/20">
-              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Final</span>
+            <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-gray-500/10 border border-gray-500/20 flex-shrink-0">
+              <span className="text-[9px] sm:text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Final</span>
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20">
+            <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-green-500/10 border border-green-500/20 flex-shrink-0">
               <div className="w-1.5 h-1.5 bg-green-400 rounded-full pulse-glow" />
-              <span className="text-[10px] font-semibold text-green-400 uppercase tracking-wider">Odds</span>
+              <span className="text-[9px] sm:text-[10px] font-semibold text-green-400 uppercase tracking-wider">Odds</span>
             </div>
           )}
         </div>
@@ -153,20 +153,20 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
         </div>
 
         {/* Odds Table */}
-        <div className="bg-white/5 rounded-xl overflow-hidden mb-4">
+        <div className="bg-white/5 rounded-lg sm:rounded-xl overflow-hidden mb-3 sm:mb-4">
           {/* Table Header */}
-          <div className="grid grid-cols-4 gap-1 px-3 py-2 bg-white/5 border-b border-white/5">
-            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Team</div>
-            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">ML</div>
-            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">Spread</div>
-            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">Total</div>
+          <div className="grid grid-cols-4 gap-0.5 sm:gap-1 px-2 sm:px-3 py-1.5 sm:py-2 bg-white/5 border-b border-white/5">
+            <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider">Team</div>
+            <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">ML</div>
+            <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">Sprd</div>
+            <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">O/U</div>
           </div>
           
           {/* Away Team Row */}
-          <div className="grid grid-cols-4 gap-1 px-3 py-2.5 border-b border-white/5 items-center">
-            <div className="flex items-center gap-2">
+          <div className="grid grid-cols-4 gap-0.5 sm:gap-1 px-2 sm:px-3 py-2 sm:py-2.5 border-b border-white/5 items-center">
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
               <TeamLogo url={awayLogoUrl} teamName={game.awayTeam} size="sm" />
-              <span className="text-sm text-gray-300 font-medium">
+              <span className="text-xs sm:text-sm text-gray-300 font-medium truncate">
                 {getShortName(game.awayTeam)}
               </span>
             </div>
@@ -176,10 +176,10 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
           </div>
           
           {/* Home Team Row */}
-          <div className="grid grid-cols-4 gap-1 px-3 py-2.5 items-center">
-            <div className="flex items-center gap-2">
+          <div className="grid grid-cols-4 gap-0.5 sm:gap-1 px-2 sm:px-3 py-2 sm:py-2.5 items-center">
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
               <TeamLogo url={homeLogoUrl} teamName={game.homeTeam} size="sm" />
-              <span className="text-sm text-gray-300 font-medium">
+              <span className="text-xs sm:text-sm text-gray-300 font-medium truncate">
                 {getShortName(game.homeTeam)}
               </span>
             </div>
@@ -196,13 +196,13 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
               e.stopPropagation();
               onSelect?.(game.gameId);
             }}
-            className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            className="flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 touch-manipulation"
           >
-            <span className="flex items-center justify-center gap-2">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <span className="flex items-center justify-center gap-1.5 sm:gap-2">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
-              AI Analysis
+              <span className="hidden xs:inline">AI</span> Analysis
             </span>
           </button>
           
@@ -212,7 +212,7 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
                 e.stopPropagation();
                 onPropsSelect(game.gameId);
               }}
-              className={`py-3 px-4 rounded-xl text-white text-sm font-semibold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 ${
+              className={`py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-white text-sm font-semibold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 touch-manipulation ${
                 sport === 'NHL' 
                   ? 'bg-gradient-to-r from-amber-500 to-orange-500 shadow-amber-500/25 hover:shadow-amber-500/40'
                   : 'bg-gradient-to-r from-orange-500 to-red-500 shadow-orange-500/25 hover:shadow-orange-500/40'
@@ -274,7 +274,7 @@ function OddsCell({
   prefix?: string;
 }) {
   if (value === undefined) {
-    return <div className="text-center text-sm text-gray-600">—</div>;
+    return <div className="text-center text-xs sm:text-sm text-gray-600">—</div>;
   }
 
   const formattedOdds = formatAmericanOdds(value);
@@ -283,11 +283,11 @@ function OddsCell({
   return (
     <div className="text-center">
       {point !== undefined && (
-        <span className="text-[10px] text-gray-400 mr-0.5">
+        <span className="text-[8px] sm:text-[10px] text-gray-400 mr-0.5 block sm:inline">
           {prefix}{point > 0 ? `+${point}` : point}
         </span>
       )}
-      <span className={`font-mono text-sm font-semibold stat-number ${isPositive ? 'text-green-400' : 'text-white'}`}>
+      <span className={`font-mono text-[11px] sm:text-sm font-semibold stat-number ${isPositive ? 'text-green-400' : 'text-white'}`}>
         {formattedOdds}
       </span>
     </div>

@@ -16,6 +16,11 @@
   --border-color: rgba(255, 255, 255, 0.08);
   --glow-primary: rgba(0, 212, 255, 0.3);
   --glow-gold: rgba(251, 191, 36, 0.3);
+  /* Safe area insets for notched phones */
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  --safe-area-inset-right: env(safe-area-inset-right, 0px);
 }
 
 @theme inline {
@@ -25,10 +30,25 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  /* Prevent content from jumping when scrollbar appears/disappears */
+  overflow-y: scroll;
+  /* Enable smooth scrolling */
+  scroll-behavior: smooth;
+  /* Prevent iOS tap highlight */
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Prevent text size adjustment on orientation change */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Add safe area padding for notched phones */
+  padding-left: var(--safe-area-inset-left);
+  padding-right: var(--safe-area-inset-right);
 }
 
 /* Premium scrollbar */
@@ -137,11 +157,18 @@ body {
   touch-action: manipulation;
 }
 
-/* Custom breakpoint for extra small screens */
+/* Custom breakpoint for extra small screens (375px+) */
 @media (min-width: 375px) {
-  .xs\:block {
-    display: block;
-  }
+  .xs\:block { display: block; }
+  .xs\:flex { display: flex; }
+  .xs\:hidden { display: none; }
+  .xs\:inline { display: inline; }
+  .xs\:inline-flex { display: inline-flex; }
+  .xs\:gap-2 { gap: 0.5rem; }
+  .xs\:gap-3 { gap: 0.75rem; }
+  .xs\:px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+  .xs\:py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+  .xs\:text-sm { font-size: 0.875rem; line-height: 1.25rem; }
 }
 
 /* Prevent text selection on interactive elements */
@@ -149,6 +176,13 @@ button,
 [role="button"] {
   -webkit-user-select: none;
   user-select: none;
+  /* Minimum tap target size for mobile accessibility */
+  min-height: 44px;
+}
+
+/* Smaller buttons can override minimum height */
+.btn-sm {
+  min-height: 36px;
 }
 
 /* Smoother scrolling on iOS */
@@ -156,6 +190,25 @@ button,
   .overflow-x-auto {
     -webkit-overflow-scrolling: touch;
   }
+}
+
+/* Better mobile focus states */
+@media (hover: none) {
+  button:active,
+  [role="button"]:active,
+  a:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+/* Safe area padding utilities */
+.safe-area-top {
+  padding-top: var(--safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: var(--safe-area-inset-bottom);
 }
 
 /* Stats number styling */

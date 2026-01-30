@@ -277,37 +277,37 @@ export default function Dashboard() {
 
       {/* Header */}
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#0a0f1a]/80 border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
+        <div className="max-w-7xl mx-auto px-3 py-2.5 sm:px-6 sm:py-4 lg:px-8">
           {/* Top Row - Title and Sport Toggle */}
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
             {/* Title */}
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-base sm:text-2xl font-bold text-white tracking-tight truncate">
                 Pete&apos;s AI Sports Picks
               </h1>
-              <p className="text-[10px] sm:text-xs text-cyan-400 font-medium tracking-wider uppercase">
+              <p className="text-[9px] sm:text-xs text-cyan-400 font-medium tracking-wider uppercase">
                 Powered by AI
               </p>
             </div>
             
             {/* Sport Toggle */}
-            <div className="flex p-1 bg-white/5 rounded-xl border border-white/10">
+            <div className="flex p-0.5 sm:p-1 bg-white/5 rounded-lg sm:rounded-xl border border-white/10 flex-shrink-0">
               {(['NHL', 'NBA'] as Sport[]).map((s) => (
                 <button
                   key={s}
                   onClick={() => setSport(s)}
-                  className={`relative px-4 sm:px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                  className={`relative px-3 sm:px-6 py-1.5 sm:py-2 rounded-md sm:rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 ${
                     sport === s
                       ? 'text-white'
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
                   {sport === s && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg shadow-lg shadow-cyan-500/25" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-md sm:rounded-lg shadow-lg shadow-cyan-500/25" />
                   )}
-                  <span className="relative z-10 flex items-center gap-2">
+                  <span className="relative z-10 flex items-center gap-1 sm:gap-2">
                     {s === 'NHL' ? '🏒' : '🏀'}
-                    <span className="hidden sm:inline">{s}</span>
+                    <span className="hidden xs:inline">{s}</span>
                   </span>
                 </button>
               ))}
@@ -315,7 +315,7 @@ export default function Dashboard() {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="mt-4 flex gap-1 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="mt-3 sm:mt-4 flex gap-1 overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0 pb-1">
             <NavTab 
               active={view === 'games'} 
               onClick={() => setView('games')}
@@ -335,7 +335,7 @@ export default function Dashboard() {
                 onClick={() => setView('props')}
                 disabled={!selectedPropsAnalysis}
                 icon="🥅"
-                label="Goal Scorers"
+                label="Goals"
                 accent
               />
             )}
@@ -345,7 +345,7 @@ export default function Dashboard() {
                 onClick={() => setView('props')}
                 disabled={!selectedNbaPropsAnalysis}
                 icon="📊"
-                label="Player Props"
+                label="Props"
                 accent
               />
             )}
@@ -358,9 +358,9 @@ export default function Dashboard() {
           </div>
 
           {/* Live indicator */}
-          <div className="mt-3 flex items-center gap-3 text-xs text-gray-400">
+          <div className="mt-2 sm:mt-3 flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-gray-400">
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 bg-green-400 rounded-full pulse-glow" />
+              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full pulse-glow" />
               <span>Live Odds</span>
             </div>
             {lastFetch && (
@@ -512,55 +512,55 @@ export default function Dashboard() {
 
         {/* Tools View */}
         {view === 'tools' && (
-          <div className="animate-slide-up space-y-6">
+          <div className="animate-slide-up space-y-4 sm:space-y-6">
             {/* Tool Selector */}
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div className="flex gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0 pb-1">
               <button
                 onClick={() => setSelectedTool('betnow')}
-                className={`px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
+                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap transition-all touch-manipulation ${
                   selectedTool === 'betnow'
                     ? 'bg-gradient-to-r from-blue-500/20 to-indigo-500/20 text-blue-400 border border-blue-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10 active:bg-white/15'
                 }`}
               >
-                🎁 Bet Now - $150 Bonus
+                🎁 <span className="hidden xs:inline">Bet Now -</span> $150
               </button>
               <button
                 onClick={() => setSelectedTool('compare')}
-                className={`px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
+                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap transition-all touch-manipulation ${
                   selectedTool === 'compare'
                     ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10 active:bg-white/15'
                 }`}
               >
-                📈 Line Shopping
+                📈 <span className="hidden xs:inline">Line</span> Shop
               </button>
               <button
                 onClick={() => setSelectedTool('calculator')}
-                className={`px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
+                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap transition-all touch-manipulation ${
                   selectedTool === 'calculator'
                     ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10 active:bg-white/15'
                 }`}
               >
-                🧮 Calculator
+                🧮 Calc
               </button>
               <button
                 onClick={() => setSelectedTool('parlay')}
-                className={`px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
+                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap transition-all touch-manipulation ${
                   selectedTool === 'parlay'
                     ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10 active:bg-white/15'
                 }`}
               >
                 🎰 Parlay
               </button>
               <button
                 onClick={() => setSelectedTool('guide')}
-                className={`px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${
+                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap transition-all touch-manipulation ${
                   selectedTool === 'guide'
                     ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10 active:bg-white/15'
                 }`}
               >
                 📚 Guide
@@ -609,13 +609,13 @@ export default function Dashboard() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 mt-auto py-6 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-gray-500 text-center sm:text-left">
-              ⚠️ For entertainment purposes only. Please gamble responsibly.
+      <footer className="relative z-10 mt-auto py-4 sm:py-6 border-t border-white/5 safe-area-bottom">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
+            <p className="text-[10px] sm:text-xs text-gray-500 text-center sm:text-left">
+              ⚠️ For entertainment only. Gamble responsibly.
             </p>
-            <div className="flex items-center gap-4 text-xs text-gray-500">
+            <div className="flex items-center gap-4 text-[10px] sm:text-xs text-gray-500">
               <span>© 2026 Pete&apos;s AI Sports Picks</span>
             </div>
           </div>
@@ -645,20 +645,20 @@ function NavTab({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`relative px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed ${
+      className={`relative px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed touch-manipulation ${
         active
           ? accent 
             ? 'text-amber-400' 
             : 'text-cyan-400'
-          : 'text-gray-400 hover:text-white hover:bg-white/5'
+          : 'text-gray-400 hover:text-white hover:bg-white/5 active:bg-white/10'
       }`}
     >
       {active && (
-        <div className={`absolute inset-0 rounded-xl ${accent ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-cyan-500/10 border border-cyan-500/20'}`} />
+        <div className={`absolute inset-0 rounded-lg sm:rounded-xl ${accent ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-cyan-500/10 border border-cyan-500/20'}`} />
       )}
-      <span className="relative z-10 flex items-center gap-2">
-        <span>{icon}</span>
-        <span className="hidden sm:inline">{label}</span>
+      <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
+        <span className="text-sm sm:text-base">{icon}</span>
+        <span>{label}</span>
       </span>
     </button>
   );
