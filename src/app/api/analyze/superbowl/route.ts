@@ -4,13 +4,12 @@
  */
 
 import { NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
-import { getCachedAnalysis, cacheAnalysis, isRedisConfigured } from '@/lib/cache/redis';
+import { getCachedGameAnalysis, cacheGameAnalysis, isRedisConfigured } from '@/lib/cache/redis';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
-const anthropic = new Anthropic();
+const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 
 interface PropData {
   playerName: string;
@@ -35,15 +34,24 @@ interface AnalysisRequest {
 }
 
 export async function POST(request: Request) {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  
+  if (!apiKey) {
+    return NextResponse.json(
+      { error: 'ANTHROPIC_API_KEY is not configured' },
+      { status: 500 }
+    );
+  }
+
   try {
     const body: AnalysisRequest = await request.json();
     const { homeTeam, awayTeam, propsByMarket, gameLines } = body;
 
     // Create cache key
-    const cacheKey = `superbowl-analysis-${homeTeam}-${awayTeam}`;
+    const cacheKey = `superbowl-${homeTeam}-${awayTeam}`;
     
     // Check cache
-    const cached = await getCachedAnalysis(cacheKey) as { analysis: unknown } | null;
+    const cached = await getCachedGameAnalysis(cacheKey, 'NFL') as { analysis: unknown } | null;
     if (cached) {
       return NextResponse.json({
         analysis: cached.analysis,
@@ -129,15 +137,29 @@ Focus on:
 
 Return ONLY valid JSON.`;
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2000,
-      messages: [{ role: 'user', content: prompt }],
+    const response = await fetch(ANTHROPIC_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }],
+      }),
     });
 
-    // Extract text content
-    const textContent = response.content.find(c => c.type === 'text');
-    if (!textContent || textContent.type !== 'text') {
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || 'Claude API request failed');
+    }
+
+    const data = await response.json();
+    const textContent = data.content?.[0]?.text;
+    
+    if (!textContent) {
       throw new Error('No text response from Claude');
     }
 
@@ -145,7 +167,7 @@ Return ONLY valid JSON.`;
     let analysis;
     try {
       // Find JSON in the response
-      const jsonMatch = textContent.text.match(/\{[\s\S]*\}/);
+      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
         throw new Error('No JSON found in response');
       }
@@ -168,7 +190,7 @@ Return ONLY valid JSON.`;
     }
 
     // Cache the result
-    await cacheAnalysis(cacheKey, { analysis });
+    await cacheGameAnalysis(cacheKey, 'NFL', { analysis });
 
     return NextResponse.json({
       analysis,
