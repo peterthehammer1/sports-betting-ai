@@ -1,10 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface OddsWidgetProps {
   sport?: 'icehockey_nhl' | 'basketball_nba';
 }
+
+// FanDuel brand colors
+const FANDUEL_NAVY = '#0D1E33';
+const FANDUEL_BLUE = '#1493FF';
 
 export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
   const [selectedSport, setSelectedSport] = useState(sport);
@@ -15,78 +20,85 @@ export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
   const widgetUrl = `https://widget.the-odds-api.com/v1/sports/${selectedSport}/events/?accessKey=${accessKey}&bookmakerKeys=fanduel&affiliateUrl_fanduel=${fanduelAffiliateUrl}&oddsFormat=american&markets=h2h%2Cspreads%2Ctotals&marketNames=h2h%3AMoneyline%2Cspreads%3ASpreads%2Ctotals%3AOver%2FUnder`;
 
   return (
-    <div className="glass-card rounded-2xl overflow-hidden">
-      {/* Header */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600" />
-        <div className="relative px-5 sm:px-6 py-5 sm:py-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-2 py-1 text-[10px] font-bold text-white/80 bg-white/10 rounded-full uppercase tracking-wider">
-                  Partner
-                </span>
-                <span className="px-2 py-1 text-[10px] font-bold text-green-200 bg-green-400/20 rounded-full uppercase tracking-wider">
-                  Special Offer
-                </span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-white">
-                Live Betting Odds
-              </h2>
-              <p className="text-sm text-white/60 mt-0.5">
-                Real-time odds from FanDuel Sportsbook
-              </p>
+    <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: FANDUEL_NAVY }}>
+      {/* Header with FanDuel Branding */}
+      <div className="px-5 sm:px-6 py-4 sm:py-5 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            {/* FanDuel Logo */}
+            <div className="relative w-32 h-8 flex-shrink-0">
+              <Image
+                src="https://www.fanduel.com/static-assets/images/FanDuel-logos/FanDuel-Sportsbook-Logo-FullColor-Horizontal-White.svg"
+                alt="FanDuel Sportsbook"
+                fill
+                className="object-contain object-left"
+                unoptimized
+              />
             </div>
-            
-            {/* Sport Toggle */}
-            <div className="flex p-1 bg-white/10 rounded-xl">
-              <button
-                onClick={() => setSelectedSport('icehockey_nhl')}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  selectedSport === 'icehockey_nhl'
-                    ? 'bg-white text-indigo-600'
-                    : 'text-white/70 hover:text-white'
-                }`}
-              >
-                🏒 NHL
-              </button>
-              <button
-                onClick={() => setSelectedSport('basketball_nba')}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  selectedSport === 'basketball_nba'
-                    ? 'bg-white text-indigo-600'
-                    : 'text-white/70 hover:text-white'
-                }`}
-              >
-                🏀 NBA
-              </button>
-            </div>
+            <div className="hidden sm:block w-px h-8 bg-white/20" />
+            <span className="hidden sm:inline text-sm text-white/60">Live Odds</span>
+          </div>
+          
+          {/* Sport Toggle */}
+          <div className="flex p-1 rounded-lg" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+            <button
+              onClick={() => setSelectedSport('icehockey_nhl')}
+              className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+                selectedSport === 'icehockey_nhl'
+                  ? 'text-white'
+                  : 'text-white/50 hover:text-white/80'
+              }`}
+              style={selectedSport === 'icehockey_nhl' ? { backgroundColor: FANDUEL_BLUE } : {}}
+            >
+              🏒 NHL
+            </button>
+            <button
+              onClick={() => setSelectedSport('basketball_nba')}
+              className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+                selectedSport === 'basketball_nba'
+                  ? 'text-white'
+                  : 'text-white/50 hover:text-white/80'
+              }`}
+              style={selectedSport === 'basketball_nba' ? { backgroundColor: FANDUEL_BLUE } : {}}
+            >
+              🏀 NBA
+            </button>
           </div>
         </div>
       </div>
 
       {/* Promo Banner */}
-      <div className="mx-5 sm:mx-6 mt-5 sm:mt-6">
+      <div className="mx-4 sm:mx-5 mt-4 sm:mt-5">
         <a 
           href="https://fndl.co/kt63uos"
           target="_blank"
           rel="noopener noreferrer"
-          className="block p-4 rounded-xl bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-blue-500/20 border border-blue-500/30 hover:border-blue-400/50 transition-all group"
+          className="block p-4 rounded-xl border transition-all group hover:scale-[1.01]"
+          style={{ 
+            backgroundColor: 'rgba(20, 147, 255, 0.15)', 
+            borderColor: 'rgba(20, 147, 255, 0.4)' 
+          }}
         >
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform">
-              <span className="text-2xl">🎁</span>
+            <div 
+              className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform"
+              style={{ backgroundColor: FANDUEL_BLUE, boxShadow: '0 4px 20px rgba(20, 147, 255, 0.4)' }}
+            >
+              <span className="text-xl">🎁</span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-white text-lg">
+              <p className="font-bold text-white">
                 Get $150 in Bonus Bets!
               </p>
-              <p className="text-sm text-blue-300">
-                Sign up on FanDuel Sportsbook Canada with our link. Terms apply.
+              <p className="text-sm" style={{ color: 'rgba(20, 147, 255, 0.9)' }}>
+                Sign up with our link. Terms apply.
               </p>
             </div>
-            <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 text-white font-semibold text-sm group-hover:bg-blue-400 transition-colors">
-              Claim Offer
+            <div 
+              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold text-sm transition-all group-hover:brightness-110"
+              style={{ backgroundColor: FANDUEL_BLUE }}
+            >
+              Claim
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
@@ -95,21 +107,21 @@ export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
         </a>
       </div>
 
-      {/* Widget */}
-      <div className="p-5 sm:p-6">
-        <div className="rounded-xl overflow-hidden bg-white">
+      {/* Widget - Compact */}
+      <div className="p-4 sm:p-5">
+        <div className="rounded-lg overflow-hidden">
           <iframe
-            title="Sports Odds Widget"
+            title="FanDuel Odds"
             src={widgetUrl}
-            className="w-full h-[500px] sm:h-[600px]"
-            style={{ border: 'none' }}
+            className="w-full h-[320px] sm:h-[380px]"
+            style={{ border: 'none', backgroundColor: '#fff' }}
           />
         </div>
         
         {/* Disclaimer */}
-        <p className="mt-4 text-xs text-gray-500 text-center">
-          Odds provided by The Odds API. Click on odds to visit FanDuel Sportsbook. 
-          Must be 19+ and located in Ontario. Gambling problem? Call 1-866-531-2600.
+        <p className="mt-3 text-[10px] text-white/40 text-center leading-relaxed">
+          Odds by The Odds API. Click odds to bet on FanDuel. 
+          19+ | Ontario only | <a href="https://www.connexontario.ca/" target="_blank" rel="noopener noreferrer" className="underline hover:text-white/60">Gambling problem? Call 1-866-531-2600</a>
         </p>
       </div>
     </div>

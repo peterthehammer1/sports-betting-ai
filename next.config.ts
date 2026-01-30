@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: 'a.espncdn.com',
         pathname: '/i/teamlogos/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.fanduel.com',
+        pathname: '/static-assets/**',
+      },
     ],
   },
 };
