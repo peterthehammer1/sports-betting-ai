@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import type { NormalizedOdds } from '@/types/odds';
 import { PlayerAvatar } from '@/components/ui/PlayerAvatar';
-import { TeamLogo } from '@/components/ui/TeamLogo';
+// TeamLogo imported but using local NflTeamLogo for NFL-specific logo handling
 
 interface SuperBowlProps {
   game: NormalizedOdds | null;
@@ -140,7 +140,7 @@ const MARKET_CATEGORIES = {
   'Defense': ['player_sacks', 'player_tackles_assists', 'player_defensive_interceptions'],
 };
 
-function TeamLogo({ team, size = 'md' }: { team: string; size?: 'sm' | 'md' | 'lg' }) {
+function NflTeamLogo({ team, size = 'md' }: { team: string; size?: 'sm' | 'md' | 'lg' }) {
   const logoUrl = NFL_TEAM_LOGOS[team];
   const sizeClasses = {
     sm: 'w-8 h-8',
@@ -302,7 +302,7 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
           {/* Teams */}
           <div className="flex items-center justify-center gap-6 mb-6">
             <div className="text-center">
-              <TeamLogo team={game.awayTeam} size="lg" />
+              <NflTeamLogo team={game.awayTeam} size="lg" />
               <p className="mt-2 text-white font-semibold">{game.awayTeam.split(' ').pop()}</p>
               <p className="text-xs text-slate-400">{game.awayTeam.split(' ').slice(0, -1).join(' ')}</p>
             </div>
@@ -318,7 +318,7 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
             </div>
             
             <div className="text-center">
-              <TeamLogo team={game.homeTeam} size="lg" />
+              <NflTeamLogo team={game.homeTeam} size="lg" />
               <p className="mt-2 text-white font-semibold">{game.homeTeam.split(' ').pop()}</p>
               <p className="text-xs text-slate-400">{game.homeTeam.split(' ').slice(0, -1).join(' ')}</p>
             </div>
