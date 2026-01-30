@@ -34,7 +34,10 @@ export async function GET(request: NextRequest) {
   try {
     // Check cache first
     const cacheKey = `nba-props-${eventId}`;
-    const cached = await getCachedPlayerProps(cacheKey);
+    const cached = await getCachedPlayerProps(cacheKey) as {
+      meta: Record<string, unknown>;
+      [key: string]: unknown;
+    } | null;
     
     if (cached) {
       return NextResponse.json({
