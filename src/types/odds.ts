@@ -30,7 +30,7 @@ export interface GameOdds {
 }
 
 // Supported sports
-export type SportKey = 'icehockey_nhl' | 'basketball_nba';
+export type SportKey = 'icehockey_nhl' | 'basketball_nba' | 'americanfootball_nfl' | 'americanfootball_nfl_super_bowl_winner';
 
 // Market types
 export type MarketType = 
@@ -233,6 +233,82 @@ export type NbaPlayerPropMarket =
   | 'player_points_rebounds'
   | 'player_points_assists'
   | 'player_rebounds_assists';
+
+// NFL/Super Bowl Player Props types
+export type NflPlayerPropMarket =
+  | 'player_pass_tds'
+  | 'player_pass_yds'
+  | 'player_pass_completions'
+  | 'player_pass_attempts'
+  | 'player_pass_interceptions'
+  | 'player_rush_yds'
+  | 'player_rush_attempts'
+  | 'player_receptions'
+  | 'player_reception_yds'
+  | 'player_anytime_td'
+  | 'player_first_td'
+  | 'player_last_td'
+  | 'player_kicking_points'
+  | 'player_field_goals';
+
+// NFL/Super Bowl game props
+export type NflGamePropMarket =
+  | 'alternate_spreads'
+  | 'alternate_totals'
+  | 'team_totals'
+  | 'first_half_h2h'
+  | 'first_half_spreads'
+  | 'first_half_totals'
+  | 'first_quarter_h2h'
+  | 'first_quarter_spreads'
+  | 'first_quarter_totals';
+
+export interface NflPlayerProp {
+  playerName: string;
+  team: string;
+  market: NflPlayerPropMarket;
+  line?: number;
+  odds: {
+    bookmaker: string;
+    bookmakerTitle: string;
+    price: number;
+    americanOdds: number;
+    impliedProbability: number;
+    point?: number;
+    name?: string; // Over/Under or player name for TD props
+  }[];
+  bestOdds: {
+    bookmaker: string;
+    bookmakerTitle: string;
+    price: number;
+    americanOdds: number;
+    impliedProbability: number;
+  } | null;
+}
+
+export interface SuperBowlOdds {
+  gameId: string;
+  homeTeam: string;
+  awayTeam: string;
+  commenceTime: Date;
+  // Main game lines
+  moneyline: {
+    home: BookOdds[];
+    away: BookOdds[];
+    bestHome: BookOdds | null;
+    bestAway: BookOdds | null;
+  };
+  spread: {
+    home: SpreadOdds[];
+    away: SpreadOdds[];
+    consensusLine: number | null;
+  };
+  total: {
+    over: TotalOdds[];
+    under: TotalOdds[];
+    consensusLine: number | null;
+  };
+}
 
 export interface NbaPlayerPropOutcome {
   name: 'Over' | 'Under';

@@ -523,11 +523,58 @@ export function createOddsApiClient(config: OddsApiConfig) {
     };
   }
 
+  /**
+   * Get NFL odds (including Super Bowl)
+   */
+  async function getNflOdds(
+    markets: MarketType[] = ['h2h', 'spreads', 'totals']
+  ): Promise<GameOdds[]> {
+    return getOdds({ sport: 'americanfootball_nfl', markets });
+  }
+
+  /**
+   * Get NFL player props for a specific game (Super Bowl)
+   */
+  async function getNflPlayerProps(
+    eventId: string,
+    markets: string[] = [
+      'player_pass_tds',
+      'player_pass_yds',
+      'player_rush_yds',
+      'player_reception_yds',
+      'player_receptions',
+      'player_anytime_td',
+    ]
+  ): Promise<PlayerPropsResponse | null> {
+    const params = new URLSearchParams({
+      apiKey,
+      regions: defaultRegion,
+      markets: markets.join(','),
+      oddsFormat: 'decimal',
+    });
+
+    const url = `${BASE_URL}/sports/americanfootball_nfl/events/${eventId}/odds?${params}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      // Player props might not be available yet
+      if (response.status === 404) {
+        return null;
+      }
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to fetch NFL player props');
+    }
+
+    updateQuota(response.headers);
+    return response.json();
+  }
+
   return {
     getSports,
     getOdds,
     getNhlOdds,
     getNbaOdds,
+    getNflOdds,
     getGameOdds,
     getNhlPlayerProps,
     normalizePlayerProps,
@@ -535,6 +582,7 @@ export function createOddsApiClient(config: OddsApiConfig) {
     normalizeScore,
     getNbaPlayerProps,
     normalizeNbaPlayerProps,
+    getNflPlayerProps,
     getQuota,
     normalizeGameOdds,
   };

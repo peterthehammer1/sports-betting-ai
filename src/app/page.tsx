@@ -12,6 +12,7 @@ import { ParlayBuilder } from '@/components/tools/ParlayBuilder';
 import { BettingGuide } from '@/components/education/BettingGuide';
 import { OddsWidget } from '@/components/widgets/OddsWidget';
 import { FanDuelBanner } from '@/components/promo/FanDuelBanner';
+import { SuperBowlCard } from '@/components/superbowl/SuperBowlCard';
 import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
 import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
 
@@ -51,7 +52,7 @@ interface QuickPick {
 }
 
 type Sport = 'NHL' | 'NBA';
-type View = 'games' | 'picks' | 'analysis' | 'props' | 'tools';
+type View = 'games' | 'picks' | 'analysis' | 'props' | 'tools' | 'superbowl';
 
 interface PlayerPropsData {
   analysis: GoalScorerAnalysis;
@@ -85,6 +86,10 @@ export default function Dashboard() {
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
   const [loadingProps, setLoadingProps] = useState(false);
   const [selectedTool, setSelectedTool] = useState<'compare' | 'calculator' | 'parlay' | 'guide' | 'betnow'>('betnow');
+  
+  // Super Bowl state
+  const [superBowlGame, setSuperBowlGame] = useState<NormalizedOdds | null>(null);
+  const [loadingSuperBowl, setLoadingSuperBowl] = useState(false);
   
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
@@ -250,6 +255,25 @@ export default function Dashboard() {
     }
   };
 
+  // Fetch Super Bowl data
+  const fetchSuperBowl = async () => {
+    setLoadingSuperBowl(true);
+    try {
+      const res = await fetch('/api/odds/nfl');
+      if (res.ok) {
+        const data = await res.json();
+        // Get the first NFL game (should be Super Bowl)
+        if (data.games && data.games.length > 0) {
+          setSuperBowlGame(data.games[0]);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch Super Bowl:', err);
+    } finally {
+      setLoadingSuperBowl(false);
+    }
+  };
+
   useEffect(() => {
     fetchOdds();
     setQuickPicks([]); // Clear picks when sport changes
@@ -340,6 +364,14 @@ export default function Dashboard() {
               active={view === 'tools'} 
               onClick={() => setView('tools')}
               label="Tools"
+            />
+            <NavTab 
+              active={view === 'superbowl'} 
+              onClick={() => {
+                setView('superbowl');
+                if (!superBowlGame) fetchSuperBowl();
+              }}
+              label="🏈 Super Bowl"
             />
           </div>
 
@@ -523,6 +555,21 @@ export default function Dashboard() {
             {selectedTool === 'guide' && (
               <BettingGuide onClose={() => setView('games')} />
             )}
+          </div>
+        )}
+
+        {/* Super Bowl View */}
+        {view === 'superbowl' && (
+          <div className="animate-slide-up">
+            <div className="mb-5">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                🏈 Super Bowl LIX
+              </h2>
+              <p className="text-sm text-slate-400">
+                All betting lines and player props
+              </p>
+            </div>
+            <SuperBowlCard game={superBowlGame} loading={loadingSuperBowl} />
           </div>
         )}
 
