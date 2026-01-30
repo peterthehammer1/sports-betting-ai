@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface OddsWidgetProps {
   sport?: 'icehockey_nhl' | 'basketball_nba';
@@ -66,16 +67,18 @@ export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
           }}
         >
           <div className="flex items-center gap-4">
-            {/* FanDuel Logo */}
+            {/* FanDuel Sportsbook Logo */}
             <div 
-              className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-105 transition-transform p-2"
+              className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-105 transition-transform p-2"
               style={{ backgroundColor: '#fff', boxShadow: '0 4px 20px rgba(20, 147, 255, 0.3)' }}
             >
-              <svg viewBox="0 0 100 100" className="w-full h-full">
-                <rect fill="#1493FF" width="100" height="100" rx="12"/>
-                <text x="50" y="38" textAnchor="middle" fill="white" fontSize="24" fontWeight="bold" fontFamily="Arial">FAN</text>
-                <text x="50" y="68" textAnchor="middle" fill="white" fontSize="24" fontWeight="bold" fontFamily="Arial">DUEL</text>
-              </svg>
+              <Image
+                src="/FanDuel Logos/Sportsbook/Secondary/fanduel_sportsbook_logo_vert_blue.svg"
+                alt="FanDuel Sportsbook"
+                width={48}
+                height={48}
+                className="w-full h-full object-contain"
+              />
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-bold text-white text-lg">
