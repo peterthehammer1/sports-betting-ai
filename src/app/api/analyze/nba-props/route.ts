@@ -18,7 +18,10 @@ export async function POST(request: NextRequest) {
 
     // Check cache first
     const cacheKey = `nba-props-analysis-${eventId}`;
-    const cached = await getCachedPropsAnalysis(cacheKey);
+    const cached = await getCachedPropsAnalysis(cacheKey) as { 
+      analysis: unknown; 
+      meta: Record<string, unknown>;
+    } | null;
     
     if (cached) {
       return NextResponse.json({
