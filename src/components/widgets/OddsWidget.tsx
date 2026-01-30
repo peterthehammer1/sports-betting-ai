@@ -17,11 +17,11 @@ export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
 
   return (
     <div className="max-w-md">
-      <div className="bg-slate-800 border border-slate-700/50 rounded-lg overflow-hidden">
+      <div className="bg-[#161d29] border border-slate-700/40 rounded-lg overflow-hidden">
         {/* Header with FanDuel branding */}
-        <div className="px-4 py-3 border-b border-slate-700/50 flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-slate-700/40 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-white p-0.5 flex-shrink-0">
+            <div className="w-6 h-6 rounded bg-slate-200 p-0.5 flex-shrink-0">
               <Image
                 src="/FanDuel Logos/Sportsbook/Secondary/fanduel_sportsbook_logo_vert_blue.svg"
                 alt="FanDuel"
@@ -30,16 +30,16 @@ export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
                 className="w-full h-full object-contain"
               />
             </div>
-            <h3 className="text-white font-medium text-sm">FanDuel Odds</h3>
+            <h3 className="text-slate-200 font-medium text-sm">FanDuel Odds</h3>
           </div>
           
-          <div className="flex bg-slate-900 rounded p-0.5">
+          <div className="flex bg-[#0c1017] rounded p-0.5">
             <button
               onClick={() => setSelectedSport('icehockey_nhl')}
               className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
                 selectedSport === 'icehockey_nhl'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-[#2a3444] text-slate-200'
+                  : 'text-slate-500 hover:text-slate-300'
               }`}
             >
               NHL
@@ -48,8 +48,8 @@ export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
               onClick={() => setSelectedSport('basketball_nba')}
               className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
                 selectedSport === 'basketball_nba'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-[#2a3444] text-slate-200'
+                  : 'text-slate-500 hover:text-slate-300'
               }`}
             >
               NBA
@@ -62,24 +62,24 @@ export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
           href="https://fndl.co/kt63uos"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-between gap-3 px-4 py-2.5 bg-[#1493FF]/10 border-b border-[#1493FF]/20 hover:bg-[#1493FF]/15 transition-colors"
+          className="flex items-center justify-between gap-3 px-4 py-2.5 bg-[#1e2836] border-b border-slate-700/40 hover:bg-[#2a3444] transition-colors"
         >
           <div>
-            <p className="text-white text-sm font-medium">
+            <p className="text-slate-200 text-sm font-medium">
               Get $150 in Bonus Bets
             </p>
-            <p className="text-[#1493FF] text-xs">
+            <p className="text-slate-500 text-xs">
               New users only. Terms apply.
             </p>
           </div>
-          <span className="px-3 py-1.5 rounded bg-[#1493FF] text-white text-xs font-medium flex-shrink-0">
+          <span className="px-3 py-1.5 rounded bg-[#4a6fa5] text-slate-100 text-xs font-medium flex-shrink-0">
             Claim
           </span>
         </a>
 
         {/* Widget - More compact */}
         <div className="p-3">
-          <div className="rounded overflow-hidden">
+          <div className="rounded overflow-hidden border border-slate-700/30">
             <iframe
               title="FanDuel Odds"
               src={widgetUrl}
@@ -88,8 +88,8 @@ export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
             />
           </div>
           
-          <p className="mt-2 text-[9px] text-slate-500 text-center">
-            19+ | Ontario | <a href="https://www.connexontario.ca/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-400">Gambling help: 1-866-531-2600</a>
+          <p className="mt-2 text-[9px] text-slate-600 text-center">
+            19+ | Ontario | <a href="https://www.connexontario.ca/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-500">Gambling help: 1-866-531-2600</a>
           </p>
         </div>
       </div>

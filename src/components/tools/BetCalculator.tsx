@@ -50,7 +50,6 @@ export function BetCalculator({ onClose }: BetCalculatorProps) {
         impliedProb = 1 / oddsNum;
         break;
       case 'fractional':
-        // Parse as fraction (e.g., "5/1" or just "5")
         const parts = odds.split('/');
         if (parts.length === 2) {
           const num = parseFloat(parts[0]) || 0;
@@ -82,7 +81,6 @@ export function BetCalculator({ onClose }: BetCalculatorProps) {
 
     let decimalOdds = 1;
 
-    // First convert to decimal
     switch (oddsFormat) {
       case 'american':
         if (oddsNum > 0) {
@@ -106,7 +104,6 @@ export function BetCalculator({ onClose }: BetCalculatorProps) {
         break;
     }
 
-    // Then convert to target format
     switch (targetFormat) {
       case 'american':
         if (decimalOdds >= 2) {
@@ -118,7 +115,6 @@ export function BetCalculator({ onClose }: BetCalculatorProps) {
         return decimalOdds.toFixed(2);
       case 'fractional':
         const fraction = decimalOdds - 1;
-        // Try to find a nice fraction
         const gcd = (a: number, b: number): number => b ? gcd(b, a % b) : a;
         const d = 100;
         const n = Math.round(fraction * d);
@@ -128,69 +124,63 @@ export function BetCalculator({ onClose }: BetCalculatorProps) {
   };
 
   return (
-    <div className="glass-card rounded-2xl overflow-hidden">
+    <div className="bg-[#161d29] border border-slate-700/40 rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600" />
-        <div className="relative px-5 sm:px-6 py-5 sm:py-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-2 py-1 text-[10px] font-bold text-white/80 bg-white/10 rounded-full uppercase tracking-wider">
-                  Tools
-                </span>
-                <span className="px-2 py-1 text-[10px] font-bold text-green-200 bg-green-400/20 rounded-full uppercase tracking-wider">
-                  Calculator
-                </span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-white">
-                Bet Calculator
-              </h2>
-              <p className="text-sm text-white/60 mt-0.5">
-                Calculate payouts & convert odds
-              </p>
+      <div className="px-5 py-4 border-b border-slate-700/40">
+        <div className="flex justify-between items-start">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="px-2 py-0.5 text-[10px] font-semibold text-slate-400 bg-slate-700/30 rounded uppercase tracking-wider">
+                Tools
+              </span>
             </div>
-            {onClose && (
-              <button
-                onClick={onClose}
-                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
+            <h2 className="text-lg font-semibold text-slate-200">
+              Bet Calculator
+            </h2>
+            <p className="text-sm text-slate-500 mt-0.5">
+              Calculate payouts & convert odds
+            </p>
           </div>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 text-slate-400 hover:text-slate-300 transition-all"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="p-5 sm:p-6 space-y-6">
+      <div className="p-5 space-y-5">
         {/* Inputs */}
         <div className="grid sm:grid-cols-2 gap-4">
           {/* Stake */}
           <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
               Stake Amount ($)
             </label>
             <input
               type="number"
               value={stake}
               onChange={(e) => setStake(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-mono text-lg focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none"
+              className="w-full px-4 py-3 rounded-lg bg-[#0c1017] border border-slate-700/40 text-slate-200 font-mono text-lg focus:border-slate-600 outline-none"
               placeholder="100"
             />
           </div>
 
           {/* Odds */}
           <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
               Odds
             </label>
             <input
               type="text"
               value={odds}
               onChange={(e) => setOdds(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-mono text-lg focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none"
+              className="w-full px-4 py-3 rounded-lg bg-[#0c1017] border border-slate-700/40 text-slate-200 font-mono text-lg focus:border-slate-600 outline-none"
               placeholder="-110"
             />
           </div>
@@ -198,7 +188,7 @@ export function BetCalculator({ onClose }: BetCalculatorProps) {
 
         {/* Odds Format */}
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+          <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
             Odds Format
           </label>
           <div className="flex gap-2">
@@ -206,10 +196,10 @@ export function BetCalculator({ onClose }: BetCalculatorProps) {
               <button
                 key={format}
                 onClick={() => setOddsFormat(format)}
-                className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all capitalize ${
+                className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all capitalize ${
                   oddsFormat === format
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/5 hover:text-white hover:bg-white/10'
+                    ? 'bg-[#2a3444] text-slate-200 border border-slate-600/50'
+                    : 'bg-[#0c1017] text-slate-500 border border-slate-700/40 hover:text-slate-300'
                 }`}
               >
                 {format}
@@ -219,28 +209,28 @@ export function BetCalculator({ onClose }: BetCalculatorProps) {
         </div>
 
         {/* Results */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 rounded-xl bg-green-500/5 border border-green-500/20">
-            <p className="text-xs text-gray-400 mb-1">Total Payout</p>
-            <p className="text-2xl font-bold text-green-400 stat-number">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-4 rounded-lg bg-[#1e2836] border border-slate-700/30">
+            <p className="text-xs text-slate-500 mb-1">Total Payout</p>
+            <p className="text-2xl font-bold text-[#5a9a7e] stat-number">
               ${results.payout.toLocaleString()}
             </p>
           </div>
-          <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-            <p className="text-xs text-gray-400 mb-1">Profit</p>
-            <p className="text-2xl font-bold text-emerald-400 stat-number">
+          <div className="p-4 rounded-lg bg-[#1e2836] border border-slate-700/30">
+            <p className="text-xs text-slate-500 mb-1">Profit</p>
+            <p className="text-2xl font-bold text-[#5a9a7e] stat-number">
               ${results.profit.toLocaleString()}
             </p>
           </div>
-          <div className="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
-            <p className="text-xs text-gray-400 mb-1">Implied Probability</p>
-            <p className="text-2xl font-bold text-cyan-400 stat-number">
+          <div className="p-4 rounded-lg bg-[#1e2836] border border-slate-700/30">
+            <p className="text-xs text-slate-500 mb-1">Implied Probability</p>
+            <p className="text-2xl font-bold text-slate-300 stat-number">
               {results.impliedProb}%
             </p>
           </div>
-          <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/20">
-            <p className="text-xs text-gray-400 mb-1">Breakeven Win Rate</p>
-            <p className="text-2xl font-bold text-blue-400 stat-number">
+          <div className="p-4 rounded-lg bg-[#1e2836] border border-slate-700/30">
+            <p className="text-xs text-slate-500 mb-1">Breakeven Win Rate</p>
+            <p className="text-2xl font-bold text-slate-300 stat-number">
               {results.breakeven}%
             </p>
           </div>
@@ -248,25 +238,25 @@ export function BetCalculator({ onClose }: BetCalculatorProps) {
 
         {/* Odds Conversion */}
         <div>
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3">
             Odds Conversion
           </h3>
           <div className="grid grid-cols-3 gap-3">
-            <div className="p-3 rounded-xl bg-white/5 text-center">
-              <p className="text-[10px] text-gray-500 uppercase mb-1">American</p>
-              <p className="text-lg font-mono font-semibold text-white stat-number">
+            <div className="p-3 rounded-lg bg-[#0c1017] text-center border border-slate-700/30">
+              <p className="text-[10px] text-slate-600 uppercase mb-1">American</p>
+              <p className="text-lg font-mono font-semibold text-slate-300 stat-number">
                 {convertOdds('american')}
               </p>
             </div>
-            <div className="p-3 rounded-xl bg-white/5 text-center">
-              <p className="text-[10px] text-gray-500 uppercase mb-1">Decimal</p>
-              <p className="text-lg font-mono font-semibold text-white stat-number">
+            <div className="p-3 rounded-lg bg-[#0c1017] text-center border border-slate-700/30">
+              <p className="text-[10px] text-slate-600 uppercase mb-1">Decimal</p>
+              <p className="text-lg font-mono font-semibold text-slate-300 stat-number">
                 {convertOdds('decimal')}
               </p>
             </div>
-            <div className="p-3 rounded-xl bg-white/5 text-center">
-              <p className="text-[10px] text-gray-500 uppercase mb-1">Fractional</p>
-              <p className="text-lg font-mono font-semibold text-white stat-number">
+            <div className="p-3 rounded-lg bg-[#0c1017] text-center border border-slate-700/30">
+              <p className="text-[10px] text-slate-600 uppercase mb-1">Fractional</p>
+              <p className="text-lg font-mono font-semibold text-slate-300 stat-number">
                 {convertOdds('fractional')}
               </p>
             </div>
@@ -275,7 +265,7 @@ export function BetCalculator({ onClose }: BetCalculatorProps) {
 
         {/* Quick Presets */}
         <div>
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3">
             Quick Presets
           </h3>
           <div className="flex flex-wrap gap-2">
@@ -286,7 +276,7 @@ export function BetCalculator({ onClose }: BetCalculatorProps) {
                   setOdds(preset);
                   setOddsFormat('american');
                 }}
-                className="px-3 py-2 rounded-lg bg-white/5 text-gray-400 text-sm font-mono hover:bg-white/10 hover:text-white transition-all"
+                className="px-3 py-2 rounded-lg bg-[#0c1017] text-slate-500 text-sm font-mono border border-slate-700/30 hover:bg-[#1e2836] hover:text-slate-300 transition-all"
               >
                 {preset}
               </button>

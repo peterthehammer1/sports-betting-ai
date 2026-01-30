@@ -52,15 +52,15 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
             {isToday ? 'Today' : gameTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
           </span>
           {score?.isLive ? (
-            <span className="flex items-center gap-1.5 text-xs font-medium text-red-400">
-              <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+            <span className="flex items-center gap-1.5 text-xs font-medium text-[#9e7a7a]">
+              <span className="w-1.5 h-1.5 bg-[#9e5a5a] rounded-full animate-pulse" />
               Live
             </span>
           ) : score?.isCompleted ? (
             <span className="text-xs font-medium text-slate-500">Final</span>
           ) : (
-            <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-400">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+            <span className="flex items-center gap-1.5 text-xs font-medium text-[#5a9a7e]">
+              <span className="w-1.5 h-1.5 bg-[#4a8a6e] rounded-full" />
               Open
             </span>
           )}
@@ -225,7 +225,7 @@ function OddsCell({
           {prefix}{point > 0 ? `+${point}` : point}
         </span>
       )}
-      <span className={`font-mono text-xs font-medium ${isPositive ? 'text-emerald-400' : 'text-slate-200'}`}>
+      <span className={`font-mono text-xs font-medium ${isPositive ? 'text-[#5a9a7e]' : 'text-slate-300'}`}>
         {formattedOdds}
       </span>
     </div>

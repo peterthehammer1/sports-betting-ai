@@ -330,13 +330,13 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-400">{game.awayTeam.split(' ').pop()}</span>
-                  <span className={`text-sm font-mono font-semibold ${game.moneyline.bestAway?.americanOdds && game.moneyline.bestAway.americanOdds > 0 ? 'text-emerald-400' : 'text-white'}`}>
+                  <span className={`text-sm font-mono font-semibold ${game.moneyline.bestAway?.americanOdds && game.moneyline.bestAway.americanOdds > 0 ? 'text-[#5a9a7e]' : 'text-slate-200'}`}>
                     {game.moneyline.bestAway ? formatOdds(game.moneyline.bestAway.americanOdds) : '—'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-400">{game.homeTeam.split(' ').pop()}</span>
-                  <span className={`text-sm font-mono font-semibold ${game.moneyline.bestHome?.americanOdds && game.moneyline.bestHome.americanOdds > 0 ? 'text-emerald-400' : 'text-white'}`}>
+                  <span className={`text-sm font-mono font-semibold ${game.moneyline.bestHome?.americanOdds && game.moneyline.bestHome.americanOdds > 0 ? 'text-[#5a9a7e]' : 'text-slate-200'}`}>
                     {game.moneyline.bestHome ? formatOdds(game.moneyline.bestHome.americanOdds) : '—'}
                   </span>
                 </div>
@@ -518,7 +518,7 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
                             </span>
                           </td>
                           <td className="px-3 py-2.5 text-center">
-                            <span className={`text-sm font-mono font-semibold ${bestOdds.americanOdds > 0 ? 'text-emerald-400' : 'text-white'}`}>
+                            <span className={`text-sm font-mono font-semibold ${bestOdds.americanOdds > 0 ? 'text-[#5a9a7e]' : 'text-slate-200'}`}>
                               {formatOdds(bestOdds.americanOdds)}
                             </span>
                           </td>
@@ -551,8 +551,8 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
       {activeTab === 'analysis' && (
         <div className="bg-slate-800 border border-slate-700/50 rounded-lg overflow-hidden">
           <div className="px-4 py-3 border-b border-slate-700/50 flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-              <span className="text-white text-sm">AI</span>
+            <div className="w-8 h-8 bg-[#2a3444] rounded-lg flex items-center justify-center">
+              <span className="text-slate-300 text-sm font-medium">AI</span>
             </div>
             <div>
               <h3 className="text-white font-medium">AI Analysis</h3>
@@ -596,9 +596,9 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
                             <span className="text-slate-500 text-xs ml-2">{pick.type}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-emerald-400 font-mono text-sm">{pick.odds}</span>
+                            <span className="text-[#5a9a7e] font-mono text-sm">{pick.odds}</span>
                             <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                              pick.confidence >= 80 ? 'bg-emerald-500/20 text-emerald-400' :
+                              pick.confidence >= 80 ? 'bg-[#4a8a6e]/20 text-[#5a9a7e]' :
                               pick.confidence >= 60 ? 'bg-amber-500/20 text-amber-400' :
                               'bg-slate-600/20 text-slate-400'
                             }`}>
@@ -623,7 +623,7 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
                       <div key={i} className="bg-slate-900/30 rounded p-2.5 border border-slate-700/20">
                         <div className="flex justify-between items-center mb-1">
                           <span className="text-sm text-white">{prop.player}</span>
-                          <span className="text-xs text-emerald-400 font-mono">{prop.odds}</span>
+                          <span className="text-xs text-[#5a9a7e] font-mono">{prop.odds}</span>
                         </div>
                         <p className="text-xs text-slate-400">{prop.reasoning}</p>
                       </div>
@@ -636,12 +636,12 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
               {analysis.avoidProps.length > 0 && (
                 <div>
                   <h4 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-                    <span className="text-red-400">⚠</span> Props to Avoid
+                    <span className="text-[#9e7a7a]">⚠</span> Props to Avoid
                   </h4>
                   <div className="space-y-2">
                     {analysis.avoidProps.map((prop, i) => (
                       <div key={i} className="flex items-start gap-2 text-sm">
-                        <span className="text-red-400">•</span>
+                        <span className="text-[#9e7a7a]">•</span>
                         <div>
                           <span className="text-slate-300">{prop.player}</span>
                           <span className="text-slate-500 text-xs ml-1">({prop.market})</span>
@@ -686,7 +686,7 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
               <button
                 onClick={fetchAnalysis}
                 disabled={!propsData}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-lg font-medium transition-colors"
+                className="px-6 py-3 bg-[#2a3444] hover:bg-[#3a4454] disabled:bg-slate-800 disabled:text-slate-600 text-slate-200 rounded-lg font-medium transition-colors"
               >
                 {propsData ? 'Generate Analysis' : 'Load Props First'}
               </button>

@@ -306,7 +306,7 @@ function PlayerPropPickCard({ pick, homeTeam, awayTeam }: { pick: NbaPlayerPropP
   return (
     <div className={`p-3 rounded-lg border transition-colors ${
       pick.valueBet 
-        ? 'bg-emerald-500/5 border-emerald-500/20' 
+        ? 'bg-[#4a8a6e]/10 border-[#4a8a6e]/20' 
         : 'bg-slate-900/30 border-slate-700/30'
     }`}>
       <div className="flex items-start gap-3">

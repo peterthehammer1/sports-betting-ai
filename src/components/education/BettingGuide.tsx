@@ -206,24 +206,24 @@ export function BettingGuide({ onClose }: BettingGuideProps) {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/20 text-center">
-            <p className="text-2xl font-bold text-blue-400">52.4%</p>
-            <p className="text-xs text-gray-500 mt-1">Break-even at -110</p>
+          <div className="p-4 rounded-xl bg-[#1e2836] border border-slate-700/30 text-center">
+            <p className="text-2xl font-bold text-slate-300">52.4%</p>
+            <p className="text-xs text-slate-600 mt-1">Break-even at -110</p>
           </div>
-          <div className="p-4 rounded-xl bg-green-500/5 border border-green-500/20 text-center">
-            <p className="text-2xl font-bold text-green-400">1-5%</p>
-            <p className="text-xs text-gray-500 mt-1">Recommended unit size</p>
+          <div className="p-4 rounded-xl bg-[#1e2836] border border-slate-700/30 text-center">
+            <p className="text-2xl font-bold text-[#5a9a7e]">1-5%</p>
+            <p className="text-xs text-slate-600 mt-1">Recommended unit size</p>
           </div>
-          <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/20 text-center">
-            <p className="text-2xl font-bold text-purple-400">3+</p>
-            <p className="text-xs text-gray-500 mt-1">Books to compare</p>
+          <div className="p-4 rounded-xl bg-[#1e2836] border border-slate-700/30 text-center">
+            <p className="text-2xl font-bold text-slate-300">3+</p>
+            <p className="text-xs text-slate-600 mt-1">Books to compare</p>
           </div>
         </div>
 
         {/* Disclaimer */}
-        <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/20">
-          <p className="text-sm text-red-300">
-            ⚠️ <strong>Important:</strong> Sports betting involves risk. Never bet more than you can afford to lose. If you or someone you know has a gambling problem, call 1-800-GAMBLER.
+        <div className="p-4 rounded-xl bg-[#1e2020] border border-[#3a3030]">
+          <p className="text-sm text-[#9e8a7a]">
+            <strong>Important:</strong> Sports betting involves risk. Never bet more than you can afford to lose. If you or someone you know has a gambling problem, call 1-800-GAMBLER.
           </p>
         </div>
       </div>
