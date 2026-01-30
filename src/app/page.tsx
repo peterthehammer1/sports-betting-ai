@@ -486,26 +486,20 @@ export default function Dashboard() {
         {/* Games View */}
         {view === 'games' && games.length > 0 && (
           <div className="animate-slide-up">
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-5 flex items-center justify-between flex-wrap gap-3">
               <div>
                 <h2 className="text-lg font-semibold text-white">
                   {sport} Games
                 </h2>
                 <p className="text-sm text-slate-400">
                   {games.length} games with odds available
-                  {injuryCount > 0 && (
-                    <span className="ml-2 text-yellow-500">
-                      • 🏥 {injuryCount} players injured
-                    </span>
-                  )}
                 </p>
               </div>
-            </div>
-
-            {/* Injury Report Panel */}
-            <div className="mb-6">
+              
+              {/* Compact Injury Badge - click to expand */}
               <InjuryReport 
-                sport={sport} 
+                sport={sport}
+                filterTeams={games.flatMap(g => [g.homeTeam, g.awayTeam])}
                 onInjuryCountChange={(count) => setInjuryCount(count)}
               />
             </div>
