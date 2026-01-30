@@ -3,7 +3,8 @@
 import Image from 'next/image';
 import type { GoalScorerAnalysis, GoalScorerPick } from '@/types/prediction';
 import type { NormalizedPlayerProp } from '@/types/odds';
-import { getNhlTeam, getPlayerInitials } from '@/lib/utils/teams';
+import { getNhlTeam } from '@/lib/utils/teams';
+import { PlayerAvatar as PlayerAvatarUI } from '@/components/ui/PlayerAvatar';
 
 interface PlayerPropsCardProps {
   analysis: GoalScorerAnalysis;
@@ -211,20 +212,13 @@ function ConfidenceBadge({ confidence, size = 'md' }: { confidence: number; size
 
 function PlayerAvatar({ playerName, teamName }: { playerName: string; teamName: string }) {
   const team = getNhlTeam(teamName);
-  const initials = getPlayerInitials(playerName);
-
   return (
-    <div 
-      className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-      style={{ backgroundColor: `${team.primary}20` }}
-    >
-      <span 
-        className="text-sm font-bold"
-        style={{ color: team.primary }}
-      >
-        {initials}
-      </span>
-    </div>
+    <PlayerAvatarUI 
+      playerName={playerName} 
+      sport="nhl" 
+      size="md" 
+      teamColor={team.primary}
+    />
   );
 }
 

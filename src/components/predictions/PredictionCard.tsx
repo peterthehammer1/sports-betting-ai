@@ -1,6 +1,7 @@
 'use client';
 
 import type { GamePrediction, ValueBet, RankedBet } from '@/types/prediction';
+import { TeamLogo } from '@/components/ui/TeamLogo';
 
 interface PredictionCardProps {
   prediction: GamePrediction;
@@ -23,16 +24,29 @@ export function PredictionCard({ prediction, onClose }: PredictionCardProps) {
                 <span className="px-2 py-1 text-[10px] font-bold text-white/80 bg-white/10 rounded-full uppercase tracking-wider">
                   {prediction.sport}
                 </span>
-                <span className="px-2 py-1 text-[10px] font-bold text-cyan-300 bg-cyan-400/20 rounded-full uppercase tracking-wider">
+                <span className="px-2 py-1 text-[10px] font-bold text-slate-300 bg-slate-500/20 rounded-full uppercase tracking-wider">
                   AI Analysis
                 </span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-white">
-                {prediction.awayTeam}
-              </h2>
-              <p className="text-sm text-white/60 mt-0.5">
-                @ {prediction.homeTeam}
-              </p>
+              <div className="flex items-center gap-3 mt-2">
+                <TeamLogo 
+                  teamName={prediction.awayTeam} 
+                  sport={prediction.sport.toLowerCase() as 'nba' | 'nhl'} 
+                  size="lg" 
+                />
+                <h2 className="text-xl sm:text-2xl font-bold text-white">
+                  {prediction.awayTeam}
+                </h2>
+              </div>
+              <div className="flex items-center gap-2 mt-1 text-sm text-white/60">
+                <span>@</span>
+                <TeamLogo 
+                  teamName={prediction.homeTeam} 
+                  sport={prediction.sport.toLowerCase() as 'nba' | 'nhl'} 
+                  size="sm" 
+                />
+                <span>{prediction.homeTeam}</span>
+              </div>
             </div>
             {onClose && (
               <button
@@ -76,12 +90,12 @@ export function PredictionCard({ prediction, onClose }: PredictionCardProps) {
         {/* Score Prediction */}
         <Section title="📊 Predicted Score" icon="score">
           <div className="flex items-center justify-center gap-6 sm:gap-10 py-4">
-            <ScoreTeam team={prediction.awayTeam} score={prediction.score.away} />
+            <ScoreTeam team={prediction.awayTeam} score={prediction.score.away} sport={prediction.sport} />
             <div className="flex flex-col items-center">
               <span className="text-xs text-gray-500 uppercase tracking-wider mb-1">Final</span>
               <span className="text-2xl font-bold text-gray-500">—</span>
             </div>
-            <ScoreTeam team={prediction.homeTeam} score={prediction.score.home} isHome />
+            <ScoreTeam team={prediction.homeTeam} score={prediction.score.home} isHome sport={prediction.sport} />
           </div>
           <div className="text-center">
             <ConfidenceBadge confidence={prediction.score.confidence} />
@@ -219,10 +233,13 @@ function ConfidenceBadge({ confidence, size = 'md' }: { confidence: number; size
   );
 }
 
-function ScoreTeam({ team, score, isHome }: { team: string; score: number; isHome?: boolean }) {
+function ScoreTeam({ team, score, isHome, sport }: { team: string; score: number; isHome?: boolean; sport?: string }) {
   return (
     <div className="text-center">
-      <p className="text-xs text-gray-500 truncate max-w-[100px]">{team}</p>
+      <div className="flex flex-col items-center gap-1">
+        <TeamLogo teamName={team} sport={(sport?.toLowerCase() || 'nba') as 'nba' | 'nhl'} size="md" />
+        <p className="text-xs text-gray-500 truncate max-w-[100px]">{team.split(' ').pop()}</p>
+      </div>
       <p className="text-4xl sm:text-5xl font-bold text-white mt-1 stat-number">{score}</p>
       {isHome && <p className="text-[10px] text-gray-500 mt-1">HOME</p>}
     </div>

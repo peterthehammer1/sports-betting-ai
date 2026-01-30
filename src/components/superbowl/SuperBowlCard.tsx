@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import type { NormalizedOdds } from '@/types/odds';
+import { PlayerAvatar } from '@/components/ui/PlayerAvatar';
+import { TeamLogo } from '@/components/ui/TeamLogo';
 
 interface SuperBowlProps {
   game: NormalizedOdds | null;
@@ -591,9 +593,12 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
                     {analysis.topPicks.map((pick, i) => (
                       <div key={i} className="bg-slate-900/50 rounded-lg p-3 border border-slate-700/30">
                         <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <span className="text-white font-medium">{pick.player}</span>
-                            <span className="text-slate-500 text-xs ml-2">{pick.type}</span>
+                          <div className="flex items-center gap-2">
+                            <PlayerAvatar playerName={pick.player} sport="nfl" size="sm" />
+                            <div>
+                              <span className="text-white font-medium">{pick.player}</span>
+                              <span className="text-slate-500 text-xs ml-2">{pick.type}</span>
+                            </div>
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-[#5a9a7e] font-mono text-sm">{pick.odds}</span>
@@ -606,7 +611,7 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
                             </span>
                           </div>
                         </div>
-                        <p className="text-xs text-blue-400 font-medium mb-1">{pick.pick}</p>
+                        <p className="text-xs text-slate-300 font-medium mb-1">{pick.pick}</p>
                         <p className="text-xs text-slate-400">{pick.reasoning}</p>
                       </div>
                     ))}
@@ -622,7 +627,10 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
                     {analysis.valueProps.map((prop, i) => (
                       <div key={i} className="bg-slate-900/30 rounded p-2.5 border border-slate-700/20">
                         <div className="flex justify-between items-center mb-1">
-                          <span className="text-sm text-white">{prop.player}</span>
+                          <div className="flex items-center gap-2">
+                            <PlayerAvatar playerName={prop.player} sport="nfl" size="xs" />
+                            <span className="text-sm text-white">{prop.player}</span>
+                          </div>
                           <span className="text-xs text-[#5a9a7e] font-mono">{prop.odds}</span>
                         </div>
                         <p className="text-xs text-slate-400">{prop.reasoning}</p>
@@ -641,7 +649,7 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
                   <div className="space-y-2">
                     {analysis.avoidProps.map((prop, i) => (
                       <div key={i} className="flex items-start gap-2 text-sm">
-                        <span className="text-[#9e7a7a]">•</span>
+                        <PlayerAvatar playerName={prop.player} sport="nfl" size="xs" />
                         <div>
                           <span className="text-slate-300">{prop.player}</span>
                           <span className="text-slate-500 text-xs ml-1">({prop.market})</span>
@@ -675,9 +683,14 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
               {/* MVP Prediction */}
               {analysis.mvpPrediction && (
                 <div className="bg-gradient-to-r from-amber-500/20 to-transparent rounded-lg p-4 border border-amber-500/30">
-                  <h4 className="text-sm font-semibold text-amber-400 mb-2">🏆 MVP Prediction</h4>
-                  <p className="text-white font-medium">{analysis.mvpPrediction.player}</p>
-                  <p className="text-xs text-slate-400 mt-1">{analysis.mvpPrediction.reasoning}</p>
+                  <h4 className="text-sm font-semibold text-amber-400 mb-3">🏆 MVP Prediction</h4>
+                  <div className="flex items-center gap-3">
+                    <PlayerAvatar playerName={analysis.mvpPrediction.player} sport="nfl" size="lg" />
+                    <div>
+                      <p className="text-white font-medium text-lg">{analysis.mvpPrediction.player}</p>
+                      <p className="text-xs text-slate-400 mt-1">{analysis.mvpPrediction.reasoning}</p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

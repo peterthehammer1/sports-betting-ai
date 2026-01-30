@@ -463,6 +463,86 @@ export const NHL_TEAMS: Record<string, {
   },
 };
 
+// NFL Team data
+export const NFL_TEAMS: Record<string, {
+  primary: string;
+  secondary: string;
+  accent: string;
+  logo: string;
+  abbrev: string;
+}> = {
+  'Kansas City Chiefs': {
+    primary: '#E31837',
+    secondary: '#FFB81C',
+    accent: 'from-red-900/40 to-yellow-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/kc.png',
+    abbrev: 'KC',
+  },
+  'Philadelphia Eagles': {
+    primary: '#004C54',
+    secondary: '#A5ACAF',
+    accent: 'from-teal-900/40 to-slate-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/phi.png',
+    abbrev: 'PHI',
+  },
+  'San Francisco 49ers': {
+    primary: '#AA0000',
+    secondary: '#B3995D',
+    accent: 'from-red-900/40 to-yellow-700/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/sf.png',
+    abbrev: 'SF',
+  },
+  'Buffalo Bills': {
+    primary: '#00338D',
+    secondary: '#C60C30',
+    accent: 'from-blue-900/40 to-red-700/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/buf.png',
+    abbrev: 'BUF',
+  },
+  'Dallas Cowboys': {
+    primary: '#003594',
+    secondary: '#869397',
+    accent: 'from-blue-900/40 to-slate-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/dal.png',
+    abbrev: 'DAL',
+  },
+  'Detroit Lions': {
+    primary: '#0076B6',
+    secondary: '#B0B7BC',
+    accent: 'from-blue-800/40 to-slate-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/det.png',
+    abbrev: 'DET',
+  },
+  'Baltimore Ravens': {
+    primary: '#241773',
+    secondary: '#9E7C0C',
+    accent: 'from-purple-900/40 to-yellow-700/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/bal.png',
+    abbrev: 'BAL',
+  },
+  'Miami Dolphins': {
+    primary: '#008E97',
+    secondary: '#FC4C02',
+    accent: 'from-teal-800/40 to-orange-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/mia.png',
+    abbrev: 'MIA',
+  },
+  'Green Bay Packers': {
+    primary: '#203731',
+    secondary: '#FFB612',
+    accent: 'from-green-900/40 to-yellow-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/gb.png',
+    abbrev: 'GB',
+  },
+  'Cincinnati Bengals': {
+    primary: '#FB4F14',
+    secondary: '#000000',
+    accent: 'from-orange-800/40 to-slate-800/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/cin.png',
+    abbrev: 'CIN',
+  },
+};
+
 // Get team data with fallback
 export function getNbaTeam(teamName: string) {
   return NBA_TEAMS[teamName] || {
@@ -484,14 +564,194 @@ export function getNhlTeam(teamName: string) {
   };
 }
 
-// Generate player photo URL (ESPN CDN placeholder approach)
-// Note: ESPN requires player IDs for actual photos, so we use initials fallback
+export function getNflTeam(teamName: string) {
+  return NFL_TEAMS[teamName] || {
+    primary: '#1e293b',
+    secondary: '#475569',
+    accent: 'from-slate-800/40 to-slate-700/20',
+    logo: '',
+    abbrev: teamName.split(' ').pop()?.substring(0, 3).toUpperCase() || 'NFL',
+  };
+}
+
+// Find team by partial match (e.g., "Chiefs" matches "Kansas City Chiefs")
+export function findTeamByName(name: string, sport: 'nba' | 'nhl' | 'nfl' = 'nba') {
+  const teams = sport === 'nba' ? NBA_TEAMS : sport === 'nhl' ? NHL_TEAMS : NFL_TEAMS;
+  const lowerName = name.toLowerCase();
+  
+  // Exact match first
+  if (teams[name]) return { name, ...teams[name] };
+  
+  // Partial match (team nickname)
+  for (const [fullName, data] of Object.entries(teams)) {
+    const parts = fullName.toLowerCase().split(' ');
+    if (parts.some(p => p === lowerName || lowerName.includes(p) || p.includes(lowerName))) {
+      return { name: fullName, ...data };
+    }
+  }
+  
+  return null;
+}
+
+// Generate player photo URL using ESPN CDN with player IDs
 export function getPlayerInitials(playerName: string): string {
   const parts = playerName.split(' ');
   if (parts.length >= 2) {
     return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
   }
   return playerName.substring(0, 2).toUpperCase();
+}
+
+// ESPN Player IDs for headshots
+// URL Pattern: https://a.espncdn.com/i/headshots/{sport}/players/full/{id}.png
+// where sport = 'nba', 'nhl', or 'nfl'
+
+export const NBA_PLAYER_IDS: Record<string, string> = {
+  // Superstars
+  'LeBron James': '1966',
+  'Anthony Davis': '6583',
+  'Stephen Curry': '3975',
+  'Kevin Durant': '3202',
+  'Giannis Antetokounmpo': '3032977',
+  'Luka Doncic': '3945274',
+  'Jayson Tatum': '4065648',
+  'Nikola Jokic': '3112335',
+  'Joel Embiid': '3059318',
+  'Ja Morant': '4279888',
+  'Donovan Mitchell': '3908809',
+  'Damian Lillard': '6606',
+  'Devin Booker': '3136193',
+  'Trae Young': '4277905',
+  'Zion Williamson': '4395628',
+  'Kawhi Leonard': '6450',
+  'Paul George': '4251',
+  'Jimmy Butler': '6430',
+  'Bam Adebayo': '4066261',
+  'De\'Aaron Fox': '4066259',
+  'Tyrese Haliburton': '4431678',
+  'Paolo Banchero': '4706540',
+  'Anthony Edwards': '4594268',
+  'Shai Gilgeous-Alexander': '4278073',
+  'Jalen Brunson': '3934672',
+  'Kyrie Irving': '6442',
+  'Darius Garland': '4395725',
+  'Lauri Markkanen': '4066336',
+  'Tyrese Maxey': '4432166',
+  'Cade Cunningham': '4432158',
+  'Scottie Barnes': '4433134',
+  'Victor Wembanyama': '4871484',
+  'Austin Reaves': '4397020',
+  'D\'Angelo Russell': '3136776',
+  'Rui Hachimura': '4065663',
+  // Add more as needed
+};
+
+export const NHL_PLAYER_IDS: Record<string, string> = {
+  // Top NHL Players
+  'Connor McDavid': '3895074',
+  'Auston Matthews': '4024123',
+  'Nathan MacKinnon': '3041969',
+  'Leon Draisaitl': '3114727',
+  'Cale Makar': '4233884',
+  'David Pastrnak': '3899937',
+  'Nikita Kucherov': '3042015',
+  'Artemi Panarin': '3032080',
+  'Mitch Marner': '4024932',
+  'Mikko Rantanen': '3899959',
+  'Sidney Crosby': '3114',
+  'Alex Ovechkin': '3101',
+  'Connor Hellebuyck': '3042109',
+  'Andrei Vasilevskiy': '3042071',
+  'Igor Shesterkin': '4233555',
+  'Matthew Tkachuk': '4024858',
+  'Brady Tkachuk': '4233557',
+  'Elias Pettersson': '4352686',
+  'Quinn Hughes': '4353440',
+  'Jack Hughes': '4387298',
+  'Adam Fox': '4233580',
+  'Roman Josi': '2976845',
+  'Victor Hedman': '5475',
+  'Kirill Kaprizov': '4024128',
+  'Jason Robertson': '4564830',
+  // Add more as needed
+};
+
+export const NFL_PLAYER_IDS: Record<string, string> = {
+  // Chiefs
+  'Patrick Mahomes': '3139477',
+  'Travis Kelce': '15847',
+  'Chris Jones': '3051389',
+  'Isiah Pacheco': '4360569',
+  'Rashee Rice': '4430807',
+  'Xavier Worthy': '4866618',
+  'JuJu Smith-Schuster': '3916148',
+  'Kadarius Toney': '4374302',
+  
+  // Eagles
+  'Jalen Hurts': '4040715',
+  'A.J. Brown': '4047646',
+  'DeVonta Smith': '4360310',
+  'Saquon Barkley': '3929630',
+  'Dallas Goedert': '3121022',
+  'Lane Johnson': '15974',
+  'Jason Kelce': '14109',
+  'Darius Slay': '16782',
+  
+  // 49ers
+  'Brock Purdy': '4432577',
+  'Christian McCaffrey': '3117251',
+  'Deebo Samuel': '4046692',
+  'George Kittle': '3040151',
+  'Brandon Aiyuk': '4360939',
+  'Nick Bosa': '4040612',
+  'Fred Warner': '3121399',
+  
+  // Bills
+  'Josh Allen': '3918298',
+  'Stefon Diggs': '2977187',
+  'James Cook': '4362887',
+  
+  // Cowboys
+  'Dak Prescott': '2577417',
+  'CeeDee Lamb': '4361411',
+  'Micah Parsons': '4361423',
+  
+  // Lions
+  'Jared Goff': '2977881',
+  'Amon-Ra St. Brown': '4362628',
+  'Jahmyr Gibbs': '4710882',
+  
+  // Ravens
+  'Lamar Jackson': '3916387',
+  'Derrick Henry': '3043078',
+  'Mark Andrews': '3121428',
+  'Zay Flowers': '4431570',
+  
+  // Dolphins
+  'Tua Tagovailoa': '4241479',
+  'Tyreek Hill': '3116406',
+  'Jaylen Waddle': '4360294',
+  
+  // Packers
+  'Jordan Love': '4241457',
+  'Aaron Jones': '3042519',
+  
+  // Bengals
+  'Joe Burrow': '3915511',
+  'Ja\'Marr Chase': '4362628',
+  'Tee Higgins': '4240017',
+  
+  // Add more as needed
+};
+
+// Get player headshot URL
+export function getPlayerHeadshot(playerName: string, sport: 'nba' | 'nhl' | 'nfl' = 'nba'): string | null {
+  const ids = sport === 'nba' ? NBA_PLAYER_IDS : sport === 'nhl' ? NHL_PLAYER_IDS : NFL_PLAYER_IDS;
+  const playerId = ids[playerName];
+  
+  if (!playerId) return null;
+  
+  return `https://a.espncdn.com/i/headshots/${sport}/players/full/${playerId}.png`;
 }
 
 // Common NBA player jersey numbers (known players)

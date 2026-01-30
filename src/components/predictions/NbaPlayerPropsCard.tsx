@@ -3,7 +3,8 @@
 import Image from 'next/image';
 import type { NbaPlayerPropsAnalysis, NbaPlayerPropPick } from '@/types/prediction';
 import type { NormalizedNbaPlayerProp } from '@/types/odds';
-import { getNbaTeam, getPlayerInitials, getPlayerNumber } from '@/lib/utils/teams';
+import { getNbaTeam } from '@/lib/utils/teams';
+import { PlayerAvatar as PlayerAvatarUI } from '@/components/ui/PlayerAvatar';
 
 interface NbaPlayerPropsCardProps {
   analysis: NbaPlayerPropsAnalysis;
@@ -228,31 +229,14 @@ function ConfidenceBadge({ confidence, size = 'md' }: { confidence: number; size
 
 function PlayerAvatar({ playerName, teamName }: { playerName: string; teamName: string }) {
   const team = getNbaTeam(teamName);
-  const initials = getPlayerInitials(playerName);
-  const number = getPlayerNumber(playerName);
-
   return (
-    <div className="relative flex-shrink-0">
-      <div 
-        className="w-10 h-10 rounded-lg flex items-center justify-center"
-        style={{ backgroundColor: `${team.primary}20` }}
-      >
-        <span 
-          className="text-sm font-bold"
-          style={{ color: team.primary }}
-        >
-          {initials}
-        </span>
-      </div>
-      {number && (
-        <div 
-          className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white"
-          style={{ backgroundColor: team.primary }}
-        >
-          {number}
-        </div>
-      )}
-    </div>
+    <PlayerAvatarUI 
+      playerName={playerName} 
+      sport="nba" 
+      size="md" 
+      showNumber={true}
+      teamColor={team.primary}
+    />
   );
 }
 
