@@ -108,16 +108,26 @@ export async function fetchInjuries(sport: 'NBA' | 'NHL' | 'NFL'): Promise<Sport
       throw new Error(`ESPN API returned ${response.status}`);
     }
 
-    const data: ESPNInjuryResponse = await response.json();
+    const data = await response.json();
     
-    const teams: TeamInjuries[] = (data.injuries || []).map((teamData) => {
+    // ESPN returns injuries grouped by team at top level
+    // Structure: { injuries: [{ id, displayName, injuries: [...] }] }
+    const teamsData = data.injuries || [];
+    
+    const teams: TeamInjuries[] = teamsData.map((teamData: { 
+      id?: string; 
+      displayName?: string; 
+      injuries?: ESPNPlayerInjury[] 
+    }) => {
+      // Get team name from top-level displayName (NOT from nested team object)
+      const teamName = teamData.displayName || 'Unknown Team';
+      // Get abbreviation from the first injury's athlete.team if available
+      const firstInjury = teamData.injuries?.[0];
+      const teamAbbrev = firstInjury?.athlete?.team?.abbreviation || 
+        teamName.split(' ').pop()?.substring(0, 3).toUpperCase() || 'UNK';
+      
       const injuries = (teamData.injuries || []).map((injury) =>
-        transformESPNInjury(
-          injury,
-          teamData.team?.displayName || 'Unknown Team',
-          teamData.team?.abbreviation || 'UNK',
-          sport
-        )
+        transformESPNInjury(injury, teamName, teamAbbrev, sport)
       );
 
       // Count key players out (high severity injuries)
@@ -126,9 +136,9 @@ export async function fetchInjuries(sport: 'NBA' | 'NHL' | 'NFL'): Promise<Sport
       ).length;
 
       return {
-        teamName: teamData.team?.displayName || 'Unknown Team',
-        teamAbbrev: teamData.team?.abbreviation || 'UNK',
-        teamId: teamData.team?.id,
+        teamName,
+        teamAbbrev,
+        teamId: teamData.id,
         injuries,
         keyPlayersOut,
       };
