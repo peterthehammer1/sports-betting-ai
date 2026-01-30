@@ -176,3 +176,99 @@ export interface GameWithPlayerProps {
   firstGoalScorers: NormalizedPlayerProp[];
   anytimeGoalScorers: NormalizedPlayerProp[];
 }
+
+// Live scores types
+export interface TeamScore {
+  name: string;
+  score: string;
+}
+
+export interface GameScore {
+  id: string;
+  sport_key: SportKey;
+  sport_title: string;
+  commence_time: string;
+  completed: boolean;
+  home_team: string;
+  away_team: string;
+  scores: TeamScore[] | null;
+  last_update: string | null;
+}
+
+// Normalized score for display
+export interface NormalizedScore {
+  gameId: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number | null;
+  awayScore: number | null;
+  isLive: boolean;
+  isCompleted: boolean;
+  commenceTime: Date;
+  lastUpdate: Date | null;
+}
+
+// Extended normalized odds with scores
+export interface NormalizedOddsWithScore extends NormalizedOdds {
+  score?: NormalizedScore;
+}
+
+// NBA Player Props types
+export type NbaPlayerPropMarket = 
+  | 'player_points'
+  | 'player_rebounds' 
+  | 'player_assists'
+  | 'player_threes'
+  | 'player_points_rebounds_assists'
+  | 'player_points_rebounds'
+  | 'player_points_assists'
+  | 'player_rebounds_assists';
+
+export interface NbaPlayerPropOutcome {
+  name: 'Over' | 'Under';
+  description: string; // Player name
+  price: number;
+  point: number; // The line (e.g., 25.5 points)
+}
+
+export interface NbaPlayerPropMarketData {
+  key: NbaPlayerPropMarket;
+  last_update: string;
+  outcomes: NbaPlayerPropOutcome[];
+}
+
+export interface NormalizedNbaPlayerProp {
+  playerName: string;
+  team: string;
+  market: NbaPlayerPropMarket;
+  line: number;
+  overOdds: {
+    bookmaker: string;
+    bookmakerTitle: string;
+    price: number;
+    americanOdds: number;
+    impliedProbability: number;
+  }[];
+  underOdds: {
+    bookmaker: string;
+    bookmakerTitle: string;
+    price: number;
+    americanOdds: number;
+    impliedProbability: number;
+  }[];
+  bestOver: {
+    bookmaker: string;
+    bookmakerTitle: string;
+    price: number;
+    americanOdds: number;
+    impliedProbability: number;
+  } | null;
+  bestUnder: {
+    bookmaker: string;
+    bookmakerTitle: string;
+    price: number;
+    americanOdds: number;
+    impliedProbability: number;
+  } | null;
+  consensusLine: number;
+}

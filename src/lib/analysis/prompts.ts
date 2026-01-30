@@ -5,7 +5,7 @@
  * from Claude for sports betting analysis.
  */
 
-import type { GameAnalysisRequest, GoalScorerAnalysisRequest } from '@/types/prediction';
+import type { GameAnalysisRequest, GoalScorerAnalysisRequest, NbaPlayerPropsAnalysisRequest } from '@/types/prediction';
 
 /**
  * System prompt that sets up Claude as a sports betting analyst
@@ -353,64 +353,160 @@ IMPORTANT RULES:
 }
 
 /**
- * Build prompt for player props analysis (NBA)
+ * System prompt for NBA player props analysis
  */
-export function buildPlayerPropsPrompt(
-  player: string,
-  team: string,
-  opponent: string,
-  seasonAverages: {
-    points: number;
-    rebounds: number;
-    assists: number;
-    minutes: number;
-  },
-  last5Games: {
-    points: number;
-    rebounds: number;
-    assists: number;
-  }[],
-  props: {
-    type: string;
-    line: number;
-    overOdds: number;
-    underOdds: number;
-  }[]
-): string {
-  const last5Avg = {
-    points: last5Games.reduce((a, b) => a + b.points, 0) / 5,
-    rebounds: last5Games.reduce((a, b) => a + b.rebounds, 0) / 5,
-    assists: last5Games.reduce((a, b) => a + b.assists, 0) / 5,
-  };
+export const NBA_PROPS_SYSTEM_PROMPT = `You are an expert NBA betting analyst specializing in player props (points, rebounds, assists).
 
-  return `Analyze player props for ${player} (${team}) vs ${opponent}:
+Your role is to analyze player prop betting markets and identify value opportunities based on the odds data provided.
 
-## Season Averages
-- Points: ${seasonAverages.points.toFixed(1)}
-- Rebounds: ${seasonAverages.rebounds.toFixed(1)}
-- Assists: ${seasonAverages.assists.toFixed(1)}
-- Minutes: ${seasonAverages.minutes.toFixed(1)}
+CRITICAL RULES:
+1. You must ONLY analyze and recommend players that appear in the provided odds data
+2. Do NOT make up or hallucinate player names - only use names from the input data
+3. Base your analysis primarily on the odds and implied probabilities provided
+4. Focus on identifying value - where the line or odds seem mispriced
+5. Your "reasoning" should focus on the odds value and line analysis
+6. Be honest that you are analyzing odds patterns, not real-time player stats
 
-## Last 5 Games Average
-- Points: ${last5Avg.points.toFixed(1)}
-- Rebounds: ${last5Avg.rebounds.toFixed(1)}
-- Assists: ${last5Avg.assists.toFixed(1)}
+For reasoning, focus on:
+- Line value - does the line seem high or low based on the odds?
+- Odds discrepancies between Over and Under (juiced lines tell a story)
+- Comparing similar players' lines
+- General NBA knowledge (role players vs stars, pace of play implications)
 
-## Available Props
-${props.map(p => `- ${p.type}: ${p.line} (Over ${formatOddsDisplay(p.overOdds)} / Under ${formatOddsDisplay(p.underOdds)})`).join('\n')}
+IMPORTANT: Always respond with valid JSON matching the exact structure requested.`;
 
-Analyze each prop and respond:
+/**
+ * Build prompt for NBA player props analysis
+ */
+export function buildNbaPlayerPropsAnalysisPrompt(request: NbaPlayerPropsAnalysisRequest): string {
+  const { homeTeam, awayTeam, commenceTime, playerProps } = request;
+
+  const formatOdds = (american: number) => 
+    american > 0 ? `+${american}` : `${american}`;
+
+  return `Analyze player prop betting markets for this NBA game:
+
+## Game Information
+- **Matchup**: ${awayTeam} @ ${homeTeam}
+- **Start Time**: ${new Date(commenceTime).toLocaleString()}
+
+## Points Props
+Players with points over/under lines:
+
+${playerProps.points.slice(0, 15).map((p, i) => 
+  `${i + 1}. ${p.playerName} - Line: ${p.line} | Over ${formatOdds(p.overOdds)} (${(p.overImpliedProb * 100).toFixed(1)}%) | Under ${formatOdds(p.underOdds)} (${(p.underImpliedProb * 100).toFixed(1)}%)`
+).join('\n')}
+
+## Rebounds Props
+Players with rebounds over/under lines:
+
+${playerProps.rebounds.slice(0, 15).map((p, i) => 
+  `${i + 1}. ${p.playerName} - Line: ${p.line} | Over ${formatOdds(p.overOdds)} (${(p.overImpliedProb * 100).toFixed(1)}%) | Under ${formatOdds(p.underOdds)} (${(p.underImpliedProb * 100).toFixed(1)}%)`
+).join('\n')}
+
+## Assists Props
+Players with assists over/under lines:
+
+${playerProps.assists.slice(0, 15).map((p, i) => 
+  `${i + 1}. ${p.playerName} - Line: ${p.line} | Over ${formatOdds(p.overOdds)} (${(p.overImpliedProb * 100).toFixed(1)}%) | Under ${formatOdds(p.underOdds)} (${(p.underImpliedProb * 100).toFixed(1)}%)`
+).join('\n')}
+
+## Analysis Request
+
+Analyze these player prop markets and identify the best betting opportunities.
+
+CRITICAL: You must ONLY select players from the lists above. Do NOT invent players.
+
+Consider:
+1. Lines that seem off compared to similar players
+2. Juiced odds indicating sharp action (heavy Over or Under juice)
+3. Value opportunities where the implied probabilities seem mispriced
+4. General NBA context (home/away, pace expectations)
+
+Respond with a JSON object matching this structure:
 
 {
-  "player": "${player}",
-  "props": [
+  "pointsPicks": [
     {
-      "type": "points",
+      "rank": 1,
+      "playerName": "Player Name",
+      "team": "Team Name",
+      "propType": "points",
       "line": 24.5,
       "pick": "OVER",
+      "bestOdds": -110,
+      "impliedProbability": 0.524,
+      "estimatedProbability": 0.58,
+      "edge": 0.056,
       "confidence": 62,
-      "reasoning": "Why over/under"
+      "reasoning": "Why this is a good pick based on the odds",
+      "valueBet": true
     }
+  ],
+  "reboundsPicks": [
+    {
+      "rank": 1,
+      "playerName": "Player Name",
+      "team": "Team Name",
+      "propType": "rebounds",
+      "line": 10.5,
+      "pick": "UNDER",
+      "bestOdds": -105,
+      "impliedProbability": 0.512,
+      "estimatedProbability": 0.57,
+      "edge": 0.058,
+      "confidence": 60,
+      "reasoning": "Why this is a good pick based on the odds",
+      "valueBet": true
+    }
+  ],
+  "assistsPicks": [
+    {
+      "rank": 1,
+      "playerName": "Player Name",
+      "team": "Team Name",
+      "propType": "assists",
+      "line": 8.5,
+      "pick": "OVER",
+      "bestOdds": -108,
+      "impliedProbability": 0.519,
+      "estimatedProbability": 0.56,
+      "edge": 0.041,
+      "confidence": 58,
+      "reasoning": "Why this is a good pick based on the odds",
+      "valueBet": false
+    }
+  ],
+  "topValueBets": [
+    {
+      "rank": 1,
+      "playerName": "Player Name",
+      "team": "Team Name",
+      "propType": "points",
+      "line": 24.5,
+      "pick": "OVER",
+      "bestOdds": -110,
+      "impliedProbability": 0.524,
+      "estimatedProbability": 0.60,
+      "edge": 0.076,
+      "confidence": 65,
+      "reasoning": "Why this is the best value bet overall",
+      "valueBet": true
+    }
+  ],
+  "analysisNotes": [
+    "Key insight about this game's player prop outlook",
+    "Notable trend or factor to consider"
   ]
-}`;
+}
+
+IMPORTANT RULES:
+- ONLY use player names that appear in the data above
+- Provide exactly 3 picks for pointsPicks (ranked best to worst)
+- Provide exactly 3 picks for reboundsPicks (ranked best to worst)  
+- Provide exactly 3 picks for assistsPicks (ranked best to worst)
+- topValueBets should contain 3 picks with the highest edge across all markets
+- Only mark valueBet: true if edge > 4%
+- Confidence scores should be 50-100
+- Be conservative with confidence`;
 }

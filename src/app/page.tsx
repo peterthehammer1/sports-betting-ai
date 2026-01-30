@@ -5,8 +5,9 @@ import { GameCard } from '@/components/games/GameCard';
 import { PredictionCard } from '@/components/predictions/PredictionCard';
 import { QuickPicks } from '@/components/predictions/QuickPicks';
 import { PlayerPropsCard } from '@/components/predictions/PlayerPropsCard';
-import type { NormalizedOdds, NormalizedPlayerProp } from '@/types/odds';
-import type { GamePrediction, GoalScorerAnalysis } from '@/types/prediction';
+import { NbaPlayerPropsCard } from '@/components/predictions/NbaPlayerPropsCard';
+import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
+import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
 
 interface OddsResponse {
   games: NormalizedOdds[];
@@ -54,13 +55,24 @@ interface PlayerPropsData {
   };
 }
 
+interface NbaPlayerPropsData {
+  analysis: NbaPlayerPropsAnalysis;
+  playerProps: {
+    points: NormalizedNbaPlayerProp[];
+    rebounds: NormalizedNbaPlayerProp[];
+    assists: NormalizedNbaPlayerProp[];
+  };
+}
+
 export default function Dashboard() {
   const [sport, setSport] = useState<Sport>('NHL');
   const [view, setView] = useState<View>('games');
   const [games, setGames] = useState<NormalizedOdds[]>([]);
+  const [scores, setScores] = useState<Record<string, NormalizedScore>>({});
   const [quickPicks, setQuickPicks] = useState<QuickPick[]>([]);
   const [selectedPrediction, setSelectedPrediction] = useState<GamePrediction | null>(null);
   const [selectedPropsAnalysis, setSelectedPropsAnalysis] = useState<PlayerPropsData | null>(null);
+  const [selectedNbaPropsAnalysis, setSelectedNbaPropsAnalysis] = useState<NbaPlayerPropsData | null>(null);
   
   const [loadingOdds, setLoadingOdds] = useState(true);
   const [loadingPicks, setLoadingPicks] = useState(false);
@@ -70,26 +82,44 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
 
-  // Fetch odds
+  // Fetch odds and scores
   const fetchOdds = async () => {
     setLoadingOdds(true);
     setError(null);
 
     try {
-      const res = await fetch(`/api/odds/${sport.toLowerCase()}`);
+      // Fetch odds
+      const oddsRes = await fetch(`/api/odds/${sport.toLowerCase()}`);
       
-      if (!res.ok) {
-        const data = await res.json();
+      if (!oddsRes.ok) {
+        const data = await oddsRes.json();
         throw new Error(data.error || 'Failed to fetch odds');
       }
 
-      const data: OddsResponse = await res.json();
-      setGames(data.games);
-      setLastFetch(new Date(data.meta.fetchedAt));
+      const oddsData: OddsResponse = await oddsRes.json();
+      setGames(oddsData.games);
+      setLastFetch(new Date(oddsData.meta.fetchedAt));
+
+      // Fetch scores (non-blocking)
+      fetchScores();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoadingOdds(false);
+    }
+  };
+
+  // Fetch live scores
+  const fetchScores = async () => {
+    try {
+      const res = await fetch(`/api/scores?sport=${sport.toLowerCase()}`);
+      if (res.ok) {
+        const data = await res.json();
+        setScores(data.scoresMap || {});
+      }
+    } catch (err) {
+      // Silently fail - scores are supplementary
+      console.error('Failed to fetch scores:', err);
     }
   };
 
@@ -148,7 +178,7 @@ export default function Dashboard() {
     }
   };
 
-  // Fetch player props analysis for a game (NHL only)
+  // Fetch player props analysis for NHL game (Goal Scorers)
   const fetchPlayerPropsAnalysis = async (gameId: string) => {
     setLoadingProps(true);
     setError(null);
@@ -178,11 +208,48 @@ export default function Dashboard() {
     }
   };
 
+  // Fetch NBA player props analysis (Points, Rebounds, Assists)
+  const fetchNbaPlayerPropsAnalysis = async (gameId: string) => {
+    setLoadingProps(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/analyze/nba-props', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId: gameId }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to analyze NBA player props');
+      }
+
+      const data = await res.json();
+      
+      // Also fetch raw props for display
+      const propsRes = await fetch(`/api/odds/nba/props?eventId=${gameId}`);
+      const propsData = propsRes.ok ? await propsRes.json() : null;
+      
+      setSelectedNbaPropsAnalysis({
+        analysis: data.analysis,
+        playerProps: propsData?.playerProps || { points: [], rebounds: [], assists: [] },
+      });
+      setView('props');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'NBA player props analysis failed');
+    } finally {
+      setLoadingProps(false);
+    }
+  };
+
   useEffect(() => {
     fetchOdds();
     setQuickPicks([]); // Clear picks when sport changes
     setSelectedPrediction(null);
     setSelectedPropsAnalysis(null);
+    setSelectedNbaPropsAnalysis(null);
+    setScores({});
     setView('games');
   }, [sport]);
 
@@ -259,6 +326,16 @@ export default function Dashboard() {
                 disabled={!selectedPropsAnalysis}
                 icon="🥅"
                 label="Goal Scorers"
+                accent
+              />
+            )}
+            {sport === 'NBA' && (
+              <NavTab 
+                active={view === 'props'} 
+                onClick={() => setView('props')}
+                disabled={!selectedNbaPropsAnalysis}
+                icon="📊"
+                label="Player Props"
                 accent
               />
             )}
@@ -356,8 +433,9 @@ export default function Dashboard() {
                   <GameCard
                     game={game}
                     sport={sport}
+                    score={scores[game.gameId]}
                     onSelect={handleGameSelect}
-                    onPropsSelect={sport === 'NHL' ? fetchPlayerPropsAnalysis : undefined}
+                    onPropsSelect={sport === 'NHL' ? fetchPlayerPropsAnalysis : fetchNbaPlayerPropsAnalysis}
                   />
                 </div>
               ))}
@@ -388,14 +466,28 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Player Props View (NHL only) */}
-        {view === 'props' && selectedPropsAnalysis && (
+        {/* Player Props View - NHL Goal Scorers */}
+        {view === 'props' && sport === 'NHL' && selectedPropsAnalysis && (
           <div className="animate-slide-up">
             <PlayerPropsCard
               analysis={selectedPropsAnalysis.analysis}
               playerProps={selectedPropsAnalysis.playerProps}
               onClose={() => {
                 setSelectedPropsAnalysis(null);
+                setView('games');
+              }}
+            />
+          </div>
+        )}
+
+        {/* Player Props View - NBA Points/Rebounds/Assists */}
+        {view === 'props' && sport === 'NBA' && selectedNbaPropsAnalysis && (
+          <div className="animate-slide-up">
+            <NbaPlayerPropsCard
+              analysis={selectedNbaPropsAnalysis.analysis}
+              playerProps={selectedNbaPropsAnalysis.playerProps}
+              onClose={() => {
+                setSelectedNbaPropsAnalysis(null);
                 setView('games');
               }}
             />

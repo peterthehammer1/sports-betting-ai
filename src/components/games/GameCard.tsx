@@ -3,16 +3,17 @@
 import Image from 'next/image';
 import { formatAmericanOdds, formatProbability } from '@/lib/utils/odds';
 import { getTeamLogoUrl } from '@/lib/utils/teamLogos';
-import type { NormalizedOdds } from '@/types/odds';
+import type { NormalizedOdds, NormalizedScore } from '@/types/odds';
 
 interface GameCardProps {
   game: NormalizedOdds;
   sport: 'NHL' | 'NBA';
+  score?: NormalizedScore;
   onSelect?: (gameId: string) => void;
   onPropsSelect?: (gameId: string) => void;
 }
 
-export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps) {
+export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCardProps) {
   const gameTime = new Date(game.commenceTime);
   const isToday = gameTime.toDateString() === new Date().toDateString();
   
@@ -61,10 +62,21 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
               {isToday ? 'Today' : gameTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20">
-            <div className="w-1.5 h-1.5 bg-green-400 rounded-full pulse-glow" />
-            <span className="text-[10px] font-semibold text-green-400 uppercase tracking-wider">Live</span>
-          </div>
+          {score?.isLive ? (
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-red-500/10 border border-red-500/20">
+              <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+              <span className="text-[10px] font-semibold text-red-400 uppercase tracking-wider">Live</span>
+            </div>
+          ) : score?.isCompleted ? (
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-gray-500/10 border border-gray-500/20">
+              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Final</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20">
+              <div className="w-1.5 h-1.5 bg-green-400 rounded-full pulse-glow" />
+              <span className="text-[10px] font-semibold text-green-400 uppercase tracking-wider">Odds</span>
+            </div>
+          )}
         </div>
 
         {/* Matchup with Logos */}
@@ -89,6 +101,14 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
                 </span>
               )}
             </div>
+            {/* Live Score */}
+            {score && score.awayScore !== null && (
+              <div className={`text-2xl font-bold stat-number ${
+                score.isLive ? 'text-white' : score.isCompleted ? 'text-gray-400' : ''
+              }`}>
+                {score.awayScore}
+              </div>
+            )}
           </div>
 
           {/* VS Divider */}
@@ -121,6 +141,14 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
                 </span>
               )}
             </div>
+            {/* Live Score */}
+            {score && score.homeScore !== null && (
+              <div className={`text-2xl font-bold stat-number ${
+                score.isLive ? 'text-white' : score.isCompleted ? 'text-gray-400' : ''
+              }`}>
+                {score.homeScore}
+              </div>
+            )}
           </div>
         </div>
 
@@ -178,15 +206,20 @@ export function GameCard({ game, sport, onSelect, onPropsSelect }: GameCardProps
             </span>
           </button>
           
-          {sport === 'NHL' && onPropsSelect && (
+          {onPropsSelect && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onPropsSelect(game.gameId);
               }}
-              className="py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              className={`py-3 px-4 rounded-xl text-white text-sm font-semibold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 ${
+                sport === 'NHL' 
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 shadow-amber-500/25 hover:shadow-amber-500/40'
+                  : 'bg-gradient-to-r from-orange-500 to-red-500 shadow-orange-500/25 hover:shadow-orange-500/40'
+              }`}
+              title={sport === 'NHL' ? 'Goal Scorer Props' : 'Player Props'}
             >
-              🥅
+              {sport === 'NHL' ? '🥅' : '📊'}
             </button>
           )}
         </div>

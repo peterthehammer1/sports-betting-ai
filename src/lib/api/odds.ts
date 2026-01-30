@@ -15,6 +15,10 @@ import type {
   PlayerPropsResponse,
   GameWithPlayerProps,
   NormalizedPlayerProp,
+  GameScore,
+  NormalizedScore,
+  NbaPlayerPropMarket,
+  NormalizedNbaPlayerProp,
 } from '@/types/odds';
 import {
   decimalToAmerican,
@@ -245,6 +249,155 @@ export function createOddsApiClient(config: OddsApiConfig) {
   }
 
   /**
+   * Get live scores for a sport
+   * @param sport - The sport key
+   * @param daysFrom - Optional: include completed games from past X days (1-3)
+   */
+  async function getScores(
+    sport: SportKey,
+    daysFrom?: 1 | 2 | 3
+  ): Promise<GameScore[]> {
+    const params = new URLSearchParams({ apiKey });
+    
+    if (daysFrom) {
+      params.append('daysFrom', daysFrom.toString());
+    }
+
+    const url = `${BASE_URL}/sports/${sport}/scores?${params}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to fetch scores');
+    }
+
+    updateQuota(response.headers);
+    return response.json();
+  }
+
+  /**
+   * Normalize score data
+   */
+  function normalizeScore(score: GameScore): NormalizedScore {
+    const now = new Date();
+    const commenceTime = new Date(score.commence_time);
+    const isLive = !score.completed && commenceTime <= now;
+    
+    let homeScore: number | null = null;
+    let awayScore: number | null = null;
+
+    if (score.scores) {
+      for (const teamScore of score.scores) {
+        if (teamScore.name === score.home_team) {
+          homeScore = parseInt(teamScore.score, 10);
+        } else if (teamScore.name === score.away_team) {
+          awayScore = parseInt(teamScore.score, 10);
+        }
+      }
+    }
+
+    return {
+      gameId: score.id,
+      homeTeam: score.home_team,
+      awayTeam: score.away_team,
+      homeScore,
+      awayScore,
+      isLive,
+      isCompleted: score.completed,
+      commenceTime,
+      lastUpdate: score.last_update ? new Date(score.last_update) : null,
+    };
+  }
+
+  /**
+   * Get NBA player props (points, rebounds, assists)
+   */
+  async function getNbaPlayerProps(
+    eventId: string,
+    markets: NbaPlayerPropMarket[] = ['player_points', 'player_rebounds', 'player_assists']
+  ): Promise<PlayerPropsResponse | null> {
+    const params = new URLSearchParams({
+      apiKey,
+      regions: defaultRegion,
+      markets: markets.join(','),
+      oddsFormat: 'decimal',
+    });
+
+    const url = `${BASE_URL}/sports/basketball_nba/events/${eventId}/odds?${params}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to fetch NBA player props');
+    }
+
+    updateQuota(response.headers);
+    return response.json();
+  }
+
+  /**
+   * Normalize NBA player props
+   */
+  function normalizeNbaPlayerProps(
+    game: PlayerPropsResponse,
+    marketKey: NbaPlayerPropMarket
+  ): NormalizedNbaPlayerProp[] {
+    const playerPropsMap: Map<string, NormalizedNbaPlayerProp> = new Map();
+
+    for (const bookmaker of game.bookmakers) {
+      for (const market of bookmaker.markets) {
+        if (market.key !== marketKey) continue;
+
+        for (const outcome of market.outcomes) {
+          const playerName = outcome.description || outcome.name;
+          const line = outcome.point || 0;
+          const key = `${playerName}-${line}`;
+
+          const oddsEntry = {
+            bookmaker: bookmaker.key,
+            bookmakerTitle: bookmaker.title,
+            price: outcome.price,
+            americanOdds: decimalToAmerican(outcome.price),
+            impliedProbability: decimalToImpliedProbability(outcome.price),
+          };
+
+          if (!playerPropsMap.has(key)) {
+            playerPropsMap.set(key, {
+              playerName,
+              team: 'Unknown',
+              market: marketKey,
+              line,
+              overOdds: [],
+              underOdds: [],
+              bestOver: null,
+              bestUnder: null,
+              consensusLine: line,
+            });
+          }
+
+          const prop = playerPropsMap.get(key)!;
+          
+          if (outcome.name === 'Over') {
+            prop.overOdds.push(oddsEntry);
+            if (!prop.bestOver || oddsEntry.price > prop.bestOver.price) {
+              prop.bestOver = oddsEntry;
+            }
+          } else {
+            prop.underOdds.push(oddsEntry);
+            if (!prop.bestUnder || oddsEntry.price > prop.bestUnder.price) {
+              prop.bestUnder = oddsEntry;
+            }
+          }
+        }
+      }
+    }
+
+    // Sort by line (highest first for more prominent players)
+    return Array.from(playerPropsMap.values())
+      .sort((a, b) => b.line - a.line);
+  }
+
+  /**
    * Get current API quota
    */
   function getQuota(): ApiQuota {
@@ -378,6 +531,10 @@ export function createOddsApiClient(config: OddsApiConfig) {
     getGameOdds,
     getNhlPlayerProps,
     normalizePlayerProps,
+    getScores,
+    normalizeScore,
+    getNbaPlayerProps,
+    normalizeNbaPlayerProps,
     getQuota,
     normalizeGameOdds,
   };

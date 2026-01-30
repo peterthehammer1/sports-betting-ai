@@ -10,14 +10,19 @@ import type {
   AnalysisMeta,
   GoalScorerAnalysis,
   GoalScorerPick,
+  NbaPlayerPropsAnalysis,
+  NbaPlayerPropPick,
+  NbaPlayerPropsAnalysisRequest,
 } from '@/types/prediction';
-import type { NormalizedOdds, GameWithPlayerProps } from '@/types/odds';
+import type { NormalizedOdds, GameWithPlayerProps, NormalizedNbaPlayerProp } from '@/types/odds';
 import { 
   ANALYST_SYSTEM_PROMPT, 
   GOAL_SCORER_SYSTEM_PROMPT,
+  NBA_PROPS_SYSTEM_PROMPT,
   buildGameAnalysisPrompt,
   buildBatchAnalysisPrompt,
   buildGoalScorerAnalysisPrompt,
+  buildNbaPlayerPropsAnalysisPrompt,
 } from './prompts';
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
@@ -345,10 +350,79 @@ export function createAnalysisClient(config: ClaudeApiConfig) {
     return { analysis, meta };
   }
 
+  /**
+   * Analyze NBA player props (points, rebounds, assists)
+   */
+  async function analyzeNbaPlayerProps(
+    gameId: string,
+    homeTeam: string,
+    awayTeam: string,
+    commenceTime: string,
+    playerProps: {
+      points: NormalizedNbaPlayerProp[];
+      rebounds: NormalizedNbaPlayerProp[];
+      assists: NormalizedNbaPlayerProp[];
+    }
+  ): Promise<{ analysis: NbaPlayerPropsAnalysis; meta: AnalysisMeta }> {
+    const startTime = Date.now();
+
+    // Prepare data for prompt - convert to simpler format
+    const prepareProps = (props: NormalizedNbaPlayerProp[]) =>
+      props.slice(0, 15).map((p) => ({
+        playerName: p.playerName,
+        line: p.line,
+        overOdds: p.bestOver?.americanOdds || -110,
+        underOdds: p.bestUnder?.americanOdds || -110,
+        overImpliedProb: p.bestOver?.impliedProbability || 0.5,
+        underImpliedProb: p.bestUnder?.impliedProbability || 0.5,
+      }));
+
+    const request: NbaPlayerPropsAnalysisRequest = {
+      gameId,
+      homeTeam,
+      awayTeam,
+      commenceTime,
+      playerProps: {
+        points: prepareProps(playerProps.points),
+        rebounds: prepareProps(playerProps.rebounds),
+        assists: prepareProps(playerProps.assists),
+      },
+    };
+
+    const prompt = buildNbaPlayerPropsAnalysisPrompt(request);
+    const { text, usage } = await callClaude(NBA_PROPS_SYSTEM_PROMPT, prompt);
+
+    const analysisResult = parseJsonResponse<{
+      pointsPicks: NbaPlayerPropPick[];
+      reboundsPicks: NbaPlayerPropPick[];
+      assistsPicks: NbaPlayerPropPick[];
+      topValueBets: NbaPlayerPropPick[];
+      analysisNotes: string[];
+    }>(text);
+
+    const analysis: NbaPlayerPropsAnalysis = {
+      gameId,
+      homeTeam,
+      awayTeam,
+      analyzedAt: new Date().toISOString(),
+      ...analysisResult,
+    };
+
+    const meta: AnalysisMeta = {
+      model,
+      tokensUsed: usage.input + usage.output,
+      analysisTime: Date.now() - startTime,
+      dataQuality: 'ODDS_ONLY',
+    };
+
+    return { analysis, meta };
+  }
+
   return {
     analyzeGame,
     analyzeGames,
     analyzeGoalScorers,
+    analyzeNbaPlayerProps,
     prepareAnalysisRequest,
   };
 }

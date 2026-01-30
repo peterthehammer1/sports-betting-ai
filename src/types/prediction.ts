@@ -191,3 +191,65 @@ export interface AnalysisMeta {
   analysisTime: number; // ms
   dataQuality: 'FULL' | 'ODDS_ONLY' | 'LIMITED';
 }
+
+// NBA Player Props Analysis
+export interface NbaPlayerPropPick {
+  rank: number;
+  playerName: string;
+  team: string;
+  propType: 'points' | 'rebounds' | 'assists';
+  line: number;
+  pick: 'OVER' | 'UNDER';
+  bestOdds: number; // American odds
+  impliedProbability: number;
+  estimatedProbability: number;
+  edge: number;
+  confidence: number;
+  reasoning: string;
+  valueBet: boolean;
+}
+
+export interface NbaPlayerPropsAnalysis {
+  gameId: string;
+  homeTeam: string;
+  awayTeam: string;
+  analyzedAt: string;
+  pointsPicks: NbaPlayerPropPick[];
+  reboundsPicks: NbaPlayerPropPick[];
+  assistsPicks: NbaPlayerPropPick[];
+  topValueBets: NbaPlayerPropPick[];
+  analysisNotes: string[];
+}
+
+export interface NbaPlayerPropsAnalysisRequest {
+  gameId: string;
+  homeTeam: string;
+  awayTeam: string;
+  commenceTime: string;
+  playerProps: {
+    points: Array<{
+      playerName: string;
+      line: number;
+      overOdds: number;
+      underOdds: number;
+      overImpliedProb: number;
+      underImpliedProb: number;
+    }>;
+    rebounds: Array<{
+      playerName: string;
+      line: number;
+      overOdds: number;
+      underOdds: number;
+      overImpliedProb: number;
+      underImpliedProb: number;
+    }>;
+    assists: Array<{
+      playerName: string;
+      line: number;
+      overOdds: number;
+      underOdds: number;
+      overImpliedProb: number;
+      underImpliedProb: number;
+    }>;
+  };
+}
