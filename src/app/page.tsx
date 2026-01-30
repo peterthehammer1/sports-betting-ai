@@ -289,12 +289,12 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-[#0c1017]">
       {/* FanDuel Promo Banner */}
       <FanDuelBanner />
 
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700/50">
+      <header className="sticky top-0 z-40 bg-[#0c1017]/95 backdrop-blur-sm border-b border-slate-800/60">
         <div className="max-w-6xl mx-auto px-4 py-3 sm:px-6 sm:py-4">
           {/* Top Row - Logo, Title and Sport Toggle */}
           <div className="flex items-center justify-between gap-3">
@@ -305,21 +305,21 @@ export default function Dashboard() {
                 alt="Pete" 
                 className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0"
               />
-              <h1 className="text-base sm:text-lg font-semibold text-white truncate">
+              <h1 className="text-base sm:text-lg font-semibold text-slate-200 truncate">
                 Pete&apos;s AI Sports Picks
               </h1>
             </div>
             
             {/* Sport Toggle */}
-            <div className="flex bg-slate-800 rounded-lg p-0.5 flex-shrink-0">
+            <div className="flex bg-[#141a24] rounded-lg p-0.5 flex-shrink-0">
               {(['NHL', 'NBA'] as Sport[]).map((s) => (
                 <button
                   key={s}
                   onClick={() => setSport(s)}
                   className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
                     sport === s
-                      ? 'bg-blue-600 text-white'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-[#2a3444] text-slate-200'
+                      : 'text-slate-500 hover:text-slate-300'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
@@ -376,9 +376,9 @@ export default function Dashboard() {
           </div>
 
           {/* Status bar */}
-          <div className="mt-2 flex items-center gap-3 text-xs text-slate-500">
+          <div className="mt-2 flex items-center gap-3 text-xs text-slate-600">
             <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full pulse-glow" />
+              <div className="w-1.5 h-1.5 bg-[#4a8a6e] rounded-full pulse-glow" />
               <span>Live</span>
             </div>
             {lastFetch && (
@@ -524,8 +524,8 @@ export default function Dashboard() {
                   onClick={() => setSelectedTool(tool.id as typeof selectedTool)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                     selectedTool === tool.id
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-[#2a3444] text-slate-200'
+                      : 'bg-[#161d29] text-slate-500 hover:text-slate-300'
                   }`}
                 >
                   {tool.label}
@@ -620,8 +620,8 @@ function NavTab({
       disabled={disabled}
       className={`px-3 sm:px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed touch-manipulation border-b-2 -mb-[1px] ${
         active
-          ? 'text-blue-400 border-blue-400'
-          : 'text-slate-400 border-transparent hover:text-slate-300'
+          ? 'text-slate-200 border-slate-400'
+          : 'text-slate-500 border-transparent hover:text-slate-400'
       }`}
     >
       {label}

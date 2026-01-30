@@ -65,7 +65,7 @@ export function NbaPlayerPropsCard({ analysis, playerProps, onClose }: NbaPlayer
                   <span className="px-2 py-0.5 text-[10px] font-semibold text-slate-400 bg-slate-700/50 rounded uppercase tracking-wider">
                     NBA
                   </span>
-                  <span className="px-2 py-0.5 text-[10px] font-semibold text-blue-400 bg-blue-500/10 rounded uppercase tracking-wider">
+                  <span className="px-2 py-0.5 text-[10px] font-semibold text-slate-400 bg-slate-600/20 rounded uppercase tracking-wider">
                     Player Props
                   </span>
                 </div>
@@ -94,7 +94,7 @@ export function NbaPlayerPropsCard({ analysis, playerProps, onClose }: NbaPlayer
         {analysis.topValueBets && analysis.topValueBets.length > 0 && (
           <div className="bg-slate-900/50 rounded-xl border border-slate-700/30 p-4">
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-amber-400">★</span>
+              <span className="text-[#a38f5c]">★</span>
               <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Top Value Picks</h3>
             </div>
             
@@ -177,7 +177,7 @@ export function NbaPlayerPropsCard({ analysis, playerProps, onClose }: NbaPlayer
             <ul className="space-y-2">
               {analysis.analysisNotes.map((note, idx) => (
                 <li key={idx} className="flex items-start gap-3 text-sm text-slate-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-2" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-500 flex-shrink-0 mt-2" />
                   <span>{note}</span>
                 </li>
               ))}
@@ -211,10 +211,10 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function ConfidenceBadge({ confidence, size = 'md' }: { confidence: number; size?: 'sm' | 'md' }) {
   const getColor = (conf: number) => {
-    if (conf >= 70) return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20';
-    if (conf >= 60) return 'bg-blue-500/15 text-blue-400 border-blue-500/20';
-    if (conf >= 55) return 'bg-amber-500/15 text-amber-400 border-amber-500/20';
-    return 'bg-slate-600/20 text-slate-400 border-slate-600/20';
+    if (conf >= 70) return 'bg-[#4a8a6e]/15 text-[#5a9a7e] border-[#4a8a6e]/20';
+    if (conf >= 60) return 'bg-[#4a6fa5]/15 text-[#6a8fc5] border-[#4a6fa5]/20';
+    if (conf >= 55) return 'bg-[#a38f5c]/15 text-[#b39f6c] border-[#a38f5c]/20';
+    return 'bg-slate-700/20 text-slate-500 border-slate-700/20';
   };
 
   const sizeClasses = size === 'sm' ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-xs';
@@ -274,7 +274,7 @@ function TopValueCard({ pick, homeTeam, awayTeam }: { pick: NbaPlayerPropPick; h
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <p className="font-medium text-white truncate">{pick.playerName}</p>
-          <span className="px-1.5 py-0.5 text-[9px] font-semibold text-blue-400 bg-blue-500/10 rounded uppercase">
+          <span className="px-1.5 py-0.5 text-[9px] font-semibold text-slate-400 bg-slate-600/20 rounded uppercase">
             {propLabels[pick.propType] || pick.propType}
           </span>
         </div>
@@ -284,10 +284,10 @@ function TopValueCard({ pick, homeTeam, awayTeam }: { pick: NbaPlayerPropPick; h
       </div>
 
       <div className="text-right flex-shrink-0">
-        <p className={`text-lg font-bold font-mono ${pick.bestOdds > 0 ? 'text-emerald-400' : 'text-white'}`}>
+        <p className={`text-lg font-bold font-mono ${pick.bestOdds > 0 ? 'text-[#5a9a7e]' : 'text-slate-200'}`}>
           {formatOdds(pick.bestOdds)}
         </p>
-        <p className="text-[10px] text-emerald-400 font-medium">
+        <p className="text-[10px] text-[#5a9a7e] font-medium">
           +{(pick.edge * 100).toFixed(1)}% edge
         </p>
       </div>
@@ -300,8 +300,8 @@ function PlayerPropPickCard({ pick, homeTeam, awayTeam }: { pick: NbaPlayerPropP
   const playerTeam = homeTeam; // Would need actual team data
   
   const pickColor = pick.pick === 'OVER' 
-    ? 'text-emerald-400 bg-emerald-500/10' 
-    : 'text-rose-400 bg-rose-500/10';
+    ? 'text-[#5a9a7e] bg-[#4a8a6e]/15' 
+    : 'text-[#9e7a7a] bg-[#9e5a5a]/15';
 
   return (
     <div className={`p-3 rounded-lg border transition-colors ${
@@ -323,11 +323,11 @@ function PlayerPropPickCard({ pick, homeTeam, awayTeam }: { pick: NbaPlayerPropP
               </div>
             </div>
             <div className="text-right flex-shrink-0">
-              <p className={`font-mono font-bold ${pick.bestOdds > 0 ? 'text-emerald-400' : 'text-white'}`}>
+              <p className={`font-mono font-bold ${pick.bestOdds > 0 ? 'text-[#5a9a7e]' : 'text-slate-200'}`}>
                 {formatOdds(pick.bestOdds)}
               </p>
               {pick.valueBet && (
-                <p className="text-[10px] text-emerald-400 font-medium">
+                <p className="text-[10px] text-[#5a9a7e] font-medium">
                   +{(pick.edge * 100).toFixed(1)}% edge
                 </p>
               )}
@@ -386,7 +386,7 @@ function OddsTable({ props, propType }: { props: NormalizedNbaPlayerProp[]; prop
                 </td>
                 <td className="px-3 py-2.5 text-sm font-mono text-center">
                   {prop.bestOver ? (
-                    <span className="text-emerald-400">
+                    <span className="text-[#5a9a7e]">
                       {formatOdds(prop.bestOver.americanOdds)}
                     </span>
                   ) : (
@@ -395,7 +395,7 @@ function OddsTable({ props, propType }: { props: NormalizedNbaPlayerProp[]; prop
                 </td>
                 <td className="px-3 py-2.5 text-sm font-mono text-center">
                   {prop.bestUnder ? (
-                    <span className="text-rose-400">
+                    <span className="text-[#9e7a7a]">
                       {formatOdds(prop.bestUnder.americanOdds)}
                     </span>
                   ) : (

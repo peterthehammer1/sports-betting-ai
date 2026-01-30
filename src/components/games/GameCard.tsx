@@ -41,7 +41,7 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
 
   return (
     <div 
-      className="bg-slate-800 border border-slate-700/50 rounded-lg overflow-hidden cursor-pointer transition-all hover:border-slate-600 active:scale-[0.99] touch-manipulation"
+      className="bg-[#161d29] border border-slate-700/40 rounded-lg overflow-hidden cursor-pointer transition-all hover:border-slate-600/60 active:scale-[0.99] touch-manipulation"
       onClick={() => onSelect?.(game.gameId)}
     >
       {/* Card Content */}
@@ -144,7 +144,7 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
               e.stopPropagation();
               onSelect?.(game.gameId);
             }}
-            className="flex-1 py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors"
+            className="flex-1 py-2.5 px-4 rounded-lg bg-[#2a3444] hover:bg-[#3a4454] text-slate-200 text-sm font-medium transition-colors"
           >
             AI Analysis
           </button>
@@ -155,7 +155,7 @@ export function GameCard({ game, sport, score, onSelect, onPropsSelect }: GameCa
                 e.stopPropagation();
                 onPropsSelect(game.gameId);
               }}
-              className="py-2.5 px-4 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium transition-colors"
+              className="py-2.5 px-4 rounded-lg bg-[#1e2836] hover:bg-[#2a3444] text-slate-300 text-sm font-medium transition-colors"
               title={sport === 'NHL' ? 'Goal Scorer Props' : 'Player Props'}
             >
               {sport === 'NHL' ? 'Goals' : 'Props'}

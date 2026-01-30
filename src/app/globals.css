@@ -1,20 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  /* Professional dark theme - cleaner, more conservative */
-  --background: #0f172a;
-  --background-secondary: #1e293b;
-  --background-card: #1e293b;
-  --background-elevated: #334155;
-  --foreground: #f1f5f9;
-  --foreground-muted: #94a3b8;
-  --accent-primary: #3b82f6;
-  --accent-primary-dim: #2563eb;
-  --accent-secondary: #6366f1;
-  --accent-gold: #f59e0b;
-  --accent-green: #10b981;
-  --accent-red: #ef4444;
-  --border-color: rgba(148, 163, 184, 0.1);
+  /* Professional dark theme - deep, sophisticated colors */
+  --background: #0c1017;
+  --background-secondary: #141a24;
+  --background-card: #161d29;
+  --background-elevated: #1e2836;
+  --foreground: #e2e8f0;
+  --foreground-muted: #7a8a9e;
+  /* Muted accent colors - sophisticated, not bright */
+  --accent-primary: #4a6fa5;
+  --accent-primary-dim: #3d5a87;
+  --accent-secondary: #5a6b8a;
+  --accent-gold: #a38f5c;
+  --accent-green: #4a8a6e;
+  --accent-red: #9e5a5a;
+  --border-color: rgba(120, 140, 160, 0.12);
   /* Safe area insets for notched phones */
   --safe-area-inset-top: env(safe-area-inset-top, 0px);
   --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
@@ -209,22 +210,22 @@ button,
 
 /* Value indicator badges */
 .value-high {
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  color: #10b981;
+  background: rgba(74, 138, 110, 0.15);
+  border: 1px solid rgba(74, 138, 110, 0.25);
+  color: #5a9a7e;
 }
 
 .value-medium {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  color: #3b82f6;
+  background: rgba(74, 111, 165, 0.15);
+  border: 1px solid rgba(74, 111, 165, 0.25);
+  color: #6a8fc5;
 }
 
 /* Odds display styling */
 .odds-positive {
-  color: #10b981;
+  color: #5a9a7e;
 }
 
 .odds-negative {
-  color: #f1f5f9;
+  color: #c5cdd8;
 }

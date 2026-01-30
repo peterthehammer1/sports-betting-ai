@@ -255,19 +255,19 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
 
   if (loading) {
     return (
-      <div className="bg-slate-800 border border-slate-700/50 rounded-lg p-8 text-center">
-        <div className="w-8 h-8 mx-auto border-2 border-slate-600 border-t-blue-500 rounded-full animate-spin" />
-        <p className="mt-4 text-slate-400">Loading Super Bowl data...</p>
+      <div className="bg-[#161d29] border border-slate-700/40 rounded-lg p-8 text-center">
+        <div className="w-8 h-8 mx-auto border-2 border-slate-700 border-t-slate-400 rounded-full animate-spin" />
+        <p className="mt-4 text-slate-500">Loading Super Bowl data...</p>
       </div>
     );
   }
 
   if (!game) {
     return (
-      <div className="bg-slate-800 border border-slate-700/50 rounded-lg p-8 text-center">
+      <div className="bg-[#161d29] border border-slate-700/40 rounded-lg p-8 text-center">
         <div className="text-6xl mb-4">🏈</div>
-        <p className="text-white font-semibold text-lg">Super Bowl LX</p>
-        <p className="text-slate-400 text-sm mt-2">
+        <p className="text-slate-200 font-semibold text-lg">Super Bowl LX</p>
+        <p className="text-slate-500 text-sm mt-2">
           No Super Bowl odds available yet. Check back closer to game day!
         </p>
       </div>
@@ -279,7 +279,7 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
   return (
     <div className="space-y-4">
       {/* Super Bowl Header */}
-      <div className="relative bg-gradient-to-br from-slate-800 via-slate-800 to-slate-900 border border-slate-700/50 rounded-xl overflow-hidden">
+      <div className="relative bg-[#161d29] border border-slate-700/40 rounded-xl overflow-hidden">
         {/* NFL Logo watermark */}
         <div className="absolute top-4 right-4 opacity-10">
           <Image
@@ -292,8 +292,8 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
         </div>
         
         {/* Super Bowl Badge */}
-        <div className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 px-4 py-2 text-center">
-          <span className="text-black font-bold text-sm tracking-wider">SUPER BOWL LX</span>
+        <div className="bg-gradient-to-r from-[#7a6a4a] via-[#a38f5c] to-[#7a6a4a] px-4 py-2 text-center">
+          <span className="text-slate-900 font-bold text-sm tracking-wider">SUPER BOWL LX</span>
         </div>
 
         <div className="p-6">
@@ -386,8 +386,8 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
           onClick={() => setActiveTab('props')}
           className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${
             activeTab === 'props'
-              ? 'bg-blue-600 text-white'
-              : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700/50'
+              ? 'bg-[#2a3444] text-slate-200'
+              : 'bg-[#161d29] text-slate-500 hover:text-slate-300 border border-slate-700/40'
           }`}
         >
           Player Props
@@ -399,8 +399,8 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
           }}
           className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${
             activeTab === 'analysis'
-              ? 'bg-blue-600 text-white'
-              : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700/50'
+              ? 'bg-[#2a3444] text-slate-200'
+              : 'bg-[#161d29] text-slate-500 hover:text-slate-300 border border-slate-700/40'
           }`}
         >
           AI Analysis
@@ -409,11 +409,11 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
 
       {/* Props Tab */}
       {activeTab === 'props' && (
-        <div className="bg-slate-800 border border-slate-700/50 rounded-lg overflow-hidden">
-          <div className="px-4 py-3 border-b border-slate-700/50 flex items-center justify-between">
+        <div className="bg-[#161d29] border border-slate-700/40 rounded-lg overflow-hidden">
+          <div className="px-4 py-3 border-b border-slate-700/40 flex items-center justify-between">
             <div>
-              <h3 className="text-white font-medium">Player Props</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="text-slate-200 font-medium">Player Props</h3>
+              <p className="text-xs text-slate-500">
                 {propsData?.availableMarkets.length || 0} markets available
               </p>
             </div>
@@ -429,13 +429,13 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
 
           {loadingProps ? (
             <div className="p-8 text-center">
-              <div className="w-6 h-6 mx-auto border-2 border-slate-600 border-t-blue-500 rounded-full animate-spin" />
-              <p className="mt-3 text-sm text-slate-400">Loading props...</p>
+              <div className="w-6 h-6 mx-auto border-2 border-slate-700 border-t-slate-400 rounded-full animate-spin" />
+              <p className="mt-3 text-sm text-slate-500">Loading props...</p>
             </div>
           ) : error ? (
             <div className="p-8 text-center">
-              <p className="text-slate-400 text-sm">{error}</p>
-              <p className="text-slate-500 text-xs mt-1">Props usually become available closer to game day</p>
+              <p className="text-slate-500 text-sm">{error}</p>
+              <p className="text-slate-600 text-xs mt-1">Props usually become available closer to game day</p>
             </div>
           ) : propsData && propsData.availableMarkets.length > 0 ? (
             <div className="p-4">
@@ -458,8 +458,8 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
                       }}
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                         selectedCategory === cat
-                          ? 'bg-amber-500 text-black'
-                          : 'bg-slate-700 text-slate-400 hover:text-white'
+                          ? 'bg-[#a38f5c] text-slate-900'
+                          : 'bg-[#1e2836] text-slate-500 hover:text-slate-300'
                       }`}
                     >
                       {cat}
