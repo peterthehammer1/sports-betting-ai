@@ -14,45 +14,70 @@ interface PlayerPropsCardProps {
 
 export function PlayerPropsCard({ analysis, playerProps, onClose }: PlayerPropsCardProps) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+    <div className="glass-card rounded-2xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-4 sm:px-6 py-3 sm:py-4">
-        <div className="flex justify-between items-start">
-          <div className="min-w-0 flex-1">
-            <p className="text-amber-100 text-xs sm:text-sm font-medium">NHL Goal Scorer Analysis</p>
-            <h2 className="text-white text-base sm:text-xl font-bold mt-1 truncate">
-              {analysis.awayTeam} @ {analysis.homeTeam}
-            </h2>
+      <div className="relative overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-500 via-orange-500 to-red-600" />
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+        
+        <div className="relative px-5 sm:px-6 py-5 sm:py-6">
+          <div className="flex justify-between items-start">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2 py-1 text-[10px] font-bold text-white/80 bg-white/10 rounded-full uppercase tracking-wider">
+                  NHL
+                </span>
+                <span className="px-2 py-1 text-[10px] font-bold text-amber-200 bg-amber-400/20 rounded-full uppercase tracking-wider">
+                  Goal Scorer Props
+                </span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold text-white">
+                {analysis.awayTeam}
+              </h2>
+              <p className="text-sm text-white/60 mt-0.5">
+                @ {analysis.homeTeam}
+              </p>
+            </div>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
-          {onClose && (
-            <button
-              onClick={onClose}
-              className="text-white/80 hover:text-white p-1 -mr-1 touch-manipulation"
-            >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
         </div>
       </div>
 
-      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-        {/* Top Value Bets */}
+      <div className="p-5 sm:p-6 space-y-6">
+        {/* Top Value Bets - Hero Section */}
         {analysis.topValueBets && analysis.topValueBets.length > 0 && (
-          <Section title="🔥 Top Value Bets">
-            <div className="space-y-3">
-              {analysis.topValueBets.map((pick, idx) => (
-                <ValuePickCard key={idx} pick={pick} showMarket />
-              ))}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-red-500/10 border border-amber-500/20 p-5 sm:p-6">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl" />
+            
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">🔥</span>
+                <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider">Top Value Picks</h3>
+              </div>
+              
+              <div className="space-y-3">
+                {analysis.topValueBets.map((pick, idx) => (
+                  <TopValueCard key={idx} pick={pick} />
+                ))}
+              </div>
             </div>
-          </Section>
+          </div>
         )}
 
         {/* First Goal Scorer Picks */}
-        <Section title="🥅 First Goal Scorer Picks">
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-2 sm:mb-3">
-            Highest-value picks for scoring the game's first goal
+        <Section title="🥅 First Goal Scorer">
+          <p className="text-sm text-gray-400 mb-4">
+            Best picks for scoring the game&apos;s first goal
           </p>
           <div className="space-y-2">
             {analysis.firstGoalPicks.map((pick, idx) => (
@@ -62,8 +87,8 @@ export function PlayerPropsCard({ analysis, playerProps, onClose }: PlayerPropsC
         </Section>
 
         {/* Anytime Goal Scorer Picks */}
-        <Section title="⚡ Anytime Goal Scorer Picks">
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-2 sm:mb-3">
+        <Section title="⚡ Anytime Goal Scorer">
+          <p className="text-sm text-gray-400 mb-4">
             Best bets to score at any point during the game
           </p>
           <div className="space-y-2">
@@ -74,26 +99,24 @@ export function PlayerPropsCard({ analysis, playerProps, onClose }: PlayerPropsC
         </Section>
 
         {/* Odds Comparison Tables */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <div className="grid sm:grid-cols-2 gap-4">
           <Section title="📊 First Goal Odds">
-            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
-              <OddsTable players={playerProps.firstGoalScorers.slice(0, 10)} />
-            </div>
+            <OddsTable players={playerProps.firstGoalScorers.slice(0, 8)} />
           </Section>
           <Section title="📊 Anytime Goal Odds">
-            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
-              <OddsTable players={playerProps.anytimeGoalScorers.slice(0, 10)} />
-            </div>
+            <OddsTable players={playerProps.anytimeGoalScorers.slice(0, 8)} />
           </Section>
         </div>
 
         {/* Analysis Notes */}
         {analysis.analysisNotes && analysis.analysisNotes.length > 0 && (
           <Section title="📝 Analysis Notes">
-            <ul className="space-y-1.5 sm:space-y-2">
+            <ul className="space-y-2">
               {analysis.analysisNotes.map((note, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                  <span className="text-amber-500 mt-0.5 flex-shrink-0">•</span>
+                <li key={idx} className="flex items-start gap-3 text-sm text-gray-300">
+                  <span className="w-5 h-5 rounded-full bg-amber-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-amber-400 text-xs">•</span>
+                  </span>
                   <span>{note}</span>
                 </li>
               ))}
@@ -102,9 +125,9 @@ export function PlayerPropsCard({ analysis, playerProps, onClose }: PlayerPropsC
         )}
 
         {/* Footer */}
-        <div className="pt-3 sm:pt-4 border-t border-gray-100 dark:border-gray-700">
-          <p className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500 text-center">
-            Analysis generated at {new Date(analysis.analyzedAt).toLocaleString()}
+        <div className="pt-4 border-t border-white/5">
+          <p className="text-xs text-gray-500 text-center">
+            Analysis generated {new Date(analysis.analyzedAt).toLocaleString()}
           </p>
         </div>
       </div>
@@ -117,7 +140,7 @@ export function PlayerPropsCard({ analysis, playerProps, onClose }: PlayerPropsC
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="text-xs sm:text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 sm:mb-3">
+      <h3 className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
         {title}
       </h3>
       {children}
@@ -125,157 +148,144 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function ConfidenceBadge({ 
-  confidence, 
-  size = 'md' 
-}: { 
-  confidence: number; 
-  size?: 'sm' | 'md' 
-}) {
+function ConfidenceBadge({ confidence, size = 'md' }: { confidence: number; size?: 'sm' | 'md' }) {
   const getColor = (conf: number) => {
-    if (conf >= 70) return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-    if (conf >= 60) return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-    if (conf >= 55) return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-    return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+    if (conf >= 70) return 'bg-green-500/20 text-green-400 border-green-500/30';
+    if (conf >= 60) return 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30';
+    if (conf >= 55) return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+    return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
   };
 
-  const sizeClasses = size === 'sm' ? 'px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs' : 'px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm';
+  const sizeClasses = size === 'sm' ? 'px-2 py-1 text-[10px]' : 'px-3 py-1.5 text-xs';
 
   return (
-    <span className={`${getColor(confidence)} ${sizeClasses} rounded-full font-medium whitespace-nowrap`}>
-      {confidence}%
+    <span className={`${getColor(confidence)} ${sizeClasses} rounded-full font-semibold border inline-flex items-center gap-1`}>
+      <span className="stat-number">{confidence}%</span>
     </span>
   );
 }
 
-function GoalScorerPickCard({ pick }: { pick: GoalScorerPick }) {
-  const formatOdds = (american: number) => 
-    american > 0 ? `+${american}` : `${american}`;
+function TopValueCard({ pick }: { pick: GoalScorerPick }) {
+  const formatOdds = (american: number) => american > 0 ? `+${american}` : `${american}`;
+  const marketLabel = pick.market === 'first_goal_scorer' ? 'First Goal' : 'Anytime';
 
   return (
-    <div className={`rounded-lg p-2.5 sm:p-3 border ${
-      pick.valueBet 
-        ? 'border-green-300 bg-green-50 dark:bg-green-900/20 dark:border-green-700' 
-        : 'border-gray-200 bg-gray-50 dark:bg-gray-700/50 dark:border-gray-600'
-    }`}>
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
-          <span className="text-base sm:text-lg font-bold text-gray-400 dark:text-gray-500 flex-shrink-0">#{pick.rank}</span>
-          <div className="min-w-0">
-            <p className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white truncate">
-              {pick.playerName}
-            </p>
-            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
-              {pick.team}
-            </p>
-          </div>
-        </div>
-        <div className="text-right flex-shrink-0">
-          <p className="font-mono font-bold text-sm sm:text-base text-gray-900 dark:text-white">
-            {formatOdds(pick.bestOdds)}
-          </p>
-          {pick.valueBet && (
-            <p className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 font-medium">
-              +{(pick.edge * 100).toFixed(1)}% edge
-            </p>
-          )}
-        </div>
+    <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
+      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/25">
+        <span className="text-white font-bold">#{pick.rank}</span>
       </div>
-      <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 flex-1">
-          {pick.reasoning}
-        </p>
-        <div className="self-start sm:self-center">
-          <ConfidenceBadge confidence={pick.confidence} size="sm" />
+      
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <p className="font-semibold text-white truncate">{pick.playerName}</p>
+          <span className="px-1.5 py-0.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 rounded uppercase">
+            {marketLabel}
+          </span>
         </div>
+        <p className="text-xs text-gray-400 mt-0.5">{pick.team}</p>
+      </div>
+
+      <div className="text-right flex-shrink-0">
+        <p className="text-xl font-bold text-white font-mono stat-number">
+          {formatOdds(pick.bestOdds)}
+        </p>
+        <p className="text-xs text-green-400 font-semibold">
+          +{(pick.edge * 100).toFixed(1)}% edge
+        </p>
       </div>
     </div>
   );
 }
 
-function ValuePickCard({ pick, showMarket }: { pick: GoalScorerPick; showMarket?: boolean }) {
-  const formatOdds = (american: number) => 
-    american > 0 ? `+${american}` : `${american}`;
-
-  const marketLabel = pick.market === 'first_goal_scorer' ? 'First Goal' : 'Anytime Goal';
+function GoalScorerPickCard({ pick }: { pick: GoalScorerPick }) {
+  const formatOdds = (american: number) => american > 0 ? `+${american}` : `${american}`;
 
   return (
-    <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg p-3 sm:p-4 border border-amber-200 dark:border-amber-800">
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
-          <span className="text-xl sm:text-2xl font-bold text-amber-500 flex-shrink-0">#{pick.rank}</span>
-          <div className="min-w-0">
-            <p className="font-bold text-base sm:text-lg text-gray-900 dark:text-white truncate">
-              {pick.playerName}
-            </p>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-              {pick.team} {showMarket && `• ${marketLabel}`}
-            </p>
+    <div className={`p-4 rounded-xl border transition-colors ${
+      pick.valueBet 
+        ? 'bg-green-500/5 border-green-500/20 hover:border-green-500/30' 
+        : 'bg-white/5 border-white/5 hover:border-white/10'
+    }`}>
+      <div className="flex items-start gap-3">
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+          pick.valueBet ? 'bg-green-500/20' : 'bg-white/10'
+        }`}>
+          <span className={`text-sm font-bold ${pick.valueBet ? 'text-green-400' : 'text-gray-400'}`}>
+            #{pick.rank}
+          </span>
+        </div>
+        
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <p className="font-semibold text-white">{pick.playerName}</p>
+              <p className="text-xs text-gray-400">{pick.team}</p>
+            </div>
+            <div className="text-right flex-shrink-0">
+              <p className={`font-mono font-bold stat-number ${pick.bestOdds > 0 ? 'text-green-400' : 'text-white'}`}>
+                {formatOdds(pick.bestOdds)}
+              </p>
+              {pick.valueBet && (
+                <p className="text-[10px] text-green-400 font-semibold">
+                  +{(pick.edge * 100).toFixed(1)}% edge
+                </p>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 mt-2">
+            <p className="text-sm text-gray-400 flex-1">{pick.reasoning}</p>
+            <ConfidenceBadge confidence={pick.confidence} size="sm" />
           </div>
         </div>
-        <div className="text-right flex-shrink-0">
-          <p className="font-mono text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
-            {formatOdds(pick.bestOdds)}
-          </p>
-          <p className="text-xs sm:text-sm text-green-600 dark:text-green-400 font-semibold">
-            +{(pick.edge * 100).toFixed(1)}% edge
-          </p>
-        </div>
       </div>
-      <div className="mt-2 sm:mt-3 flex flex-wrap items-center gap-2 sm:gap-4 text-[10px] sm:text-xs">
-        <span className="text-gray-500 dark:text-gray-400">
-          Implied: {(pick.impliedProbability * 100).toFixed(1)}%
-        </span>
-        <span className="text-gray-500 dark:text-gray-400">
-          Est: {(pick.estimatedProbability * 100).toFixed(1)}%
-        </span>
-        <ConfidenceBadge confidence={pick.confidence} size="sm" />
-      </div>
-      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-2">
-        {pick.reasoning}
-      </p>
     </div>
   );
 }
 
 function OddsTable({ players }: { players: NormalizedPlayerProp[] }) {
-  const formatOdds = (american: number) => 
-    american > 0 ? `+${american}` : `${american}`;
+  const formatOdds = (american: number) => american > 0 ? `+${american}` : `${american}`;
 
   if (players.length === 0) {
     return (
-      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 italic">
+      <p className="text-sm text-gray-500 italic py-4 text-center">
         No odds available
       </p>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 min-w-[280px]">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead className="bg-gray-50 dark:bg-gray-900">
-          <tr>
-            <th className="px-2 sm:px-3 py-1.5 sm:py-2 text-left text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+    <div className="overflow-hidden rounded-xl border border-white/5">
+      <table className="min-w-full">
+        <thead>
+          <tr className="bg-white/5">
+            <th className="px-3 py-2.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
               Player
             </th>
-            <th className="px-2 sm:px-3 py-1.5 sm:py-2 text-right text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+            <th className="px-3 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">
               Odds
             </th>
-            <th className="px-2 sm:px-3 py-1.5 sm:py-2 text-right text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-              Impl %
+            <th className="px-3 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+              Impl
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+        <tbody className="divide-y divide-white/5">
           {players.map((player, idx) => (
-            <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-              <td className="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-900 dark:text-white truncate max-w-[120px] sm:max-w-none">
+            <tr key={idx} className="hover:bg-white/5 transition-colors">
+              <td className="px-3 py-2.5 text-sm text-white truncate max-w-[140px]">
                 {player.playerName}
               </td>
-              <td className="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-mono text-right text-gray-900 dark:text-white">
-                {player.bestOdds ? formatOdds(player.bestOdds.americanOdds) : '-'}
+              <td className="px-3 py-2.5 text-sm font-mono text-right stat-number">
+                {player.bestOdds ? (
+                  <span className={player.bestOdds.americanOdds > 0 ? 'text-green-400' : 'text-white'}>
+                    {formatOdds(player.bestOdds.americanOdds)}
+                  </span>
+                ) : (
+                  <span className="text-gray-500">—</span>
+                )}
               </td>
-              <td className="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-right text-gray-500 dark:text-gray-400">
+              <td className="px-3 py-2.5 text-sm text-right text-gray-400 stat-number">
                 {(player.averageImpliedProb * 100).toFixed(1)}%
               </td>
             </tr>

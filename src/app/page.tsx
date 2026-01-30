@@ -191,146 +191,188 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header - Sticky on mobile */}
-      <header className="bg-white dark:bg-gray-800 shadow sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-3 py-3 sm:px-6 sm:py-4 lg:px-8">
-          {/* Title and Sport Toggle Row */}
-          <div className="flex items-center justify-between gap-3">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white whitespace-nowrap">
-              🎯 AI Sports Picks
-            </h1>
+    <div className="min-h-screen bg-[#0a0f1a]">
+      {/* Ambient background effect */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-radial from-cyan-500/10 via-transparent to-transparent blur-3xl" />
+        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-radial from-purple-500/10 via-transparent to-transparent blur-3xl" />
+      </div>
+
+      {/* Header */}
+      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#0a0f1a]/80 border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
+          {/* Top Row - Logo and Sport Toggle */}
+          <div className="flex items-center justify-between gap-4">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/25">
+                  <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-[#0a0f1a] pulse-glow" />
+              </div>
+              <div>
+                <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                  AI Sports Picks
+                </h1>
+                <p className="text-[10px] sm:text-xs text-cyan-400 font-medium tracking-wider uppercase">
+                  Powered by AI
+                </p>
+              </div>
+            </div>
             
             {/* Sport Toggle */}
-            <div className="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            <div className="flex p-1 bg-white/5 rounded-xl border border-white/10">
               {(['NHL', 'NBA'] as Sport[]).map((s) => (
                 <button
                   key={s}
                   onClick={() => setSport(s)}
-                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md font-medium text-sm sm:text-base transition-colors ${
+                  className={`relative px-4 sm:px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
                     sport === s
-                      ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow'
-                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                      ? 'text-white'
+                      : 'text-gray-400 hover:text-white'
                   }`}
                 >
-                  {s}
+                  {sport === s && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg shadow-lg shadow-cyan-500/25" />
+                  )}
+                  <span className="relative z-10 flex items-center gap-2">
+                    {s === 'NHL' ? '🏒' : '🏀'}
+                    <span className="hidden sm:inline">{s}</span>
+                  </span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* View Tabs - Scrollable on mobile */}
-          <div className="mt-3 sm:mt-4 flex gap-1 sm:gap-4 border-b border-gray-200 dark:border-gray-700 overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0">
-            <button
+          {/* Navigation Tabs */}
+          <div className="mt-4 flex gap-1 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+            <NavTab 
+              active={view === 'games'} 
               onClick={() => setView('games')}
-              className={`pb-2 px-2 sm:px-1 font-medium text-xs sm:text-sm border-b-2 transition-colors whitespace-nowrap ${
-                view === 'games'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-              }`}
-            >
-              📊 Games
-            </button>
-            <button
+              icon="📊"
+              label="Games"
+            />
+            <NavTab 
+              active={view === 'analysis'} 
               onClick={() => setView('analysis')}
               disabled={!selectedPrediction}
-              className={`pb-2 px-2 sm:px-1 font-medium text-xs sm:text-sm border-b-2 transition-colors disabled:opacity-50 whitespace-nowrap ${
-                view === 'analysis'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-              }`}
-            >
-              🔍 Analysis
-            </button>
+              icon="🎯"
+              label="Analysis"
+            />
             {sport === 'NHL' && (
-              <button
+              <NavTab 
+                active={view === 'props'} 
                 onClick={() => setView('props')}
                 disabled={!selectedPropsAnalysis}
-                className={`pb-2 px-2 sm:px-1 font-medium text-xs sm:text-sm border-b-2 transition-colors disabled:opacity-50 whitespace-nowrap ${
-                  view === 'props'
-                    ? 'border-amber-600 text-amber-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                }`}
-              >
-                🥅 Goal Scorers
-              </button>
+                icon="🥅"
+                label="Goal Scorers"
+                accent
+              />
             )}
           </div>
 
-          {/* Meta info - Hidden on mobile, shown on larger screens */}
-          <div className="hidden sm:flex mt-2 gap-4 text-sm text-gray-500 dark:text-gray-400">
+          {/* Live indicator */}
+          <div className="mt-3 flex items-center gap-3 text-xs text-gray-400">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 bg-green-400 rounded-full pulse-glow" />
+              <span>Live Odds</span>
+            </div>
             {lastFetch && (
-              <span>Updated: {lastFetch.toLocaleTimeString()}</span>
+              <span className="text-gray-500">
+                Updated {lastFetch.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+              </span>
             )}
-            <button
-              onClick={fetchOdds}
-              disabled={loadingOdds}
-              className="text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50"
-            >
-              {loadingOdds ? 'Refreshing...' : 'Refresh Odds'}
-            </button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {/* Error State */}
         {error && (
-          <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <p className="text-sm sm:text-base text-red-700 dark:text-red-400">{error}</p>
+          <div className="mb-6 p-4 glass-card rounded-xl border-red-500/30 animate-slide-up">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                <span className="text-red-400">⚠️</span>
+              </div>
+              <p className="text-sm text-red-400">{error}</p>
+            </div>
           </div>
         )}
 
         {/* Loading State */}
         {loadingOdds && games.length === 0 && (
-          <div className="flex flex-col justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="mt-3 text-gray-600 dark:text-gray-400">
+          <div className="flex flex-col justify-center items-center py-20">
+            <div className="relative">
+              <div className="w-16 h-16 rounded-full border-2 border-cyan-500/30 border-t-cyan-400 animate-spin" />
+              <div className="absolute inset-2 rounded-full border-2 border-purple-500/30 border-b-purple-400 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+            </div>
+            <span className="mt-6 text-gray-400 font-medium">
               Loading {sport} games...
             </span>
           </div>
         )}
 
-        {/* Analysis Loading Overlay - Better mobile experience */}
+        {/* Analysis Loading Overlay */}
         {(loadingAnalysis || loadingProps) && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 sm:p-8 text-center max-w-sm w-full mx-4">
-              <div className={`animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 mx-auto ${loadingProps ? 'border-amber-600' : 'border-blue-600'}`}></div>
-              <p className="mt-4 text-base sm:text-lg font-medium text-gray-900 dark:text-white">
-                {loadingProps ? 'Analyzing goal scorers...' : 'Analyzing game...'}
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="glass-card rounded-2xl p-8 text-center max-w-sm w-full animate-slide-up">
+              <div className="relative mx-auto w-20 h-20">
+                <div className={`absolute inset-0 rounded-full border-2 ${loadingProps ? 'border-amber-500/30 border-t-amber-400' : 'border-cyan-500/30 border-t-cyan-400'} animate-spin`} />
+                <div className={`absolute inset-3 rounded-full border-2 ${loadingProps ? 'border-orange-500/30 border-b-orange-400' : 'border-blue-500/30 border-b-blue-400'} animate-spin`} style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-2xl">{loadingProps ? '🥅' : '🎯'}</span>
+                </div>
+              </div>
+              <p className="mt-6 text-lg font-semibold text-white">
+                {loadingProps ? 'Analyzing Goal Scorers' : 'Running AI Analysis'}
               </p>
-              <p className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                This may take 10-20 seconds
+              <p className="mt-2 text-sm text-gray-400">
+                Our AI is crunching the numbers...
               </p>
+              <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
+                <div className={`h-full ${loadingProps ? 'bg-gradient-to-r from-amber-500 to-orange-500' : 'bg-gradient-to-r from-cyan-500 to-blue-500'} shimmer`} style={{ width: '60%' }} />
+              </div>
             </div>
           </div>
         )}
 
         {/* Games View */}
         {view === 'games' && games.length > 0 && (
-          <>
-            <div className="mb-3 sm:mb-4">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-                {sport} Games Today ({games.length})
-              </h2>
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                Tap any game for AI analysis
-              </p>
+          <div className="animate-slide-up">
+            <div className="mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white">
+                    {sport} Games
+                  </h2>
+                  <p className="text-sm text-gray-400 mt-1">
+                    {games.length} games available • Tap for AI insights
+                  </p>
+                </div>
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20">
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full pulse-glow" />
+                  <span className="text-xs font-medium text-cyan-400">LIVE</span>
+                </div>
+              </div>
             </div>
 
-            <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {games.map((game) => (
-                <GameCard
-                  key={game.gameId}
-                  game={game}
-                  sport={sport}
-                  onSelect={handleGameSelect}
-                  onPropsSelect={sport === 'NHL' ? fetchPlayerPropsAnalysis : undefined}
-                />
+            <div className="grid gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {games.map((game, index) => (
+                <div key={game.gameId} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
+                  <GameCard
+                    game={game}
+                    sport={sport}
+                    onSelect={handleGameSelect}
+                    onPropsSelect={sport === 'NHL' ? fetchPlayerPropsAnalysis : undefined}
+                  />
+                </div>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {/* Quick Picks View */}
@@ -345,41 +387,99 @@ export default function Dashboard() {
 
         {/* Deep Analysis View */}
         {view === 'analysis' && selectedPrediction && (
-          <PredictionCard
-            prediction={selectedPrediction}
-            onClose={() => {
-              setSelectedPrediction(null);
-              setView('games');
-            }}
-          />
+          <div className="animate-slide-up">
+            <PredictionCard
+              prediction={selectedPrediction}
+              onClose={() => {
+                setSelectedPrediction(null);
+                setView('games');
+              }}
+            />
+          </div>
         )}
 
         {/* Player Props View (NHL only) */}
         {view === 'props' && selectedPropsAnalysis && (
-          <PlayerPropsCard
-            analysis={selectedPropsAnalysis.analysis}
-            playerProps={selectedPropsAnalysis.playerProps}
-            onClose={() => {
-              setSelectedPropsAnalysis(null);
-              setView('games');
-            }}
-          />
+          <div className="animate-slide-up">
+            <PlayerPropsCard
+              analysis={selectedPropsAnalysis.analysis}
+              playerProps={selectedPropsAnalysis.playerProps}
+              onClose={() => {
+                setSelectedPropsAnalysis(null);
+                setView('games');
+              }}
+            />
+          </div>
         )}
 
         {/* Empty State */}
         {!loadingOdds && games.length === 0 && !error && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400">
-              No {sport} games scheduled for today.
+          <div className="text-center py-20">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/5 flex items-center justify-center">
+              <span className="text-4xl">{sport === 'NHL' ? '🏒' : '🏀'}</span>
+            </div>
+            <p className="text-gray-400 text-lg">
+              No {sport} games scheduled for today
+            </p>
+            <p className="text-gray-500 text-sm mt-2">
+              Check back later for upcoming matchups
             </p>
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400 px-4">
-        <p>⚠️ For entertainment purposes only. Please gamble responsibly.</p>
+      <footer className="relative z-10 mt-auto py-6 border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-gray-500 text-center sm:text-left">
+              ⚠️ For entertainment purposes only. Please gamble responsibly.
+            </p>
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <span>© 2026 AI Sports Picks</span>
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
+  );
+}
+
+// Navigation Tab Component
+function NavTab({ 
+  active, 
+  onClick, 
+  disabled, 
+  icon, 
+  label, 
+  accent 
+}: { 
+  active: boolean; 
+  onClick: () => void; 
+  disabled?: boolean; 
+  icon: string; 
+  label: string;
+  accent?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`relative px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed ${
+        active
+          ? accent 
+            ? 'text-amber-400' 
+            : 'text-cyan-400'
+          : 'text-gray-400 hover:text-white hover:bg-white/5'
+      }`}
+    >
+      {active && (
+        <div className={`absolute inset-0 rounded-xl ${accent ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-cyan-500/10 border border-cyan-500/20'}`} />
+      )}
+      <span className="relative z-10 flex items-center gap-2">
+        <span>{icon}</span>
+        <span className="hidden sm:inline">{label}</span>
+      </span>
+    </button>
   );
 }

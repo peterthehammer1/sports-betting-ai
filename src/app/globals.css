@@ -1,8 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0f1a;
+  --background-secondary: #111827;
+  --background-card: #1a2234;
+  --background-elevated: #243049;
+  --foreground: #f8fafc;
+  --foreground-muted: #94a3b8;
+  --accent-primary: #00d4ff;
+  --accent-primary-dim: #00a8cc;
+  --accent-secondary: #8b5cf6;
+  --accent-gold: #fbbf24;
+  --accent-green: #22c55e;
+  --accent-red: #ef4444;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --glow-primary: rgba(0, 212, 255, 0.3);
+  --glow-gold: rgba(251, 191, 36, 0.3);
 }
 
 @theme inline {
@@ -12,20 +25,32 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Hide scrollbar for horizontal scroll areas on mobile */
+/* Premium scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--background-elevated);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary-dim);
+}
+
+/* Hide scrollbar for horizontal scroll areas */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -33,6 +58,78 @@ body {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: linear-gradient(135deg, rgba(26, 34, 52, 0.9) 0%, rgba(17, 24, 39, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+}
+
+/* Glow effects */
+.glow-primary {
+  box-shadow: 0 0 20px var(--glow-primary), 0 0 40px rgba(0, 212, 255, 0.1);
+}
+
+.glow-gold {
+  box-shadow: 0 0 20px var(--glow-gold), 0 0 40px rgba(251, 191, 36, 0.1);
+}
+
+/* Animated gradient border */
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-gold));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Pulse animation for live indicators */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Shimmer effect for loading */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Slide up animation */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
 }
 
 /* Touch manipulation for better mobile tap response */
@@ -47,7 +144,7 @@ body {
   }
 }
 
-/* Prevent text selection on interactive elements for cleaner mobile UX */
+/* Prevent text selection on interactive elements */
 button, 
 [role="button"] {
   -webkit-user-select: none;
@@ -59,4 +156,49 @@ button,
   .overflow-x-auto {
     -webkit-overflow-scrolling: touch;
   }
+}
+
+/* Stats number styling */
+.stat-number {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Premium button styles */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-dim) 100%);
+  color: #000;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px var(--glow-primary);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Value indicator badges */
+.value-high {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #22c55e;
+}
+
+.value-medium {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 212, 255, 0.1) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: #00d4ff;
+}
+
+/* Odds display styling */
+.odds-positive {
+  color: #22c55e;
+}
+
+.odds-negative {
+  color: #f8fafc;
 }
