@@ -237,11 +237,18 @@ export default function Dashboard() {
     setError(null);
 
     try {
+      // Create AbortController for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ gameId, sport }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!res.ok) {
         const data = await res.json();
@@ -252,7 +259,11 @@ export default function Dashboard() {
       setSelectedPrediction(data.prediction);
       setView('analysis');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Analysis failed');
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('Analysis timed out. Please try again.');
+      } else {
+        setError(err instanceof Error ? err.message : 'Analysis failed');
+      }
     } finally {
       setLoadingAnalysis(false);
     }
@@ -476,12 +487,22 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className={view === 'landing' ? '' : 'max-w-6xl mx-auto px-4 py-6 sm:px-6'}>
-        {/* Error State - hide on landing page and when we have games */}
-        {error && view !== 'landing' && games.length === 0 && (
+        {/* Error State - show for all errors except on landing page */}
+        {error && view !== 'landing' && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl animate-slide-up">
-            <div className="flex items-center gap-3">
-              <span className="text-red-500">⚠️</span>
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-red-500">⚠️</span>
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+              <button 
+                onClick={() => setError(null)}
+                className="text-red-400 hover:text-red-600 p-1"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
           </div>
         )}
