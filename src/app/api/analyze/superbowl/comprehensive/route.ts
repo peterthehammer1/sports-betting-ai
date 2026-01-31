@@ -63,7 +63,7 @@ export async function POST() {
   }
 
   try {
-    const cacheKey = 'superbowl-lx-comprehensive-v4';
+    const cacheKey = 'superbowl-lx-comprehensive-v5';
     
     // Check cache (24 hour TTL for comprehensive analysis)
     const cached = await getCachedGameAnalysis(cacheKey, 'NFL') as { analysis: unknown } | null;
@@ -155,11 +155,21 @@ Provide comprehensive analysis in this EXACT JSON format:
       "player": "Kenneth Walker III",
       "team": "SEA",
       "market": "Rushing Yards",
-      "pick": "Over",
+      "pick": "Under",
       "line": "75.5",
       "odds": "-110",
-      "confidence": 65,
-      "reasoning": "Brief reasoning"
+      "confidence": 85,
+      "reasoning": "A+ PICK: Patriots boast the #4 run defense allowing just 95.2 rush YPG. New England stuffed the run in the AFC Championship (Broncos had 67 rush yards). Seattle will lean on the pass with JSN dominating - expect Walker around 55-65 rushing yards."
+    },
+    {
+      "player": "Kenneth Walker III",
+      "team": "SEA",
+      "market": "Receiving Yards",
+      "pick": "Over",
+      "line": "18.5",
+      "odds": "-115",
+      "confidence": 88,
+      "reasoning": "A+ PICK: With Patriots stacking the box to stop the run, Walker becomes a key outlet receiver. He's averaged 3.2 receptions per game in playoffs. Seattle uses him on screens and check-downs when facing pressure - expect 4-5 catches for 25-35 yards."
     },
     {
       "player": "Hunter Henry",
@@ -169,7 +179,7 @@ Provide comprehensive analysis in this EXACT JSON format:
       "line": "45.5",
       "odds": "-115",
       "confidence": 68,
-      "reasoning": "Brief reasoning"
+      "reasoning": "Henry is Maye's safety valve and red zone target. Expect 5-6 catches in a game where Patriots will need to throw."
     },
     {
       "player": "Jaxon Smith-Njigba",
