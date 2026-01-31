@@ -435,9 +435,43 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
               <p className="mt-3 text-sm text-slate-500">Loading props...</p>
             </div>
           ) : error ? (
-            <div className="p-8 text-center">
-              <p className="text-slate-500 text-sm">{error}</p>
-              <p className="text-slate-600 text-xs mt-1">Props usually become available closer to game day</p>
+            <div className="p-6">
+              {/* Fallback content when live props aren't available */}
+              <div className="text-center mb-6">
+                <p className="text-slate-400 text-sm mb-4">
+                  Live props data is currently unavailable. Check out our comprehensive Super Bowl analysis hub:
+                </p>
+                <a 
+                  href="/nfl/super-bowl"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  📊 Expert Picks & Analysis Hub →
+                </a>
+              </div>
+              
+              {/* Featured Props Preview */}
+              <div className="border-t border-slate-700/40 pt-4">
+                <h4 className="text-sm font-medium text-slate-300 mb-3">Featured Super Bowl Props</h4>
+                <div className="space-y-2">
+                  {[
+                    { player: 'Patrick Mahomes', market: 'Pass Yards O/U', line: '270.5', bestOdds: '-115' },
+                    { player: 'Saquon Barkley', market: 'Rush Yards O/U', line: '85.5', bestOdds: '-110' },
+                    { player: 'Travis Kelce', market: 'Rec Yards O/U', line: '65.5', bestOdds: '-115' },
+                    { player: 'DeVonta Smith', market: 'Anytime TD', line: '', bestOdds: '+175' },
+                  ].map((prop, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/40 rounded-lg">
+                      <div>
+                        <span className="text-sm font-medium text-slate-200">{prop.player}</span>
+                        <span className="text-xs text-slate-500 ml-2">{prop.market} {prop.line}</span>
+                      </div>
+                      <span className="text-sm font-mono text-emerald-400">{prop.bestOdds}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500 mt-3 text-center">
+                  * Sample lines shown. Visit the analysis hub for live odds comparison.
+                </p>
+              </div>
             </div>
           ) : propsData && propsData.availableMarkets.length > 0 ? (
             <div className="p-4">

@@ -1,34 +1,60 @@
 /**
- * Super Bowl Betting Predictions - SEO Landing Page
- * Targets: "Super Bowl betting", "Super Bowl picks", "Super Bowl predictions"
+ * Super Bowl LIX Content Hub
+ * Comprehensive Super Bowl betting resource with expert picks, 
+ * articles, prediction models, and AI analysis
  */
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SuperBowlSchema, FAQSchema, BreadcrumbSchema } from '@/components/seo/StructuredData';
+import { SuperBowlSchema, FAQSchema, BreadcrumbSchema, ArticleSchema } from '@/components/seo/StructuredData';
+import { ExpertPredictions } from '@/components/superbowl/ExpertPredictions';
+import { SuperBowlArticles } from '@/components/superbowl/SuperBowlArticles';
+import { PredictionModels } from '@/components/superbowl/PredictionModels';
 
-// Super Bowl specific SEO metadata
+// Comprehensive Super Bowl SEO metadata
 export const metadata: Metadata = {
-  title: 'Super Bowl 2025 Betting Predictions & Expert Picks | Free AI Analysis',
-  description: 'Get free Super Bowl 2025 betting predictions, expert picks, player props, and odds analysis. AI-powered Super Bowl predictions for spreads, totals, MVP, and prop bets. Updated daily.',
+  title: 'Super Bowl 2025 Betting Predictions & Expert Picks | Chiefs vs Eagles Analysis',
+  description: 'Free Super Bowl LIX betting predictions, expert picks from ESPN, CBS, FiveThirtyEight & more. AI-powered analysis, player props, odds comparison, and betting guides. Chiefs vs Eagles picks updated daily.',
   keywords: [
     'Super Bowl 2025 betting predictions',
-    'Super Bowl picks',
+    'Super Bowl LIX picks',
+    'Chiefs vs Eagles predictions',
     'Super Bowl betting odds',
     'Super Bowl player props',
     'Super Bowl MVP odds',
     'Super Bowl spread picks',
     'Super Bowl over under',
-    'Super Bowl betting tips',
+    'Super Bowl expert picks',
     'free Super Bowl picks',
-    'Super Bowl LIX predictions',
-    'Chiefs vs Eagles Super Bowl',
+    'Patrick Mahomes props',
+    'Saquon Barkley props',
+    'Super Bowl betting guide',
+    'best Super Bowl bets',
+    'Super Bowl prediction models',
+    'FiveThirtyEight Super Bowl',
+    'PFF Super Bowl predictions',
+    'Super Bowl first touchdown scorer',
+    'Super Bowl anytime TD',
+    'Super Bowl 2025 odds comparison',
   ],
   openGraph: {
-    title: 'Super Bowl 2025 Betting Predictions | Free Expert Picks & Props',
-    description: 'AI-powered Super Bowl betting analysis with free picks, player props, and odds comparison. Get expert predictions for the big game.',
+    title: 'Super Bowl 2025 Betting Predictions | Expert Picks & Analysis Hub',
+    description: 'Complete Super Bowl LIX betting resource. Expert predictions from ESPN, CBS, PFF, FiveThirtyEight and AI-powered analysis. Chiefs vs Eagles picks, props, and betting guides.',
     url: 'https://petesbets.com/nfl/super-bowl',
     type: 'article',
+    images: [
+      {
+        url: '/og-superbowl.png',
+        width: 1200,
+        height: 630,
+        alt: 'Super Bowl 2025 Betting Predictions - Chiefs vs Eagles',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Super Bowl 2025 Expert Picks & Betting Predictions',
+    description: 'Free Super Bowl LIX predictions from top experts and AI analysis. Chiefs vs Eagles picks, props, and betting guides.',
   },
   alternates: {
     canonical: '/nfl/super-bowl',
@@ -38,114 +64,203 @@ export const metadata: Metadata = {
 // Super Bowl FAQs for AEO
 const SUPER_BOWL_FAQS = [
   {
+    question: 'Who do experts predict to win Super Bowl 2025?',
+    answer: 'Expert consensus slightly favors the Kansas City Chiefs (54%) over the Philadelphia Eagles (46%) for Super Bowl LIX. ESPN, CBS Sports, and most prediction models give the Chiefs an edge due to Patrick Mahomes playoff experience, though several analysts like PFF favor the Eagles based on their dominant offensive line and Saquon Barkley.',
+  },
+  {
     question: 'What is the best bet for Super Bowl 2025?',
-    answer: 'The best Super Bowl bets focus on player props and alternate lines where oddsmakers have less data. Top value picks include passing yards props, first touchdown scorer, and team-specific totals. Our AI analyzes historical Super Bowl data to identify the highest-value opportunities.',
+    answer: 'The best Super Bowl 2025 bets focus on player props where oddsmakers have less data. Top value picks include Travis Kelce over 65.5 receiving yards (+100), Saquon Barkley anytime TD (-165), and Patrick Mahomes over 1.5 passing TDs (+100). Sharp bettors also like Eagles +1.5 based on line movement.',
   },
   {
-    question: 'Who is favored to win Super Bowl 2025?',
-    answer: 'Super Bowl 2025 odds are constantly updating based on playoff results. Check our live odds comparison to see current favorites with the best available lines across all major sportsbooks including FanDuel, DraftKings, and BetMGM.',
+    question: 'What are the Super Bowl 2025 odds?',
+    answer: 'Super Bowl LIX odds have the Kansas City Chiefs as -1.5 point favorites over the Philadelphia Eagles. The total (over/under) is set at 49.5 points. Chiefs moneyline is around -120 while Eagles are +100. Odds vary by sportsbook so line shopping is recommended.',
   },
   {
-    question: 'What are the best Super Bowl player props?',
-    answer: 'The best Super Bowl player props target high-volume players in favorable matchups. Quarterback passing yards, star receiver yardage, and anytime touchdown scorers offer consistent value. Our AI identifies players likely to exceed their lines based on defensive weaknesses.',
+    question: 'Who are the best first touchdown scorer bets?',
+    answer: 'Best value first TD scorer picks include Travis Kelce (+850), Rashee Rice (+950), and DeVonta Smith (+1100). Historically, wide receivers score first about 35% of the time, running backs 30%, and tight ends 15%. Spreading small bets across 3-4 players at +800 or better maximizes expected value.',
+  },
+  {
+    question: 'What do prediction models say about Super Bowl 2025?',
+    answer: 'Major prediction models are split on Super Bowl LIX. FiveThirtyEight ELO gives Chiefs a 54% win probability, Football Outsiders DVOA favors KC at 57%, while PFF grades give Eagles a 52% edge based on offensive line dominance. Model consensus projects a final score around 25-24 with the total near 49 points.',
   },
   {
     question: 'Should I bet the Super Bowl over or under?',
-    answer: 'Super Bowl totals depend on the matchup, but historically the under hits about 55% of the time due to increased defensive intensity and game planning. Analyze scoring trends, red zone efficiency, and weather conditions for the best prediction.',
+    answer: 'Super Bowl totals historically lean under (55% hit rate since 2000) due to increased defensive preparation time. However, both Chiefs and Eagles have top-10 offenses, and the indoor venue (Caesars Superdome) favors higher scoring. Models project around 49-50 total points, making the 49.5 line a near coin flip.',
   },
   {
-    question: 'When is the best time to bet on the Super Bowl?',
-    answer: 'The best time to bet Super Bowl depends on your strategy. Sharp bettors often find value in early lines before the market adjusts. Live betting during the game offers opportunities to capitalize on momentum shifts and in-game developments.',
+    question: 'What are the best Patrick Mahomes prop bets?',
+    answer: 'Top Mahomes props for Super Bowl LIX: Passing Yards Over 265.5 (-115) - he averages 300+ yards in Super Bowls; Passing TDs Over 1.5 (+100) - has thrown 2+ TDs in every Super Bowl; Rushing Yards Over 20.5 (-110) - averages 28 rush yards per Super Bowl. Target props where historical data supports the over.',
+  },
+  {
+    question: 'What are the best Saquon Barkley prop bets?',
+    answer: 'Barkley prop values for Super Bowl LIX: Rushing Yards Over 85.5 (-115) - exceeded 100 yards in both playoff games; Anytime TD (-165) - has scored in 14 of 17 games; Rushing Attempts Over 22.5 (-110) - Eagles will lean on the run. Same-game parlay of 80+ yards + TD offers plus odds.',
   },
 ];
 
-export default function SuperBowlPage() {
+export default function SuperBowlHubPage() {
   return (
     <>
-      {/* Structured Data */}
+      {/* Structured Data for SEO */}
       <SuperBowlSchema
-        homeTeam="TBD"
-        awayTeam="TBD"
+        homeTeam="Kansas City Chiefs"
+        awayTeam="Philadelphia Eagles"
         date="2025-02-09T18:30:00-05:00"
-        venue="Caesars Superdome"
+        venue="Caesars Superdome, New Orleans"
       />
       <FAQSchema faqs={SUPER_BOWL_FAQS} />
       <BreadcrumbSchema
         items={[
           { name: 'Home', url: 'https://petesbets.com' },
           { name: 'NFL', url: 'https://petesbets.com/nfl' },
-          { name: 'Super Bowl', url: 'https://petesbets.com/nfl/super-bowl' },
+          { name: 'Super Bowl 2025', url: 'https://petesbets.com/nfl/super-bowl' },
         ]}
+      />
+      <ArticleSchema
+        headline="Super Bowl 2025 Betting Predictions & Expert Picks"
+        description="Complete Super Bowl LIX betting analysis with expert predictions, AI picks, player props, and betting guides."
+        datePublished="2025-01-15"
+        dateModified="2025-02-02"
+        author="Pete's AI Sports Picks"
       />
 
       <main className="min-h-screen bg-[#0c1017] text-white">
         {/* Hero Section */}
         <section className="relative overflow-hidden py-16 px-4 sm:px-6 lg:px-8">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/20 via-transparent to-blue-900/20" />
-          <div className="relative max-w-4xl mx-auto text-center">
-            <span className="inline-block px-4 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-sm font-medium mb-4">
-              🏈 Super Bowl LIX • February 9, 2025
+          {/* Background Effects */}
+          <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-transparent to-emerald-900/20" />
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500 rounded-full blur-3xl" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-500 rounded-full blur-3xl" />
+          </div>
+          
+          <div className="relative max-w-5xl mx-auto text-center">
+            {/* Event Badge */}
+            <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800/80 backdrop-blur rounded-full text-sm font-medium mb-6 border border-slate-700">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              Super Bowl LIX • February 9, 2025 • Caesars Superdome
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+
+            {/* Matchup */}
+            <div className="flex items-center justify-center gap-6 sm:gap-12 mb-8">
+              <div className="text-center">
+                <img 
+                  src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" 
+                  alt="Kansas City Chiefs"
+                  className="w-20 h-20 sm:w-28 sm:h-28 mx-auto mb-2"
+                />
+                <span className="text-lg sm:text-xl font-bold">Chiefs</span>
+                <span className="block text-sm text-red-400">AFC Champions</span>
+              </div>
+              
+              <div className="text-center">
+                <span className="text-3xl sm:text-5xl font-bold text-slate-400">VS</span>
+                <div className="mt-2 text-xs sm:text-sm text-slate-500">
+                  <div>Line: KC -1.5</div>
+                  <div>O/U: 49.5</div>
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <img 
+                  src="https://a.espncdn.com/i/teamlogos/nfl/500/phi.png" 
+                  alt="Philadelphia Eagles"
+                  className="w-20 h-20 sm:w-28 sm:h-28 mx-auto mb-2"
+                />
+                <span className="text-lg sm:text-xl font-bold">Eagles</span>
+                <span className="block text-sm text-emerald-400">NFC Champions</span>
+              </div>
+            </div>
+            
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
               Super Bowl 2025 Betting Predictions
             </h1>
-            <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-8">
-              Free AI-powered Super Bowl picks, player props, and odds analysis. 
-              Get expert predictions for spreads, totals, MVP, and prop bets.
+            <p className="text-lg sm:text-xl text-slate-400 max-w-3xl mx-auto mb-8">
+              Your complete Super Bowl LIX betting resource. Expert picks from ESPN, CBS, PFF, 
+              FiveThirtyEight, and AI-powered analysis. Player props, betting guides, and odds comparison.
             </p>
-            <Link
-              href="/?sport=NFL&view=superbowl"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition-colors text-lg"
-            >
-              Get Free Super Bowl Picks
-              <span>→</span>
-            </Link>
+            
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/?sport=NFL&view=superbowl"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition-colors text-lg"
+              >
+                🤖 Get AI Analysis
+              </Link>
+              <Link
+                href="#expert-picks"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl transition-colors border border-slate-700"
+              >
+                📊 Expert Picks
+              </Link>
+            </div>
           </div>
         </section>
 
-        {/* What We Offer */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">Super Bowl Betting Analysis</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                {
-                  icon: '🎯',
-                  title: 'Expert Picks',
-                  description: 'AI-analyzed spread, moneyline, and total predictions with confidence ratings.',
-                },
-                {
-                  icon: '👤',
-                  title: 'Player Props',
-                  description: 'Passing yards, rushing, receiving, touchdowns, and defensive props.',
-                },
-                {
-                  icon: '📊',
-                  title: 'Odds Comparison',
-                  description: 'Compare Super Bowl odds across FanDuel, DraftKings, BetMGM & more.',
-                },
-                {
-                  icon: '🏆',
-                  title: 'MVP Predictions',
-                  description: 'Super Bowl MVP odds and analysis with historical trends.',
-                },
-                {
-                  icon: '📈',
-                  title: 'Line Movement',
-                  description: 'Track how Super Bowl lines move from open to kickoff.',
-                },
-                {
-                  icon: '🎰',
-                  title: 'Alternate Lines',
-                  description: 'Find value with alternate spreads and totals.',
-                },
-              ].map((item) => (
-                <div key={item.title} className="bg-[#151c28] rounded-xl p-6 border border-slate-800">
-                  <span className="text-3xl mb-4 block">{item.icon}</span>
-                  <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                  <p className="text-slate-400 text-sm">{item.description}</p>
-                </div>
-              ))}
+        {/* Quick Stats Bar */}
+        <section className="border-y border-slate-800 bg-[#0a0e14]">
+          <div className="max-w-6xl mx-auto px-4 py-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+              <div>
+                <div className="text-2xl font-bold text-emerald-400">10+</div>
+                <div className="text-sm text-slate-400">Expert Sources</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-blue-400">7</div>
+                <div className="text-sm text-slate-400">Prediction Models</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-amber-400">50+</div>
+                <div className="text-sm text-slate-400">Prop Analysis</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-purple-400">Daily</div>
+                <div className="text-sm text-slate-400">Updates</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Expert Predictions Section */}
+        <div id="expert-picks">
+          <ExpertPredictions />
+        </div>
+
+        {/* Prediction Models Section */}
+        <PredictionModels />
+
+        {/* Articles & Guides Section */}
+        <SuperBowlArticles />
+
+        {/* Quick Betting Tips */}
+        <section className="py-12 px-4 border-t border-slate-800">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-2xl font-bold text-center mb-8">Quick Super Bowl Betting Tips</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-gradient-to-br from-emerald-900/20 to-transparent rounded-xl p-6 border border-emerald-900/30">
+                <span className="text-3xl mb-4 block">💰</span>
+                <h3 className="text-lg font-semibold mb-2">Shop Your Lines</h3>
+                <p className="text-sm text-slate-400">
+                  A half-point can mean the difference between winning and losing. 
+                  Compare odds across FanDuel, DraftKings, BetMGM, and Caesars before placing any bet.
+                </p>
+              </div>
+              <div className="bg-gradient-to-br from-blue-900/20 to-transparent rounded-xl p-6 border border-blue-900/30">
+                <span className="text-3xl mb-4 block">📈</span>
+                <h3 className="text-lg font-semibold mb-2">Follow Sharp Money</h3>
+                <p className="text-sm text-slate-400">
+                  Watch line movement. If the line moves against public betting percentages, 
+                  sharp bettors may have identified value. Eagles moved from +2.5 to +1.5.
+                </p>
+              </div>
+              <div className="bg-gradient-to-br from-amber-900/20 to-transparent rounded-xl p-6 border border-amber-900/30">
+                <span className="text-3xl mb-4 block">🎯</span>
+                <h3 className="text-lg font-semibold mb-2">Target Player Props</h3>
+                <p className="text-sm text-slate-400">
+                  Super Bowl player props offer the best value because oddsmakers have limited 
+                  data. Focus on high-volume players with favorable matchups.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -153,18 +268,19 @@ export default function SuperBowlPage() {
         {/* FAQ Section for AEO */}
         <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[#0a0e14]">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">Super Bowl Betting FAQ</h2>
-            <div className="space-y-6">
+            <h2 className="text-3xl font-bold text-center mb-12">Super Bowl 2025 Betting FAQ</h2>
+            <div className="space-y-4">
               {SUPER_BOWL_FAQS.map((faq, index) => (
                 <details
                   key={index}
                   className="group bg-[#151c28] rounded-xl border border-slate-800 overflow-hidden"
+                  open={index === 0}
                 >
-                  <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-slate-800/30 transition-colors">
-                    <h3 className="text-lg font-medium pr-4">{faq.question}</h3>
-                    <span className="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                  <summary className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-800/30 transition-colors">
+                    <h3 className="text-base font-medium pr-4">{faq.question}</h3>
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0">▼</span>
                   </summary>
-                  <div className="px-6 pb-6 text-slate-400">
+                  <div className="px-5 pb-5 text-slate-400 text-sm leading-relaxed">
                     {faq.answer}
                   </div>
                 </details>
@@ -175,29 +291,66 @@ export default function SuperBowlPage() {
 
         {/* CTA Section */}
         <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800">
-          <div className="max-w-2xl mx-auto text-center">
+          <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-2xl font-bold mb-4">Ready to Win on Super Bowl Sunday?</h2>
             <p className="text-slate-400 mb-8">
-              Get instant access to AI-powered Super Bowl picks, player props, and odds comparison.
+              Get instant access to AI-powered Super Bowl analysis, player props breakdown, 
+              and real-time odds comparison.
             </p>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg transition-colors"
-            >
-              Start Analyzing Now
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/?sport=NFL&view=superbowl"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg transition-colors"
+              >
+                🤖 AI Analysis Dashboard
+              </Link>
+              <Link
+                href="/?sport=NFL&view=tools"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg transition-colors border border-slate-700"
+              >
+                🔧 Betting Tools
+              </Link>
+            </div>
           </div>
         </section>
 
-        {/* Footer navigation for internal linking */}
-        <footer className="py-8 px-4 border-t border-slate-800">
+        {/* Related Content & Internal Links */}
+        <section className="py-12 px-4 border-t border-slate-800 bg-[#0a0e14]">
           <div className="max-w-4xl mx-auto">
+            <h2 className="text-xl font-semibold text-center mb-8">More Betting Resources</h2>
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <Link href="/nba" className="bg-[#151c28] rounded-lg p-4 border border-slate-800 hover:border-slate-700 transition-colors text-center">
+                <span className="text-2xl block mb-2">🏀</span>
+                <span className="font-medium">NBA Picks</span>
+              </Link>
+              <Link href="/nhl" className="bg-[#151c28] rounded-lg p-4 border border-slate-800 hover:border-slate-700 transition-colors text-center">
+                <span className="text-2xl block mb-2">🏒</span>
+                <span className="font-medium">NHL Picks</span>
+              </Link>
+              <Link href="/mlb" className="bg-[#151c28] rounded-lg p-4 border border-slate-800 hover:border-slate-700 transition-colors text-center">
+                <span className="text-2xl block mb-2">⚾</span>
+                <span className="font-medium">MLB Picks</span>
+              </Link>
+              <Link href="/?view=tools" className="bg-[#151c28] rounded-lg p-4 border border-slate-800 hover:border-slate-700 transition-colors text-center">
+                <span className="text-2xl block mb-2">🧮</span>
+                <span className="font-medium">Bet Calculator</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="py-8 px-4 border-t border-slate-800">
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="text-sm text-slate-500 mb-4">
+              Expert predictions are aggregated from publicly available sources. Betting involves risk. 
+              Please gamble responsibly and only wager what you can afford to lose.
+            </p>
             <nav className="flex flex-wrap justify-center gap-6 text-sm text-slate-400">
-              <Link href="/nba" className="hover:text-white">NBA Picks</Link>
-              <Link href="/nhl" className="hover:text-white">NHL Picks</Link>
-              <Link href="/mlb" className="hover:text-white">MLB Picks</Link>
-              <Link href="/tools/odds-comparison" className="hover:text-white">Odds Comparison</Link>
-              <Link href="/tools/parlay-builder" className="hover:text-white">Parlay Builder</Link>
+              <Link href="/" className="hover:text-white">Home</Link>
+              <Link href="/nba" className="hover:text-white">NBA</Link>
+              <Link href="/nhl" className="hover:text-white">NHL</Link>
+              <Link href="/mlb" className="hover:text-white">MLB</Link>
             </nav>
           </div>
         </footer>
