@@ -1,0 +1,25 @@
+# Pete's AI Sports Picks - robots.txt
+# https://petesaisportspicks.com
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://petesaisportspicks.com/sitemap.xml
+
+# Block API routes from indexing
+Disallow: /api/
+
+# Allow all other crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Social media crawlers for rich previews
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /

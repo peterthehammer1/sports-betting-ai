@@ -1,0 +1,30 @@
+{
+  "name": "Pete's AI Sports Picks - Expert Betting Analysis",
+  "short_name": "Pete's Picks",
+  "description": "AI-powered sports betting predictions for NFL, NBA, NHL, MLB, and Soccer. Get expert Super Bowl picks, player props, and betting advice.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c1017",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/Pete/PeterCartoon1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Pete/PeterCartoon1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "entertainment", "news"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "scope": "/",
+  "screenshots": [],
+  "prefer_related_applications": false
+}
