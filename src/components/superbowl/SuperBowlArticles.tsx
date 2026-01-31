@@ -21,8 +21,8 @@ interface Article {
 const ARTICLES: Article[] = [
   {
     id: 'betting-guide',
-    title: 'Complete Super Bowl Betting Guide 2025',
-    description: 'Everything you need to know about betting on Super Bowl LIX - from spreads and totals to exotic props.',
+    title: 'Complete Super Bowl Betting Guide 2026',
+    description: 'Everything you need to know about betting on Super Bowl LX - from spreads and totals to exotic props.',
     category: 'guide',
     readTime: '12 min read',
     icon: '📚',
@@ -31,24 +31,24 @@ const ARTICLES: Article[] = [
   {
     id: 'player-props',
     title: 'Best Super Bowl Player Props to Bet',
-    description: 'Analysis of the top player prop bets for Chiefs vs Eagles including passing, rushing, and touchdown props.',
+    description: 'Analysis of the top player prop bets for Seahawks vs Patriots including passing, rushing, and touchdown props.',
     category: 'props',
     readTime: '8 min read',
     icon: '👤',
     featured: true,
   },
   {
-    id: 'mahomes-analysis',
-    title: 'Patrick Mahomes Super Bowl Props Breakdown',
-    description: 'Deep dive into Mahomes passing yards, touchdowns, and rushing props with historical Super Bowl data.',
+    id: 'geno-smith-analysis',
+    title: 'Geno Smith Super Bowl Props Breakdown',
+    description: 'Deep dive into Geno Smith passing yards, touchdowns, and rushing props for Seattle.',
     category: 'analysis',
     readTime: '6 min read',
     icon: '🏈',
   },
   {
-    id: 'barkley-analysis',
-    title: 'Saquon Barkley Prop Bets Guide',
-    description: 'Analyzing Barkley\'s rushing yards, receptions, and touchdown props against the Chiefs defense.',
+    id: 'dk-metcalf-analysis',
+    title: 'DK Metcalf Prop Bets Guide',
+    description: 'Analyzing Metcalf\'s receiving yards, receptions, and touchdown props against the Patriots defense.',
     category: 'analysis',
     readTime: '5 min read',
     icon: '🏃',
@@ -56,7 +56,7 @@ const ARTICLES: Article[] = [
   {
     id: 'super-bowl-history',
     title: 'Super Bowl Betting Trends & History',
-    description: 'Historical data on Super Bowl spreads, totals, and prop performance to inform your 2025 bets.',
+    description: 'Historical data on Super Bowl spreads, totals, and prop performance to inform your 2026 bets.',
     category: 'history',
     readTime: '10 min read',
     icon: '📊',
@@ -94,17 +94,17 @@ const ARTICLE_CONTENT: Record<string, ArticleContent> = {
         title: 'Understanding Super Bowl Betting Lines',
         content: [
           'The Super Bowl offers more betting markets than any other single sporting event. Understanding each type is crucial for making informed wagers.',
-          'The point spread (or "line") is the most popular bet type. For Super Bowl LIX, the Chiefs opened as slight favorites. A bet on KC -1.5 means they must win by 2 or more points to cover.',
-          'Moneyline bets are straight-up winner picks. As slight favorites, Chiefs moneyline offers less value but more probability. Eagles moneyline pays better as underdogs.',
+          'The point spread (or "line") is the most popular bet type. For Super Bowl LX, the Seahawks opened as slight favorites. A bet on SEA -2.5 means they must win by 3 or more points to cover.',
+          'Moneyline bets are straight-up winner picks. As slight favorites, Seahawks moneyline offers less value but more probability. Patriots moneyline pays better as underdogs.',
         ],
         tip: 'Shop lines across multiple sportsbooks. A half-point difference can significantly impact your expected value over time.',
       },
       {
         title: 'Totals (Over/Under) Betting',
         content: [
-          'The total for Super Bowl LIX opened around 49.5 points. This represents oddsmakers\' projection for combined team scoring.',
+          'The total for Super Bowl LX is projected around 47.5 points. This represents oddsmakers\' projection for combined team scoring.',
           'Historically, Super Bowl unders have hit about 55% of the time. The increased preparation time often leads to tighter defensive games.',
-          'Consider factors like weather (Superdome is indoor), offensive tempo, and red zone efficiency when betting totals.',
+          'Consider factors like weather (Levi\'s Stadium is outdoor), offensive tempo, and red zone efficiency when betting totals.',
         ],
       },
       {
@@ -132,7 +132,7 @@ const ARTICLE_CONTENT: Record<string, ArticleContent> = {
         title: 'Top Value Prop Bets',
         content: [
           'Player props offer the best value in Super Bowl betting because oddsmakers have less historical data to work with for specific player performances.',
-          'Focus on players with consistent volume: Mahomes, Hurts, Kelce, and Barkley will all see heavy target shares.',
+          'Focus on players with consistent volume: Geno Smith, DK Metcalf, Tyler Lockett, and Kenneth Walker III for Seattle.',
           'Avoid "square" props (heavily bet by public) and look for lines where sharp money has created value.',
         ],
         tip: 'Props posted earlier in the week often have softer lines. Bet early if you see value before the market adjusts.',
@@ -140,17 +140,17 @@ const ARTICLE_CONTENT: Record<string, ArticleContent> = {
       {
         title: 'Passing Yards Props',
         content: [
-          'Patrick Mahomes O/U 270.5 passing yards: Mahomes averages 265 yards in Super Bowls but has exceeded this in 2 of 4 appearances.',
-          'Jalen Hurts O/U 225.5 passing yards: With Barkley commanding attention, play-action should create opportunities.',
-          'Consider the game script: If Eagles build a lead, Mahomes will air it out. If Chiefs lead, Hurts may need to pass more.',
+          'Geno Smith O/U 255.5 passing yards: Smith has consistently hit this mark with his elite receiving corps.',
+          'Watch for Patriots QB props based on game script - if trailing, passing volume increases significantly.',
+          'Consider the game script: If Seahawks build a lead, they may run more. If Patriots lead, Smith will need to air it out.',
         ],
       },
       {
         title: 'Rushing & Receiving Props',
         content: [
-          'Saquon Barkley O/U 85.5 rushing yards: The Eagles\' offensive line is dominant, and Barkley has been the NFL\'s best back this season.',
-          'Travis Kelce O/U 65.5 receiving yards: Kelce has exceeded this in 3 of 4 Super Bowls. He\'s Mahomes\' security blanket in big games.',
-          'DeVonta Smith O/U 55.5 receiving yards: Smith could see increased targets with defensive attention on A.J. Brown.',
+          'Kenneth Walker III O/U 75.5 rushing yards: Seattle\'s workhorse back should see 18-22 carries.',
+          'DK Metcalf O/U 80.5 receiving yards: Metcalf is a big-game player who thrives against single coverage.',
+          'Tyler Lockett O/U 55.5 receiving yards: The veteran slot receiver is Geno Smith\'s safety valve.',
         ],
         tip: 'Cross-reference reception props with yards props. High target volume + favorable matchup = good value.',
       },
@@ -158,66 +158,66 @@ const ARTICLE_CONTENT: Record<string, ArticleContent> = {
         title: 'Touchdown Scorer Props',
         content: [
           'First TD Scorer: Historically, skill position players (not QBs) score the first TD about 75% of the time.',
-          'Best value first TD: Travis Kelce (+900), Rashee Rice (+950), DeVonta Smith (+1100).',
+          'Best value first TD: DK Metcalf (+750), Kenneth Walker III (+800), Tyler Lockett (+1000).',
           'Anytime TD scorers: Build a same-game parlay with 2-3 likely scorers to boost your payout.',
         ],
       },
     ],
   },
-  'mahomes-analysis': {
+  'geno-smith-analysis': {
     sections: [
       {
-        title: 'Mahomes Super Bowl Track Record',
+        title: 'Geno Smith\'s Resurgence',
         content: [
-          'Patrick Mahomes has appeared in 4 Super Bowls, winning 3 (MVP in 2 of them). His postseason pedigree is unmatched among active QBs.',
-          'Super Bowl stats: 112 completions on 167 attempts (67%), 1,201 yards, 9 TDs, 2 INTs, 100.8 passer rating.',
-          'Mahomes\' ability to extend plays and make off-platform throws has been crucial in Super Bowl victories.',
+          'Geno Smith has transformed from journeyman to Pro Bowl quarterback since taking over in Seattle.',
+          'His connection with DK Metcalf and Tyler Lockett creates one of the NFL\'s most dangerous passing attacks.',
+          'Smith\'s ability to extend plays and make accurate deep throws has been crucial to Seattle\'s success.',
         ],
       },
       {
         title: 'Props to Target',
         content: [
-          'Passing Yards Over 265.5 (-115): Mahomes has thrown for 270+ in 2 of 4 Super Bowls. Eagles secondary is vulnerable.',
-          'Passing TDs Over 1.5 (+100): Mahomes has thrown 2+ TDs in every Super Bowl. This is plus-money value.',
-          'Rushing Yards Over 20.5 (-110): Often overlooked, Mahomes averages 28 rush yards per Super Bowl.',
+          'Passing Yards Over 250.5 (-115): Smith averages 265 yards per game this season with elite weapons.',
+          'Passing TDs Over 1.5 (+100): Seattle\'s red zone efficiency makes this plus-money value appealing.',
+          'Completions Over 22.5 (-110): High completion percentage (68%) supports the over here.',
         ],
-        tip: 'Mahomes props adjust quickly. If you like something, bet it early in the week before lines move.',
+        tip: 'Geno Smith props can offer value because he\'s not a household name - oddsmakers may undervalue him.',
       },
       {
         title: 'Matchup Analysis',
         content: [
-          'Eagles have the #1 rush defense but are more vulnerable to the pass (11th in DVOA vs pass).',
-          'Vic Fangio\'s complex defensive schemes will test Mahomes, but he\'s solved similar puzzles before.',
-          'Watch for Mahomes to target the middle of the field where Eagles LBs are weakest in coverage.',
+          'Patriots secondary has been opportunistic but can be exploited by elite route runners.',
+          'Watch for Smith to attack the intermediate zones where Seattle\'s offense thrives.',
+          'Play-action should be effective as Patriots respect Seattle\'s running game.',
         ],
       },
     ],
   },
-  'barkley-analysis': {
+  'dk-metcalf-analysis': {
     sections: [
       {
-        title: 'Barkley\'s Historic Season',
+        title: 'DK Metcalf\'s Big-Game Ability',
         content: [
-          'Saquon Barkley led the NFL with 2,005 rushing yards in 2024, the 9th-best season in NFL history.',
-          'His 5.8 yards per carry and 13 rushing TDs demonstrate elite efficiency and scoring ability.',
-          'Behind the Eagles\' dominant offensive line, Barkley has been nearly unstoppable in the playoffs.',
+          'DK Metcalf is one of the NFL\'s most physically dominant receivers at 6\'4" 235 lbs.',
+          'His combination of size, speed, and contested-catch ability makes him nearly impossible to cover one-on-one.',
+          'Metcalf has consistently performed well in primetime and playoff games throughout his career.',
         ],
       },
       {
         title: 'Props to Target',
         content: [
-          'Rushing Yards Over 85.5 (-115): Barkley has exceeded 100 yards in both playoff games. Volume is guaranteed.',
-          'Total TDs Over 0.5 (-165): Barkley has scored in 14 of 17 games. He\'ll get goal-line carries.',
-          'Rushing Attempts Over 22.5 (-110): Eagles will lean on the run to control clock and limit Mahomes possessions.',
+          'Receiving Yards Over 80.5 (-115): Metcalf averages 85+ yards in big games.',
+          'Receptions Over 5.5 (-110): High target share makes this a solid play.',
+          'Anytime TD (-140): Metcalf is Seattle\'s primary red zone target.',
         ],
-        tip: 'Same-game parlay: Barkley 80+ yards + Barkley TD at plus-odds offers great value.',
+        tip: 'Same-game parlay: Metcalf 70+ yards + Metcalf TD at plus-odds offers great value.',
       },
       {
-        title: 'Chiefs Run Defense Analysis',
+        title: 'Patriots Coverage Analysis',
         content: [
-          'Kansas City ranks 7th in rush defense DVOA but faced fewer elite rushing attacks this season.',
-          'Chris Jones commands double teams but Eagles guards are Pro Bowlers capable of handling him.',
-          'Watch for Eagles to attack the edges with sweeps and tosses where Barkley\'s speed is devastating.',
+          'Patriots will likely bracket Metcalf with safety help over the top.',
+          'This could open up opportunities for Tyler Lockett and the tight ends.',
+          'Watch for designed plays to get Metcalf the ball in space on screens and quick slants.',
         ],
       },
     ],
@@ -271,20 +271,20 @@ const ARTICLE_CONTENT: Record<string, ArticleContent> = {
         tip: 'Consider players who see red zone targets/carries consistently, not just overall yardage leaders.',
       },
       {
-        title: 'Top Candidates Chiefs',
+        title: 'Top Candidates Seahawks',
         content: [
-          'Travis Kelce (+850): Mahomes\' favorite target in the red zone. 2 first-half TDs in last 3 Super Bowls.',
-          'Rashee Rice (+950): Chiefs\' WR1 with elite route-running. Gets open quickly in short-yardage situations.',
-          'Isiah Pacheco (+1100): If healthy, he\'s the goal-line back. Scored first TD in Super Bowl LVII.',
+          'DK Metcalf (+750): Seattle\'s primary red zone target. Physical presence makes him a constant threat.',
+          'Kenneth Walker III (+800): Seattle\'s workhorse back who gets goal-line carries consistently.',
+          'Tyler Lockett (+1000): Veteran slot receiver who finds soft spots in the defense.',
         ],
       },
       {
-        title: 'Top Candidates Eagles',
+        title: 'Top Candidates Patriots',
         content: [
-          'Saquon Barkley (+700): Most likely to score a TD overall, but first TD odds are shorter as a result.',
-          'DeVonta Smith (+1100): Quieter than A.J. Brown but equally dangerous. Good value at this price.',
-          'A.J. Brown (+950): Red zone monster who draws targets. Defensive attention might limit early looks.',
-          'Dallas Goedert (+1400): Forgotten TE who gets open in the middle. Solid sleeper value.',
+          'Patriots RB (+850): New England\'s backfield rotation means value on the featured runner.',
+          'Patriots WR1 (+1000): Primary receiving target should see red zone opportunities.',
+          'Patriots TE (+1200): Tight ends often find space in the red zone.',
+          'Look for game script - if Patriots trail, more passing means WR/TE value.',
         ],
       },
       {

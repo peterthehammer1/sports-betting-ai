@@ -269,9 +269,15 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
       <div className="bg-[#161d29] border border-slate-700/40 rounded-lg p-8 text-center">
         <div className="text-6xl mb-4">🏈</div>
         <p className="text-slate-200 font-semibold text-lg">Super Bowl LX</p>
-        <p className="text-slate-500 text-sm mt-2">
-          No Super Bowl odds available yet. Check back closer to game day!
+        <p className="text-slate-500 text-sm mt-2 mb-4">
+          Seahawks vs Patriots • February 8, 2026 • Levi&apos;s Stadium
         </p>
+        <a 
+          href="/nfl/super-bowl"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition-colors"
+        >
+          📊 View Expert Picks & Analysis →
+        </a>
       </div>
     );
   }
@@ -451,13 +457,13 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
               
               {/* Featured Props Preview */}
               <div className="border-t border-slate-700/40 pt-4">
-                <h4 className="text-sm font-medium text-slate-300 mb-3">Featured Super Bowl Props</h4>
+                <h4 className="text-sm font-medium text-slate-300 mb-3">Featured Super Bowl LX Props</h4>
                 <div className="space-y-2">
                   {[
-                    { player: 'Patrick Mahomes', market: 'Pass Yards O/U', line: '270.5', bestOdds: '-115' },
-                    { player: 'Saquon Barkley', market: 'Rush Yards O/U', line: '85.5', bestOdds: '-110' },
-                    { player: 'Travis Kelce', market: 'Rec Yards O/U', line: '65.5', bestOdds: '-115' },
-                    { player: 'DeVonta Smith', market: 'Anytime TD', line: '', bestOdds: '+175' },
+                    { player: 'Geno Smith', market: 'Pass Yards O/U', line: '255.5', bestOdds: '-115' },
+                    { player: 'Kenneth Walker III', market: 'Rush Yards O/U', line: '75.5', bestOdds: '-110' },
+                    { player: 'DK Metcalf', market: 'Rec Yards O/U', line: '80.5', bestOdds: '-115' },
+                    { player: 'Tyler Lockett', market: 'Anytime TD', line: '', bestOdds: '+175' },
                   ].map((prop, idx) => (
                     <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/40 rounded-lg">
                       <div>

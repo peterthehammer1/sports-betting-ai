@@ -11,12 +11,12 @@ interface PredictionModel {
   name: string;
   type: string;
   description: string;
-  chiefsWinProb: number;
-  eaglesWinProb: number;
+  seahawksWinProb: number;
+  patriotsWinProb: number;
   projectedSpread: number;
   projectedTotal: number;
-  chiefsProjScore: number;
-  eaglesProjScore: number;
+  seahawksProjScore: number;
+  patriotsProjScore: number;
   lastUpdated: string;
   accuracy?: string;
   logo?: string;
@@ -27,103 +27,103 @@ const PREDICTION_MODELS: PredictionModel[] = [
     name: 'FiveThirtyEight ELO',
     type: 'ELO Rating System',
     description: 'Chess-style rating system adapted for football. Considers margin of victory, home field, and opponent strength.',
-    chiefsWinProb: 54,
-    eaglesWinProb: 46,
-    projectedSpread: -1.5,
-    projectedTotal: 49,
-    chiefsProjScore: 25.2,
-    eaglesProjScore: 23.8,
-    lastUpdated: '2025-02-01',
+    seahawksWinProb: 56,
+    patriotsWinProb: 44,
+    projectedSpread: -2.0,
+    projectedTotal: 47,
+    seahawksProjScore: 24.5,
+    patriotsProjScore: 22.5,
+    lastUpdated: '2026-01-28',
     accuracy: '68% historical ATS',
   },
   {
     name: 'PFF Power Rankings',
     type: 'Grade-Based Model',
     description: 'Based on individual player grades from every play. Aggregates offense, defense, and special teams.',
-    chiefsWinProb: 48,
-    eaglesWinProb: 52,
-    projectedSpread: 1.0,
-    projectedTotal: 50,
-    chiefsProjScore: 24.5,
-    eaglesProjScore: 25.5,
-    lastUpdated: '2025-02-01',
+    seahawksWinProb: 54,
+    patriotsWinProb: 46,
+    projectedSpread: -3.0,
+    projectedTotal: 48,
+    seahawksProjScore: 25.5,
+    patriotsProjScore: 22.5,
+    lastUpdated: '2026-01-28',
     accuracy: '64% historical ATS',
   },
   {
     name: 'Football Outsiders DVOA',
     type: 'Efficiency Model',
     description: 'Defense-adjusted Value Over Average. Measures per-play efficiency with adjustments for opponent.',
-    chiefsWinProb: 57,
-    eaglesWinProb: 43,
+    seahawksWinProb: 55,
+    patriotsWinProb: 45,
     projectedSpread: -2.5,
-    projectedTotal: 48,
-    chiefsProjScore: 25.2,
-    eaglesProjScore: 22.8,
-    lastUpdated: '2025-01-31',
+    projectedTotal: 46,
+    seahawksProjScore: 24.2,
+    patriotsProjScore: 21.8,
+    lastUpdated: '2026-01-27',
     accuracy: '65% historical ATS',
   },
   {
     name: 'numberFire nERD',
     type: 'Expected Points Model',
     description: 'Net Expected Rating Differential. Predicts points per drive and converts to win probability.',
-    chiefsWinProb: 55,
-    eaglesWinProb: 45,
-    projectedSpread: -1.5,
-    projectedTotal: 52,
-    chiefsProjScore: 27.3,
-    eaglesProjScore: 24.8,
-    lastUpdated: '2025-02-01',
+    seahawksWinProb: 57,
+    patriotsWinProb: 43,
+    projectedSpread: -2.5,
+    projectedTotal: 49,
+    seahawksProjScore: 26.1,
+    patriotsProjScore: 22.8,
+    lastUpdated: '2026-01-28',
     accuracy: '62% historical ATS',
   },
   {
     name: 'ESPN FPI',
     type: 'Power Index',
     description: 'Football Power Index. Measures team strength with adjustments for schedule and recent performance.',
-    chiefsWinProb: 56,
-    eaglesWinProb: 44,
-    projectedSpread: -2.0,
-    projectedTotal: 49,
-    chiefsProjScore: 25.5,
-    eaglesProjScore: 23.5,
-    lastUpdated: '2025-02-02',
+    seahawksWinProb: 58,
+    patriotsWinProb: 42,
+    projectedSpread: -3.0,
+    projectedTotal: 47,
+    seahawksProjScore: 25.0,
+    patriotsProjScore: 22.0,
+    lastUpdated: '2026-01-29',
     accuracy: '66% historical ATS',
   },
   {
     name: 'Sagarin Ratings',
     type: 'Hybrid Model',
     description: 'Combines pure points-based rating with schedule-adjusted predictor for balanced projections.',
-    chiefsWinProb: 53,
-    eaglesWinProb: 47,
-    projectedSpread: -1.0,
-    projectedTotal: 50,
-    chiefsProjScore: 25.5,
-    eaglesProjScore: 24.5,
-    lastUpdated: '2025-02-01',
+    seahawksWinProb: 54,
+    patriotsWinProb: 46,
+    projectedSpread: -2.0,
+    projectedTotal: 48,
+    seahawksProjScore: 25.0,
+    patriotsProjScore: 23.0,
+    lastUpdated: '2026-01-28',
     accuracy: '63% historical ATS',
   },
   {
     name: "Pete's AI Model",
     type: 'Machine Learning',
     description: 'Claude-powered analysis combining odds data, injury reports, historical trends, and situational factors.',
-    chiefsWinProb: 55,
-    eaglesWinProb: 45,
-    projectedSpread: -1.5,
-    projectedTotal: 49,
-    chiefsProjScore: 25.2,
-    eaglesProjScore: 23.8,
-    lastUpdated: '2025-02-02',
+    seahawksWinProb: 56,
+    patriotsWinProb: 44,
+    projectedSpread: -2.5,
+    projectedTotal: 47,
+    seahawksProjScore: 24.8,
+    patriotsProjScore: 22.2,
+    lastUpdated: '2026-01-29',
     accuracy: 'New model - tracking',
   },
 ];
 
 export function PredictionModels() {
-  const [sortBy, setSortBy] = useState<'chiefs' | 'eagles' | 'total'>('chiefs');
+  const [sortBy, setSortBy] = useState<'seahawks' | 'patriots' | 'total'>('seahawks');
   
   // Calculate consensus
-  const avgChiefsProb = Math.round(
-    PREDICTION_MODELS.reduce((sum, m) => sum + m.chiefsWinProb, 0) / PREDICTION_MODELS.length
+  const avgSeahawksProb = Math.round(
+    PREDICTION_MODELS.reduce((sum, m) => sum + m.seahawksWinProb, 0) / PREDICTION_MODELS.length
   );
-  const avgEaglesProb = 100 - avgChiefsProb;
+  const avgPatriotsProb = 100 - avgSeahawksProb;
   const avgSpread = (
     PREDICTION_MODELS.reduce((sum, m) => sum + m.projectedSpread, 0) / PREDICTION_MODELS.length
   ).toFixed(1);
@@ -132,8 +132,8 @@ export function PredictionModels() {
   ).toFixed(1);
 
   const sortedModels = [...PREDICTION_MODELS].sort((a, b) => {
-    if (sortBy === 'chiefs') return b.chiefsWinProb - a.chiefsWinProb;
-    if (sortBy === 'eagles') return b.eaglesWinProb - a.eaglesWinProb;
+    if (sortBy === 'seahawks') return b.seahawksWinProb - a.seahawksWinProb;
+    if (sortBy === 'patriots') return b.patriotsWinProb - a.patriotsWinProb;
     return b.projectedTotal - a.projectedTotal;
   });
 
@@ -148,34 +148,34 @@ export function PredictionModels() {
         </div>
 
         {/* Consensus Summary */}
-        <div className="bg-gradient-to-r from-red-900/30 via-slate-800/50 to-emerald-900/30 rounded-xl p-6 mb-8 border border-slate-700">
+        <div className="bg-gradient-to-r from-[#69be28]/20 via-slate-800/50 to-[#002244]/30 rounded-xl p-6 mb-8 border border-slate-700">
           <h3 className="text-lg font-semibold text-center mb-4">Model Consensus</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
               <div className="flex items-center justify-center gap-2 mb-2">
                 <img 
-                  src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" 
-                  alt="Chiefs" 
+                  src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" 
+                  alt="Seahawks" 
                   className="w-8 h-8"
                 />
-                <span className="text-2xl font-bold text-red-400">{avgChiefsProb}%</span>
+                <span className="text-2xl font-bold text-[#69be28]">{avgSeahawksProb}%</span>
               </div>
-              <span className="text-sm text-slate-400">Chiefs Win Prob</span>
+              <span className="text-sm text-slate-400">Seahawks Win Prob</span>
             </div>
             <div>
               <div className="flex items-center justify-center gap-2 mb-2">
                 <img 
-                  src="https://a.espncdn.com/i/teamlogos/nfl/500/phi.png" 
-                  alt="Eagles" 
+                  src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" 
+                  alt="Patriots" 
                   className="w-8 h-8"
                 />
-                <span className="text-2xl font-bold text-emerald-400">{avgEaglesProb}%</span>
+                <span className="text-2xl font-bold text-[#c8102e]">{avgPatriotsProb}%</span>
               </div>
-              <span className="text-sm text-slate-400">Eagles Win Prob</span>
+              <span className="text-sm text-slate-400">Patriots Win Prob</span>
             </div>
             <div>
               <div className="text-2xl font-bold text-slate-200 mb-2">
-                {Number(avgSpread) < 0 ? `KC ${avgSpread}` : `PHI +${avgSpread}`}
+                {Number(avgSpread) < 0 ? `SEA ${avgSpread}` : `NE +${avgSpread}`}
               </div>
               <span className="text-sm text-slate-400">Avg Projected Spread</span>
             </div>
@@ -190,8 +190,8 @@ export function PredictionModels() {
         <div className="flex justify-center gap-2 mb-6">
           <span className="text-sm text-slate-400 mr-2">Sort by:</span>
           {[
-            { key: 'chiefs', label: 'Chiefs %' },
-            { key: 'eagles', label: 'Eagles %' },
+            { key: 'seahawks', label: 'Seahawks %' },
+            { key: 'patriots', label: 'Patriots %' },
             { key: 'total', label: 'Total' },
           ].map((option) => (
             <button
@@ -216,14 +216,14 @@ export function PredictionModels() {
                 <th className="py-3 px-4">Model</th>
                 <th className="py-3 px-4 text-center">
                   <div className="flex items-center justify-center gap-1">
-                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" alt="" className="w-5 h-5" />
-                    KC %
+                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" alt="" className="w-5 h-5" />
+                    SEA %
                   </div>
                 </th>
                 <th className="py-3 px-4 text-center">
                   <div className="flex items-center justify-center gap-1">
-                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/phi.png" alt="" className="w-5 h-5" />
-                    PHI %
+                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" alt="" className="w-5 h-5" />
+                    NE %
                   </div>
                 </th>
                 <th className="py-3 px-4 text-center">Spread</th>
@@ -245,27 +245,27 @@ export function PredictionModels() {
                     <div className="text-xs text-slate-500">{model.type}</div>
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <span className={`font-semibold ${model.chiefsWinProb >= 50 ? 'text-red-400' : 'text-slate-400'}`}>
-                      {model.chiefsWinProb}%
+                    <span className={`font-semibold ${model.seahawksWinProb >= 50 ? 'text-[#69be28]' : 'text-slate-400'}`}>
+                      {model.seahawksWinProb}%
                     </span>
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <span className={`font-semibold ${model.eaglesWinProb >= 50 ? 'text-emerald-400' : 'text-slate-400'}`}>
-                      {model.eaglesWinProb}%
+                    <span className={`font-semibold ${model.patriotsWinProb >= 50 ? 'text-[#c8102e]' : 'text-slate-400'}`}>
+                      {model.patriotsWinProb}%
                     </span>
                   </td>
                   <td className="py-4 px-4 text-center">
                     <span className="font-medium">
-                      {model.projectedSpread < 0 ? `KC ${model.projectedSpread}` : `PHI +${model.projectedSpread}`}
+                      {model.projectedSpread < 0 ? `SEA ${model.projectedSpread}` : `NE +${model.projectedSpread}`}
                     </span>
                   </td>
                   <td className="py-4 px-4 text-center">
                     <span className="font-medium text-amber-400">{model.projectedTotal}</span>
                   </td>
                   <td className="py-4 px-4 text-center text-sm">
-                    <span className="text-red-400">{model.chiefsProjScore}</span>
+                    <span className="text-[#69be28]">{model.seahawksProjScore}</span>
                     <span className="text-slate-500"> - </span>
-                    <span className="text-emerald-400">{model.eaglesProjScore}</span>
+                    <span className="text-[#c8102e]">{model.patriotsProjScore}</span>
                   </td>
                   <td className="py-4 px-4 text-center text-xs text-slate-500 hidden sm:table-cell">
                     {model.lastUpdated}

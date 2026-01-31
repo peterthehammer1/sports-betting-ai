@@ -13,21 +13,21 @@ import { PredictionModels } from '@/components/superbowl/PredictionModels';
 
 // Comprehensive Super Bowl SEO metadata
 export const metadata: Metadata = {
-  title: 'Super Bowl 2025 Betting Predictions & Expert Picks | Chiefs vs Eagles Analysis',
-  description: 'Free Super Bowl LIX betting predictions, expert picks from ESPN, CBS, FiveThirtyEight & more. AI-powered analysis, player props, odds comparison, and betting guides. Chiefs vs Eagles picks updated daily.',
+  title: 'Super Bowl 2026 Betting Predictions & Expert Picks | Seahawks vs Patriots Analysis',
+  description: 'Free Super Bowl LX betting predictions, expert picks from ESPN, CBS, FiveThirtyEight & more. AI-powered analysis, player props, odds comparison, and betting guides. Seahawks vs Patriots picks updated daily.',
   keywords: [
-    'Super Bowl 2025 betting predictions',
-    'Super Bowl LIX picks',
-    'Chiefs vs Eagles predictions',
-    'Super Bowl betting odds',
+    'Super Bowl 2026 betting predictions',
+    'Super Bowl LX picks',
+    'Seahawks vs Patriots predictions',
+    'Super Bowl 60 betting odds',
     'Super Bowl player props',
     'Super Bowl MVP odds',
     'Super Bowl spread picks',
     'Super Bowl over under',
     'Super Bowl expert picks',
     'free Super Bowl picks',
-    'Patrick Mahomes props',
-    'Saquon Barkley props',
+    'Geno Smith props',
+    'Drake Maye props',
     'Super Bowl betting guide',
     'best Super Bowl bets',
     'Super Bowl prediction models',
@@ -35,11 +35,14 @@ export const metadata: Metadata = {
     'PFF Super Bowl predictions',
     'Super Bowl first touchdown scorer',
     'Super Bowl anytime TD',
-    'Super Bowl 2025 odds comparison',
+    'Super Bowl 2026 odds comparison',
+    'Seattle Seahawks Super Bowl',
+    'New England Patriots Super Bowl',
+    'Levis Stadium Super Bowl',
   ],
   openGraph: {
-    title: 'Super Bowl 2025 Betting Predictions | Expert Picks & Analysis Hub',
-    description: 'Complete Super Bowl LIX betting resource. Expert predictions from ESPN, CBS, PFF, FiveThirtyEight and AI-powered analysis. Chiefs vs Eagles picks, props, and betting guides.',
+    title: 'Super Bowl 2026 Betting Predictions | Expert Picks & Analysis Hub',
+    description: 'Complete Super Bowl LX betting resource. Expert predictions from ESPN, CBS, PFF, FiveThirtyEight and AI-powered analysis. Seahawks vs Patriots picks, props, and betting guides.',
     url: 'https://petesbets.com/nfl/super-bowl',
     type: 'article',
     images: [
@@ -47,14 +50,14 @@ export const metadata: Metadata = {
         url: '/og-superbowl.png',
         width: 1200,
         height: 630,
-        alt: 'Super Bowl 2025 Betting Predictions - Chiefs vs Eagles',
+        alt: 'Super Bowl 2026 Betting Predictions - Seahawks vs Patriots',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Super Bowl 2025 Expert Picks & Betting Predictions',
-    description: 'Free Super Bowl LIX predictions from top experts and AI analysis. Chiefs vs Eagles picks, props, and betting guides.',
+    title: 'Super Bowl 2026 Expert Picks & Betting Predictions',
+    description: 'Free Super Bowl LX predictions from top experts and AI analysis. Seahawks vs Patriots picks, props, and betting guides.',
   },
   alternates: {
     canonical: '/nfl/super-bowl',
@@ -64,36 +67,36 @@ export const metadata: Metadata = {
 // Super Bowl FAQs for AEO
 const SUPER_BOWL_FAQS = [
   {
-    question: 'Who do experts predict to win Super Bowl 2025?',
-    answer: 'Expert consensus slightly favors the Kansas City Chiefs (54%) over the Philadelphia Eagles (46%) for Super Bowl LIX. ESPN, CBS Sports, and most prediction models give the Chiefs an edge due to Patrick Mahomes playoff experience, though several analysts like PFF favor the Eagles based on their dominant offensive line and Saquon Barkley.',
+    question: 'Who do experts predict to win Super Bowl 2026?',
+    answer: 'Expert predictions for Super Bowl LX are evolving as the playoffs progress. The Seattle Seahawks and New England Patriots will face off in San Francisco on February 8, 2026. Check our expert predictions section for the latest consensus picks from ESPN, CBS Sports, PFF, and other top analysts.',
   },
   {
-    question: 'What is the best bet for Super Bowl 2025?',
-    answer: 'The best Super Bowl 2025 bets focus on player props where oddsmakers have less data. Top value picks include Travis Kelce over 65.5 receiving yards (+100), Saquon Barkley anytime TD (-165), and Patrick Mahomes over 1.5 passing TDs (+100). Sharp bettors also like Eagles +1.5 based on line movement.',
+    question: 'What is the best bet for Super Bowl 2026?',
+    answer: 'The best Super Bowl 2026 bets focus on player props where oddsmakers have less data. Key players to watch include Seattle\'s DK Metcalf, Tyler Lockett, and Kenneth Walker III, plus New England\'s emerging stars. Our AI analysis identifies value opportunities across all prop markets.',
   },
   {
-    question: 'What are the Super Bowl 2025 odds?',
-    answer: 'Super Bowl LIX odds have the Kansas City Chiefs as -1.5 point favorites over the Philadelphia Eagles. The total (over/under) is set at 49.5 points. Chiefs moneyline is around -120 while Eagles are +100. Odds vary by sportsbook so line shopping is recommended.',
+    question: 'What are the Super Bowl 2026 odds?',
+    answer: 'Super Bowl LX odds will be updated as we get closer to game day. The Seahawks vs Patriots matchup in San Francisco (Levi\'s Stadium) will feature dynamic odds across spreads, totals, and props. Check our odds comparison tool for the best lines across all major sportsbooks.',
   },
   {
     question: 'Who are the best first touchdown scorer bets?',
-    answer: 'Best value first TD scorer picks include Travis Kelce (+850), Rashee Rice (+950), and DeVonta Smith (+1100). Historically, wide receivers score first about 35% of the time, running backs 30%, and tight ends 15%. Spreading small bets across 3-4 players at +800 or better maximizes expected value.',
+    answer: 'Best value first TD scorer picks for Super Bowl LX will target high-volume skill players. For Seattle, DK Metcalf and Kenneth Walker III are primary candidates. For New England, look for value on their top offensive weapons. Historically, wide receivers score first about 35% of the time, running backs 30%.',
   },
   {
-    question: 'What do prediction models say about Super Bowl 2025?',
-    answer: 'Major prediction models are split on Super Bowl LIX. FiveThirtyEight ELO gives Chiefs a 54% win probability, Football Outsiders DVOA favors KC at 57%, while PFF grades give Eagles a 52% edge based on offensive line dominance. Model consensus projects a final score around 25-24 with the total near 49 points.',
+    question: 'What do prediction models say about Super Bowl 2026?',
+    answer: 'Major prediction models including FiveThirtyEight ELO, Football Outsiders DVOA, PFF grades, and ESPN FPI will all have projections for Seahawks vs Patriots. Our prediction model tracker compares all major systems to identify consensus and find value opportunities.',
   },
   {
     question: 'Should I bet the Super Bowl over or under?',
-    answer: 'Super Bowl totals historically lean under (55% hit rate since 2000) due to increased defensive preparation time. However, both Chiefs and Eagles have top-10 offenses, and the indoor venue (Caesars Superdome) favors higher scoring. Models project around 49-50 total points, making the 49.5 line a near coin flip.',
+    answer: 'Super Bowl totals historically lean under (55% hit rate since 2000) due to increased defensive preparation time. The outdoor venue at Levi\'s Stadium in San Francisco could impact scoring. Weather conditions and both teams\' offensive/defensive tendencies will factor into the total.',
   },
   {
-    question: 'What are the best Patrick Mahomes prop bets?',
-    answer: 'Top Mahomes props for Super Bowl LIX: Passing Yards Over 265.5 (-115) - he averages 300+ yards in Super Bowls; Passing TDs Over 1.5 (+100) - has thrown 2+ TDs in every Super Bowl; Rushing Yards Over 20.5 (-110) - averages 28 rush yards per Super Bowl. Target props where historical data supports the over.',
+    question: 'Where is Super Bowl LX being played?',
+    answer: 'Super Bowl LX will be played at Levi\'s Stadium in Santa Clara, California (San Francisco Bay Area) on February 8, 2026. The outdoor venue can impact game conditions, though Bay Area weather in February is typically mild compared to other northern locations.',
   },
   {
-    question: 'What are the best Saquon Barkley prop bets?',
-    answer: 'Barkley prop values for Super Bowl LIX: Rushing Yards Over 85.5 (-115) - exceeded 100 yards in both playoff games; Anytime TD (-165) - has scored in 14 of 17 games; Rushing Attempts Over 22.5 (-110) - Eagles will lean on the run. Same-game parlay of 80+ yards + TD offers plus odds.',
+    question: 'What are the best Seahawks player props?',
+    answer: 'Key Seattle Seahawks props for Super Bowl LX will focus on their offensive playmakers: DK Metcalf receiving yards, Tyler Lockett receptions, Kenneth Walker III rushing yards, and Geno Smith passing props. Our AI analyzes matchups to find the best value plays.',
   },
 ];
 
@@ -102,24 +105,24 @@ export default function SuperBowlHubPage() {
     <>
       {/* Structured Data for SEO */}
       <SuperBowlSchema
-        homeTeam="Kansas City Chiefs"
-        awayTeam="Philadelphia Eagles"
-        date="2025-02-09T18:30:00-05:00"
-        venue="Caesars Superdome, New Orleans"
+        homeTeam="Seattle Seahawks"
+        awayTeam="New England Patriots"
+        date="2026-02-08T18:30:00-05:00"
+        venue="Levi's Stadium, Santa Clara, CA"
       />
       <FAQSchema faqs={SUPER_BOWL_FAQS} />
       <BreadcrumbSchema
         items={[
           { name: 'Home', url: 'https://petesbets.com' },
           { name: 'NFL', url: 'https://petesbets.com/nfl' },
-          { name: 'Super Bowl 2025', url: 'https://petesbets.com/nfl/super-bowl' },
+          { name: 'Super Bowl 2026', url: 'https://petesbets.com/nfl/super-bowl' },
         ]}
       />
       <ArticleSchema
-        headline="Super Bowl 2025 Betting Predictions & Expert Picks"
-        description="Complete Super Bowl LIX betting analysis with expert predictions, AI picks, player props, and betting guides."
-        datePublished="2025-01-15"
-        dateModified="2025-02-02"
+        headline="Super Bowl 2026 Betting Predictions & Expert Picks"
+        description="Complete Super Bowl LX betting analysis with expert predictions, AI picks, player props, and betting guides."
+        datePublished="2026-01-15"
+        dateModified="2026-01-29"
         author="Pete's AI Sports Picks"
       />
 
@@ -127,55 +130,55 @@ export default function SuperBowlHubPage() {
         {/* Hero Section */}
         <section className="relative overflow-hidden py-16 px-4 sm:px-6 lg:px-8">
           {/* Background Effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-transparent to-emerald-900/20" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#002244]/30 via-transparent to-[#69be28]/20" />
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500 rounded-full blur-3xl" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-500 rounded-full blur-3xl" />
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#002244] rounded-full blur-3xl" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#69be28] rounded-full blur-3xl" />
           </div>
           
           <div className="relative max-w-5xl mx-auto text-center">
             {/* Event Badge */}
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800/80 backdrop-blur rounded-full text-sm font-medium mb-6 border border-slate-700">
               <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              Super Bowl LIX • February 9, 2025 • Caesars Superdome
+              Super Bowl LX • February 8, 2026 • Levi&apos;s Stadium, San Francisco
             </span>
 
             {/* Matchup */}
             <div className="flex items-center justify-center gap-6 sm:gap-12 mb-8">
               <div className="text-center">
                 <img 
-                  src="https://a.espncdn.com/i/teamlogos/nfl/500/kc.png" 
-                  alt="Kansas City Chiefs"
+                  src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" 
+                  alt="Seattle Seahawks"
                   className="w-20 h-20 sm:w-28 sm:h-28 mx-auto mb-2"
                 />
-                <span className="text-lg sm:text-xl font-bold">Chiefs</span>
-                <span className="block text-sm text-red-400">AFC Champions</span>
+                <span className="text-lg sm:text-xl font-bold">Seahawks</span>
+                <span className="block text-sm text-[#69be28]">NFC Champions</span>
               </div>
               
               <div className="text-center">
                 <span className="text-3xl sm:text-5xl font-bold text-slate-400">VS</span>
                 <div className="mt-2 text-xs sm:text-sm text-slate-500">
-                  <div>Line: KC -1.5</div>
-                  <div>O/U: 49.5</div>
+                  <div>Line: TBD</div>
+                  <div>O/U: TBD</div>
                 </div>
               </div>
               
               <div className="text-center">
                 <img 
-                  src="https://a.espncdn.com/i/teamlogos/nfl/500/phi.png" 
-                  alt="Philadelphia Eagles"
+                  src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" 
+                  alt="New England Patriots"
                   className="w-20 h-20 sm:w-28 sm:h-28 mx-auto mb-2"
                 />
-                <span className="text-lg sm:text-xl font-bold">Eagles</span>
-                <span className="block text-sm text-emerald-400">NFC Champions</span>
+                <span className="text-lg sm:text-xl font-bold">Patriots</span>
+                <span className="block text-sm text-[#002244]">AFC Champions</span>
               </div>
             </div>
             
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-              Super Bowl 2025 Betting Predictions
+              Super Bowl 2026 Betting Predictions
             </h1>
             <p className="text-lg sm:text-xl text-slate-400 max-w-3xl mx-auto mb-8">
-              Your complete Super Bowl LIX betting resource. Expert picks from ESPN, CBS, PFF, 
+              Your complete Super Bowl LX betting resource. Expert picks from ESPN, CBS, PFF, 
               FiveThirtyEight, and AI-powered analysis. Player props, betting guides, and odds comparison.
             </p>
             
