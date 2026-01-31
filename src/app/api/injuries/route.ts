@@ -26,12 +26,25 @@ const INJURY_CACHE_TTL = 30 * 60;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const sport = searchParams.get('sport')?.toUpperCase() as 'NBA' | 'NHL' | 'NFL' | null;
+  const sportRaw = searchParams.get('sport')?.toUpperCase();
   const teamFilter = searchParams.get('team');
+
+  // MLB and EPL injury data not fully supported yet - return empty
+  if (sportRaw === 'MLB' || sportRaw === 'EPL') {
+    return NextResponse.json({
+      sport: sportRaw,
+      teams: [],
+      totalInjuries: 0,
+      keyPlayersOut: 0,
+      message: `${sportRaw} injury data coming soon`,
+    });
+  }
+  
+  const sport = sportRaw as 'NBA' | 'NHL' | 'NFL' | null;
 
   if (!sport || !['NBA', 'NHL', 'NFL'].includes(sport)) {
     return NextResponse.json(
-      { error: 'Valid sport parameter required (NBA, NHL, or NFL)' },
+      { error: 'Valid sport parameter required (NBA, NHL, NFL, MLB, or EPL)' },
       { status: 400 }
     );
   }

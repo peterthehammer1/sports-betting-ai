@@ -55,8 +55,17 @@ interface QuickPick {
   };
 }
 
-type Sport = 'NHL' | 'NBA';
+type Sport = 'NHL' | 'NBA' | 'MLB' | 'EPL' | 'NFL';
 type View = 'games' | 'picks' | 'analysis' | 'props' | 'tools' | 'superbowl' | 'tracker';
+
+// Sport configurations for the UI
+const SPORTS_CONFIG: Record<Sport, { emoji: string; label: string; hasProps: boolean }> = {
+  NHL: { emoji: '🏒', label: 'NHL', hasProps: true },
+  NBA: { emoji: '🏀', label: 'NBA', hasProps: true },
+  NFL: { emoji: '🏈', label: 'NFL', hasProps: true },
+  MLB: { emoji: '⚾', label: 'MLB', hasProps: true },
+  EPL: { emoji: '⚽', label: 'Soccer', hasProps: true },
+};
 
 interface PlayerPropsData {
   analysis: GoalScorerAnalysis;
@@ -148,8 +157,16 @@ export default function Dashboard() {
     setError(null);
 
     try {
+      // Determine API endpoint based on sport
+      let oddsUrl = `/api/odds/${sport.toLowerCase()}`;
+      
+      // Soccer uses a different route with league param
+      if (sport === 'EPL') {
+        oddsUrl = '/api/odds/soccer?league=epl';
+      }
+      
       // Fetch odds
-      const oddsRes = await fetch(`/api/odds/${sport.toLowerCase()}`);
+      const oddsRes = await fetch(oddsUrl);
       
       if (!oddsRes.ok) {
         const data = await oddsRes.json();
@@ -160,8 +177,10 @@ export default function Dashboard() {
       setGames(oddsData.games);
       setLastFetch(new Date(oddsData.meta.fetchedAt));
 
-      // Fetch scores (non-blocking)
-      fetchScores();
+      // Fetch scores (non-blocking) - skip for soccer for now
+      if (sport !== 'EPL') {
+        fetchScores();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -361,21 +380,21 @@ export default function Dashboard() {
               </h1>
             </div>
             
-            {/* Sport Toggle */}
-            <div className="flex bg-[#141a24] rounded-lg p-0.5 flex-shrink-0">
-              {(['NHL', 'NBA'] as Sport[]).map((s) => (
+            {/* Sport Toggle - Expanded with all sports */}
+            <div className="flex bg-[#141a24] rounded-lg p-0.5 flex-shrink-0 overflow-x-auto">
+              {(Object.keys(SPORTS_CONFIG) as Sport[]).map((s) => (
                 <button
                   key={s}
                   onClick={() => setSport(s)}
-                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
+                  className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                     sport === s
                       ? 'bg-[#2a3444] text-slate-200'
                       : 'text-slate-500 hover:text-slate-300'
                   }`}
                 >
-                  <span className="flex items-center gap-1.5">
-                    {s === 'NHL' ? '🏒' : '🏀'}
-                    {s}
+                  <span className="flex items-center gap-1">
+                    <span>{SPORTS_CONFIG[s].emoji}</span>
+                    <span className="hidden sm:inline">{SPORTS_CONFIG[s].label}</span>
                   </span>
                 </button>
               ))}
@@ -395,20 +414,13 @@ export default function Dashboard() {
               disabled={!selectedPrediction}
               label="Analysis"
             />
-            {sport === 'NHL' && (
+            {/* Player Props - Available for sports with props */}
+            {SPORTS_CONFIG[sport]?.hasProps && (
               <NavTab 
                 active={view === 'props'} 
                 onClick={() => setView('props')}
-                disabled={!selectedPropsAnalysis}
-                label="Goal Scorers"
-              />
-            )}
-            {sport === 'NBA' && (
-              <NavTab 
-                active={view === 'props'} 
-                onClick={() => setView('props')}
-                disabled={!selectedNbaPropsAnalysis}
-                label="Player Props"
+                disabled={sport === 'NHL' ? !selectedPropsAnalysis : !selectedNbaPropsAnalysis}
+                label={sport === 'NHL' ? 'Goal Scorers' : sport === 'MLB' ? 'Player Props' : sport === 'EPL' ? 'Goal Scorers' : 'Player Props'}
               />
             )}
             <NavTab 

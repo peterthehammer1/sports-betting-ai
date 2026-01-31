@@ -6,7 +6,7 @@ import type { TeamInjuries, PlayerInjury, SportInjuries } from '@/types/injuries
 import { getNbaTeam, getNhlTeam, getNflTeam, getPlayerHeadshot } from '@/lib/utils/teams';
 
 interface InjuryReportProps {
-  sport: 'NBA' | 'NHL' | 'NFL';
+  sport: 'NBA' | 'NHL' | 'NFL' | 'MLB' | 'EPL';
   filterTeams?: string[]; // Optional: only show injuries for specific teams (today's games)
   onInjuryCountChange?: (count: number) => void;
 }

@@ -59,11 +59,16 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Fetch player props for points, rebounds, assists
+    // Fetch player props - EXPANDED with premium features
     const markets: NbaPlayerPropMarket[] = [
       'player_points',
       'player_rebounds', 
       'player_assists',
+      'player_threes',
+      'player_points_rebounds_assists',
+      'player_points_rebounds',
+      'player_points_assists',
+      'player_rebounds_assists',
     ];
     
     const propsData = await oddsApi.getNbaPlayerProps(eventId, markets);
@@ -88,10 +93,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Normalize props for each market
+    // Normalize props for each market - EXPANDED
     const pointsProps = oddsApi.normalizeNbaPlayerProps(propsData, 'player_points');
     const reboundsProps = oddsApi.normalizeNbaPlayerProps(propsData, 'player_rebounds');
     const assistsProps = oddsApi.normalizeNbaPlayerProps(propsData, 'player_assists');
+    const threesProps = oddsApi.normalizeNbaPlayerProps(propsData, 'player_threes');
+    const praProps = oddsApi.normalizeNbaPlayerProps(propsData, 'player_points_rebounds_assists');
+    const prProps = oddsApi.normalizeNbaPlayerProps(propsData, 'player_points_rebounds');
+    const paProps = oddsApi.normalizeNbaPlayerProps(propsData, 'player_points_assists');
+    const raProps = oddsApi.normalizeNbaPlayerProps(propsData, 'player_rebounds_assists');
 
     const quota = oddsApi.getQuota();
 
@@ -104,6 +114,12 @@ export async function GET(request: NextRequest) {
         points: pointsProps,
         rebounds: reboundsProps,
         assists: assistsProps,
+        threes: threesProps,
+        // Combo props
+        pointsReboundsAssists: praProps,
+        pointsRebounds: prProps,
+        pointsAssists: paProps,
+        reboundsAssists: raProps,
       },
       meta: {
         sport: 'NBA',

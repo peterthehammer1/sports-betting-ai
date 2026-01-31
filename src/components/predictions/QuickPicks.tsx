@@ -24,7 +24,7 @@ interface QuickPick {
 
 interface QuickPicksProps {
   picks: QuickPick[];
-  sport: 'NHL' | 'NBA';
+  sport: 'NHL' | 'NBA' | 'NFL' | 'MLB' | 'EPL';
   onGameSelect?: (gameId: string) => void;
   loading?: boolean;
 }

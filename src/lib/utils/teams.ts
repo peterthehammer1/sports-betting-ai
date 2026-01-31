@@ -796,3 +796,410 @@ export const NBA_PLAYER_NUMBERS: Record<string, string> = {
 export function getPlayerNumber(playerName: string): string | null {
   return NBA_PLAYER_NUMBERS[playerName] || null;
 }
+
+// ============================================
+// MLB TEAMS (NEW - Premium Feature)
+// ============================================
+
+export const MLB_TEAMS: Record<string, {
+  primary: string;
+  secondary: string;
+  accent: string;
+  logo: string;
+  abbrev: string;
+}> = {
+  'New York Yankees': {
+    primary: '#003087',
+    secondary: '#E4002C',
+    accent: 'from-blue-900/40 to-red-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/nyy.png',
+    abbrev: 'NYY',
+  },
+  'Los Angeles Dodgers': {
+    primary: '#005A9C',
+    secondary: '#EF3E42',
+    accent: 'from-blue-900/40 to-red-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/lad.png',
+    abbrev: 'LAD',
+  },
+  'Boston Red Sox': {
+    primary: '#BD3039',
+    secondary: '#0C2340',
+    accent: 'from-red-900/40 to-blue-800/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/bos.png',
+    abbrev: 'BOS',
+  },
+  'Atlanta Braves': {
+    primary: '#CE1141',
+    secondary: '#13274F',
+    accent: 'from-red-900/40 to-blue-900/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/atl.png',
+    abbrev: 'ATL',
+  },
+  'Philadelphia Phillies': {
+    primary: '#E81828',
+    secondary: '#002D72',
+    accent: 'from-red-900/40 to-blue-900/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/phi.png',
+    abbrev: 'PHI',
+  },
+  'Houston Astros': {
+    primary: '#002D62',
+    secondary: '#EB6E1F',
+    accent: 'from-blue-900/40 to-orange-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/hou.png',
+    abbrev: 'HOU',
+  },
+  'Chicago Cubs': {
+    primary: '#0E3386',
+    secondary: '#CC3433',
+    accent: 'from-blue-900/40 to-red-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/chc.png',
+    abbrev: 'CHC',
+  },
+  'New York Mets': {
+    primary: '#002D72',
+    secondary: '#FF5910',
+    accent: 'from-blue-900/40 to-orange-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/nym.png',
+    abbrev: 'NYM',
+  },
+  'San Francisco Giants': {
+    primary: '#FD5A1E',
+    secondary: '#27251F',
+    accent: 'from-orange-700/40 to-slate-800/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/sf.png',
+    abbrev: 'SF',
+  },
+  'St. Louis Cardinals': {
+    primary: '#C41E3A',
+    secondary: '#0C2340',
+    accent: 'from-red-900/40 to-blue-900/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/stl.png',
+    abbrev: 'STL',
+  },
+  'San Diego Padres': {
+    primary: '#2F241D',
+    secondary: '#FFC425',
+    accent: 'from-amber-700/40 to-slate-800/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/sd.png',
+    abbrev: 'SD',
+  },
+  'Texas Rangers': {
+    primary: '#003278',
+    secondary: '#C0111F',
+    accent: 'from-blue-900/40 to-red-700/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/tex.png',
+    abbrev: 'TEX',
+  },
+  'Arizona Diamondbacks': {
+    primary: '#A71930',
+    secondary: '#E3D4AD',
+    accent: 'from-red-900/40 to-amber-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/ari.png',
+    abbrev: 'ARI',
+  },
+  'Baltimore Orioles': {
+    primary: '#DF4601',
+    secondary: '#000000',
+    accent: 'from-orange-700/40 to-slate-800/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/bal.png',
+    abbrev: 'BAL',
+  },
+  'Tampa Bay Rays': {
+    primary: '#092C5C',
+    secondary: '#8FBCE6',
+    accent: 'from-blue-900/40 to-blue-400/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/tb.png',
+    abbrev: 'TB',
+  },
+  'Seattle Mariners': {
+    primary: '#0C2C56',
+    secondary: '#005C5C',
+    accent: 'from-blue-900/40 to-teal-700/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/sea.png',
+    abbrev: 'SEA',
+  },
+  'Toronto Blue Jays': {
+    primary: '#134A8E',
+    secondary: '#1D2D5C',
+    accent: 'from-blue-800/40 to-blue-900/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/tor.png',
+    abbrev: 'TOR',
+  },
+  'Cleveland Guardians': {
+    primary: '#00385D',
+    secondary: '#E50022',
+    accent: 'from-blue-900/40 to-red-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/cle.png',
+    abbrev: 'CLE',
+  },
+  'Minnesota Twins': {
+    primary: '#002B5C',
+    secondary: '#D31145',
+    accent: 'from-blue-900/40 to-red-700/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/min.png',
+    abbrev: 'MIN',
+  },
+  'Milwaukee Brewers': {
+    primary: '#12284B',
+    secondary: '#B6922E',
+    accent: 'from-blue-900/40 to-yellow-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/mil.png',
+    abbrev: 'MIL',
+  },
+  'Detroit Tigers': {
+    primary: '#0C2340',
+    secondary: '#FA4616',
+    accent: 'from-blue-900/40 to-orange-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/det.png',
+    abbrev: 'DET',
+  },
+  'Los Angeles Angels': {
+    primary: '#BA0021',
+    secondary: '#003263',
+    accent: 'from-red-900/40 to-blue-800/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/laa.png',
+    abbrev: 'LAA',
+  },
+  'Chicago White Sox': {
+    primary: '#27251F',
+    secondary: '#C4CED4',
+    accent: 'from-slate-800/40 to-slate-500/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/chw.png',
+    abbrev: 'CWS',
+  },
+  'Kansas City Royals': {
+    primary: '#004687',
+    secondary: '#BD9B60',
+    accent: 'from-blue-800/40 to-amber-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/kc.png',
+    abbrev: 'KC',
+  },
+  'Pittsburgh Pirates': {
+    primary: '#27251F',
+    secondary: '#FDB827',
+    accent: 'from-slate-800/40 to-yellow-500/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/pit.png',
+    abbrev: 'PIT',
+  },
+  'Cincinnati Reds': {
+    primary: '#C6011F',
+    secondary: '#000000',
+    accent: 'from-red-900/40 to-slate-800/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/cin.png',
+    abbrev: 'CIN',
+  },
+  'Miami Marlins': {
+    primary: '#00A3E0',
+    secondary: '#EF3340',
+    accent: 'from-blue-500/40 to-red-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/mia.png',
+    abbrev: 'MIA',
+  },
+  'Washington Nationals': {
+    primary: '#AB0003',
+    secondary: '#14225A',
+    accent: 'from-red-900/40 to-blue-900/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/wsh.png',
+    abbrev: 'WSH',
+  },
+  'Colorado Rockies': {
+    primary: '#33006F',
+    secondary: '#C4CED4',
+    accent: 'from-purple-900/40 to-slate-500/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/col.png',
+    abbrev: 'COL',
+  },
+  'Oakland Athletics': {
+    primary: '#003831',
+    secondary: '#EFB21E',
+    accent: 'from-green-900/40 to-yellow-500/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/oak.png',
+    abbrev: 'OAK',
+  },
+};
+
+// ============================================
+// SOCCER/EPL TEAMS (NEW - Premium Feature)
+// ============================================
+
+export const EPL_TEAMS: Record<string, {
+  primary: string;
+  secondary: string;
+  accent: string;
+  logo: string;
+  abbrev: string;
+}> = {
+  'Arsenal': {
+    primary: '#EF0107',
+    secondary: '#063672',
+    accent: 'from-red-700/40 to-blue-900/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/359.png',
+    abbrev: 'ARS',
+  },
+  'Manchester City': {
+    primary: '#6CABDD',
+    secondary: '#1C2C5B',
+    accent: 'from-blue-400/40 to-blue-900/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/382.png',
+    abbrev: 'MCI',
+  },
+  'Liverpool': {
+    primary: '#C8102E',
+    secondary: '#00B2A9',
+    accent: 'from-red-700/40 to-teal-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/364.png',
+    abbrev: 'LIV',
+  },
+  'Manchester United': {
+    primary: '#DA291C',
+    secondary: '#FBE122',
+    accent: 'from-red-700/40 to-yellow-500/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/360.png',
+    abbrev: 'MUN',
+  },
+  'Chelsea': {
+    primary: '#034694',
+    secondary: '#DBA111',
+    accent: 'from-blue-800/40 to-yellow-600/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/363.png',
+    abbrev: 'CHE',
+  },
+  'Tottenham Hotspur': {
+    primary: '#132257',
+    secondary: '#FFFFFF',
+    accent: 'from-blue-900/40 to-slate-300/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/367.png',
+    abbrev: 'TOT',
+  },
+  'Newcastle United': {
+    primary: '#241F20',
+    secondary: '#FFFFFF',
+    accent: 'from-slate-800/40 to-slate-300/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/361.png',
+    abbrev: 'NEW',
+  },
+  'Brighton': {
+    primary: '#0057B8',
+    secondary: '#FFCD00',
+    accent: 'from-blue-700/40 to-yellow-500/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/331.png',
+    abbrev: 'BHA',
+  },
+  'Aston Villa': {
+    primary: '#670E36',
+    secondary: '#95BFE5',
+    accent: 'from-purple-900/40 to-blue-400/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/362.png',
+    abbrev: 'AVL',
+  },
+  'West Ham United': {
+    primary: '#7A263A',
+    secondary: '#1BB1E7',
+    accent: 'from-red-900/40 to-blue-500/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/371.png',
+    abbrev: 'WHU',
+  },
+  'Crystal Palace': {
+    primary: '#1B458F',
+    secondary: '#C4122E',
+    accent: 'from-blue-800/40 to-red-700/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/384.png',
+    abbrev: 'CRY',
+  },
+  'Brentford': {
+    primary: '#E30613',
+    secondary: '#FBB800',
+    accent: 'from-red-700/40 to-yellow-500/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/337.png',
+    abbrev: 'BRE',
+  },
+  'Nottingham Forest': {
+    primary: '#DD0000',
+    secondary: '#FFFFFF',
+    accent: 'from-red-700/40 to-slate-300/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/393.png',
+    abbrev: 'NFO',
+  },
+  'Fulham': {
+    primary: '#000000',
+    secondary: '#CC0000',
+    accent: 'from-slate-800/40 to-red-700/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/370.png',
+    abbrev: 'FUL',
+  },
+  'Wolverhampton': {
+    primary: '#FDB913',
+    secondary: '#231F20',
+    accent: 'from-yellow-500/40 to-slate-800/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/380.png',
+    abbrev: 'WOL',
+  },
+  'Everton': {
+    primary: '#003399',
+    secondary: '#FFFFFF',
+    accent: 'from-blue-800/40 to-slate-300/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/368.png',
+    abbrev: 'EVE',
+  },
+  'Bournemouth': {
+    primary: '#DA291C',
+    secondary: '#000000',
+    accent: 'from-red-700/40 to-slate-800/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/349.png',
+    abbrev: 'BOU',
+  },
+  'Leicester City': {
+    primary: '#003090',
+    secondary: '#FDBE11',
+    accent: 'from-blue-800/40 to-yellow-500/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/375.png',
+    abbrev: 'LEI',
+  },
+  'Ipswich Town': {
+    primary: '#3A64A3',
+    secondary: '#FFFFFF',
+    accent: 'from-blue-700/40 to-slate-300/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/373.png',
+    abbrev: 'IPS',
+  },
+  'Southampton': {
+    primary: '#D71920',
+    secondary: '#130C0E',
+    accent: 'from-red-700/40 to-slate-800/20',
+    logo: 'https://a.espncdn.com/i/teamlogos/soccer/500/376.png',
+    abbrev: 'SOU',
+  },
+};
+
+// Get team data by sport
+export function getTeamData(teamName: string, sport: 'nba' | 'nhl' | 'nfl' | 'mlb' | 'epl' = 'nba') {
+  const teamMaps: Record<string, Record<string, { primary: string; secondary: string; accent: string; logo: string; abbrev: string }>> = {
+    nba: NBA_TEAMS,
+    nhl: NHL_TEAMS,
+    nfl: NFL_TEAMS,
+    mlb: MLB_TEAMS,
+    epl: EPL_TEAMS,
+  };
+  
+  const teams = teamMaps[sport];
+  if (!teams) return null;
+  
+  // Direct match
+  if (teams[teamName]) return teams[teamName];
+  
+  // Partial match
+  const match = Object.entries(teams).find(([name]) => 
+    name.toLowerCase().includes(teamName.toLowerCase()) ||
+    teamName.toLowerCase().includes(name.toLowerCase())
+  );
+  
+  return match ? match[1] : null;
+}
+
+// Get team logo URL
+export function getTeamLogo(teamName: string, sport: 'nba' | 'nhl' | 'nfl' | 'mlb' | 'epl' = 'nba'): string | null {
+  const teamData = getTeamData(teamName, sport);
+  return teamData?.logo || null;
+}

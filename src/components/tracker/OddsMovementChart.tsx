@@ -12,7 +12,7 @@ interface OddsSnapshot {
 
 interface OddsMovementChartProps {
   game: NormalizedOdds;
-  sport: 'NBA' | 'NHL' | 'NFL';
+  sport: 'NBA' | 'NHL' | 'NFL' | 'MLB' | 'EPL';
 }
 
 export function OddsMovementChart({ game, sport }: OddsMovementChartProps) {

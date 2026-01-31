@@ -14,14 +14,16 @@ interface InjuryInfo {
 
 interface GameCardProps {
   game: NormalizedOdds;
-  sport: 'NHL' | 'NBA';
+  sport: 'NHL' | 'NBA' | 'MLB' | 'EPL' | 'NFL';
   score?: NormalizedScore;
   injuries?: InjuryInfo;
   onSelect?: (gameId: string) => void;
   onPropsSelect?: (gameId: string) => void;
+  onAlternateLinesSelect?: (gameId: string) => void;
+  onPeriodMarketsSelect?: (gameId: string) => void;
 }
 
-export function GameCard({ game, sport, score, injuries, onSelect, onPropsSelect }: GameCardProps) {
+export function GameCard({ game, sport, score, injuries, onSelect, onPropsSelect, onAlternateLinesSelect, onPeriodMarketsSelect }: GameCardProps) {
   const gameTime = new Date(game.commenceTime);
   const isToday = gameTime.toDateString() === new Date().toDateString();
   
