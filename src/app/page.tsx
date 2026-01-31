@@ -390,7 +390,13 @@ export default function Dashboard() {
               {(Object.keys(SPORTS_CONFIG) as Sport[]).map((s) => (
                 <button
                   key={s}
-                  onClick={() => setSport(s)}
+                  onClick={() => {
+                    setSport(s);
+                    // NFL goes directly to Super Bowl landing page
+                    if (s === 'NFL') {
+                      setView('landing');
+                    }
+                  }}
                   className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                     sport === s
                       ? 'bg-[#2a3444] text-slate-200'

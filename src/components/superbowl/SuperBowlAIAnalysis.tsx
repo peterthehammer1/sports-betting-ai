@@ -271,16 +271,80 @@ export function SuperBowlAIAnalysis() {
         </div>
       </Section>
 
+      {/* Pete's A+ Picks - Featured Walker Props */}
+      <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent rounded-xl border border-amber-500/30 p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <img 
+            src="/Pete/PeterCartoon1.png" 
+            alt="Pete" 
+            className="w-10 h-10 rounded-full object-cover"
+          />
+          <div>
+            <h3 className="font-bold text-amber-400">Pete&apos;s A+ Picks</h3>
+            <p className="text-xs text-slate-500">Highest confidence player props</p>
+          </div>
+          <span className="ml-auto px-3 py-1 bg-amber-500/20 rounded-full text-xs font-bold text-amber-400">
+            🔥 FEATURED
+          </span>
+        </div>
+        
+        <div className="grid md:grid-cols-2 gap-4">
+          {/* Walker Under Rushing */}
+          <div className="p-4 bg-slate-900/60 rounded-xl border border-amber-500/20">
+            <div className="flex items-center gap-3 mb-3">
+              <Image src={SEAHAWKS_LOGO} alt="SEA" width={36} height={36} unoptimized />
+              <div>
+                <p className="font-semibold text-white">Kenneth Walker III</p>
+                <p className="text-xs text-slate-500">Rushing Yards</p>
+              </div>
+              <span className="ml-auto px-2 py-1 bg-emerald-500/20 rounded text-xs font-bold text-emerald-400">
+                85%
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg font-bold text-red-400">UNDER</span>
+              <span className="text-lg font-bold text-white">75.5</span>
+              <span className="text-sm font-mono text-slate-400">-110</span>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Patriots boast the #4 run defense (95.2 YPG allowed). NE stuffed Broncos to 67 rush yards in AFC Championship. Seattle will lean on JSN in the passing game. <span className="text-amber-400">Projection: 55-65 yards.</span>
+            </p>
+          </div>
+
+          {/* Walker Over Receiving */}
+          <div className="p-4 bg-slate-900/60 rounded-xl border border-amber-500/20">
+            <div className="flex items-center gap-3 mb-3">
+              <Image src={SEAHAWKS_LOGO} alt="SEA" width={36} height={36} unoptimized />
+              <div>
+                <p className="font-semibold text-white">Kenneth Walker III</p>
+                <p className="text-xs text-slate-500">Receiving Yards</p>
+              </div>
+              <span className="ml-auto px-2 py-1 bg-emerald-500/20 rounded text-xs font-bold text-emerald-400">
+                88%
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg font-bold text-emerald-400">OVER</span>
+              <span className="text-lg font-bold text-white">18.5</span>
+              <span className="text-sm font-mono text-slate-400">-115</span>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              With Patriots stacking the box, Walker becomes the key outlet receiver. Averaging 3.2 receptions/game in playoffs. Seattle uses screens and check-downs under pressure. <span className="text-amber-400">Projection: 4-5 catches, 25-35 yards.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Player Props */}
       <Section 
-        title="Player Props" 
+        title="More Player Props" 
         icon="🏈"
         expanded={expanded.playerProps}
         onToggle={() => toggleSection('playerProps')}
         badge={`${analysis.playerProps.length} picks`}
       >
         <div className="grid gap-3">
-          {analysis.playerProps.map((prop, i) => (
+          {analysis.playerProps.filter(p => !(p.player === 'Kenneth Walker III' && (p.market === 'Rushing Yards' || p.market === 'Receiving Yards'))).map((prop, i) => (
             <div key={i} className="p-4 bg-slate-800/30 rounded-lg flex items-start gap-4">
               <Image 
                 src={prop.team === 'SEA' ? SEAHAWKS_LOGO : PATRIOTS_LOGO} 
