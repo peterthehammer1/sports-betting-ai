@@ -1,7 +1,10 @@
 // Types for Claude analysis and predictions
 
+// Supported sports for analysis
+export type AnalysisSport = 'NHL' | 'NBA' | 'NFL' | 'MLB' | 'EPL';
+
 export interface GameAnalysisRequest {
-  sport: 'NHL' | 'NBA';
+  sport: AnalysisSport;
   gameId: string;
   homeTeam: string;
   awayTeam: string;
@@ -58,7 +61,7 @@ export interface H2HRecord {
 // Claude's analysis response
 export interface GamePrediction {
   gameId: string;
-  sport: 'NHL' | 'NBA';
+  sport: AnalysisSport;
   homeTeam: string;
   awayTeam: string;
   analyzedAt: string;

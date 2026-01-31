@@ -142,22 +142,28 @@ export function createAnalysisClient(config: ClaudeApiConfig) {
    */
   function prepareAnalysisRequest(
     game: NormalizedOdds,
-    sport: 'NHL' | 'NBA'
+    sport: 'NHL' | 'NBA' | 'NFL' | 'MLB' | 'EPL'
   ): GameAnalysisRequest {
     // Calculate averages from all bookmakers
     const homeMLPrices = game.moneyline.home.map(o => o.price);
     const awayMLPrices = game.moneyline.away.map(o => o.price);
     
-    const avgHomeML = homeMLPrices.reduce((a, b) => a + b, 0) / homeMLPrices.length;
-    const avgAwayML = awayMLPrices.reduce((a, b) => a + b, 0) / awayMLPrices.length;
+    const avgHomeML = homeMLPrices.length > 0 
+      ? homeMLPrices.reduce((a, b) => a + b, 0) / homeMLPrices.length 
+      : 2.0;
+    const avgAwayML = awayMLPrices.length > 0 
+      ? awayMLPrices.reduce((a, b) => a + b, 0) / awayMLPrices.length 
+      : 2.0;
     
-    // Get consensus spread line
-    const spreadLine = game.spread.consensusLine || -1.5;
+    // Get consensus spread line - different defaults per sport
+    const defaultSpread = sport === 'NHL' ? -1.5 : sport === 'MLB' ? -1.5 : sport === 'EPL' ? -0.5 : sport === 'NFL' ? -3 : -5;
+    const spreadLine = game.spread.consensusLine || defaultSpread;
     const homeSpreadOdds = game.spread.home.find(s => s.point === spreadLine);
     const awaySpreadOdds = game.spread.away.find(s => Math.abs(s.point) === Math.abs(spreadLine));
     
-    // Get consensus total line
-    const totalLine = game.total.consensusLine || (sport === 'NHL' ? 6.0 : 220);
+    // Get consensus total line - different defaults per sport
+    const defaultTotal = sport === 'NHL' ? 6.0 : sport === 'MLB' ? 8.5 : sport === 'EPL' ? 2.5 : sport === 'NFL' ? 45 : 220;
+    const totalLine = game.total.consensusLine || defaultTotal;
     const overOdds = game.total.over.find(t => t.point === totalLine);
     const underOdds = game.total.under.find(t => t.point === totalLine);
 
@@ -209,12 +215,12 @@ export function createAnalysisClient(config: ClaudeApiConfig) {
   /**
    * Analyze a single game
    * @param game - Normalized game odds data
-   * @param sport - Sport type (NHL or NBA)
+   * @param sport - Sport type (NHL, NBA, NFL, MLB, EPL)
    * @param injuryReport - Optional injury report string for context
    */
   async function analyzeGame(
     game: NormalizedOdds,
-    sport: 'NHL' | 'NBA',
+    sport: 'NHL' | 'NBA' | 'NFL' | 'MLB' | 'EPL',
     injuryReport?: string
   ): Promise<{ prediction: GamePrediction; meta: AnalysisMeta }> {
     const startTime = Date.now();
@@ -249,7 +255,7 @@ export function createAnalysisClient(config: ClaudeApiConfig) {
    */
   async function analyzeGames(
     games: NormalizedOdds[],
-    sport: 'NHL' | 'NBA'
+    sport: 'NHL' | 'NBA' | 'NFL' | 'MLB' | 'EPL'
   ): Promise<{
     predictions: Array<{
       gameIndex: number;

@@ -8,7 +8,7 @@
  * Request body:
  * {
  *   "gameId": "abc123",
- *   "sport": "NHL" | "NBA"
+ *   "sport": "NHL" | "NBA" | "NFL" | "MLB" | "EPL"
  * }
  */
 
@@ -17,9 +17,19 @@ import { createOddsApiClient } from '@/lib/api/odds';
 import { createAnalysisClient } from '@/lib/analysis/claude';
 import { getCachedGameAnalysis, cacheGameAnalysis, isRedisConfigured } from '@/lib/cache/redis';
 import { fetchInjuries, getGameInjuries, formatInjuriesForAI } from '@/lib/api/injuries';
+import type { SportKey } from '@/types/odds';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // Allow up to 60 seconds for Claude analysis
+
+// Map sport names to API sport keys
+const SPORT_KEY_MAP: Record<string, SportKey> = {
+  'NHL': 'icehockey_nhl',
+  'NBA': 'basketball_nba',
+  'NFL': 'americanfootball_nfl',
+  'MLB': 'baseball_mlb',
+  'EPL': 'soccer_epl',
+};
 
 export async function POST(request: NextRequest) {
   const oddsApiKey = process.env.THE_ODDS_API_KEY;
@@ -41,11 +51,20 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { gameId, sport } = body as { gameId: string; sport: 'NHL' | 'NBA' };
+    const { gameId, sport } = body as { gameId: string; sport: 'NHL' | 'NBA' | 'NFL' | 'MLB' | 'EPL' };
 
     if (!gameId || !sport) {
       return NextResponse.json(
         { error: 'gameId and sport are required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate sport
+    const sportKey = SPORT_KEY_MAP[sport];
+    if (!sportKey) {
+      return NextResponse.json(
+        { error: `Unsupported sport: ${sport}. Supported: NHL, NBA, NFL, MLB, EPL` },
         { status: 400 }
       );
     }
@@ -62,7 +81,6 @@ export async function POST(request: NextRequest) {
 
     // Fetch current odds for the game
     const oddsClient = createOddsApiClient({ apiKey: oddsApiKey });
-    const sportKey = sport === 'NHL' ? 'icehockey_nhl' : 'basketball_nba';
     
     const game = await oddsClient.getGameOdds(
       sportKey,
@@ -79,38 +97,44 @@ export async function POST(request: NextRequest) {
 
     const normalizedGame = oddsClient.normalizeGameOdds(game);
 
-    // Fetch injury data for context
+    // Fetch injury data for context (only for sports with injury data)
     let injuryReport = '';
     let gameInjuryData = null;
-    try {
-      const sportInjuries = await fetchInjuries(sport);
-      const { home, away, impactLevel } = getGameInjuries(
-        sportInjuries,
-        normalizedGame.homeTeam,
-        normalizedGame.awayTeam
-      );
-      
-      injuryReport = formatInjuriesForAI(
-        normalizedGame.homeTeam,
-        normalizedGame.awayTeam,
-        home,
-        away
-      );
-      
-      gameInjuryData = {
-        homeTeam: home,
-        awayTeam: away,
-        impactLevel,
-        totalInjuries: (home?.injuries.length || 0) + (away?.injuries.length || 0),
-      };
-    } catch (injuryError) {
-      console.error('Failed to fetch injuries, continuing without:', injuryError);
-      injuryReport = 'INJURY REPORT: Injury data unavailable.';
+    const sportsWithInjuries = ['NHL', 'NBA', 'NFL'];
+    
+    if (sportsWithInjuries.includes(sport)) {
+      try {
+        const sportInjuries = await fetchInjuries(sport as 'NHL' | 'NBA' | 'NFL');
+        const { home, away, impactLevel } = getGameInjuries(
+          sportInjuries,
+          normalizedGame.homeTeam,
+          normalizedGame.awayTeam
+        );
+        
+        injuryReport = formatInjuriesForAI(
+          normalizedGame.homeTeam,
+          normalizedGame.awayTeam,
+          home,
+          away
+        );
+        
+        gameInjuryData = {
+          homeTeam: home,
+          awayTeam: away,
+          impactLevel,
+          totalInjuries: (home?.injuries.length || 0) + (away?.injuries.length || 0),
+        };
+      } catch (injuryError) {
+        console.error('Failed to fetch injuries, continuing without:', injuryError);
+        injuryReport = 'INJURY REPORT: Injury data unavailable.';
+      }
     }
 
-    // Analyze with Claude (now includes injury data)
+    // Analyze with Claude - map sport to analysis type
     const analysisClient = createAnalysisClient({ apiKey: anthropicApiKey });
-    const { prediction, meta } = await analysisClient.analyzeGame(normalizedGame, sport, injuryReport);
+    // For analysis, treat EPL as a generic sport, NFL/MLB get their own handling
+    const analysisSport = (sport === 'EPL' || sport === 'MLB') ? 'NBA' : sport; // Use NBA format for non-traditional sports
+    const { prediction, meta } = await analysisClient.analyzeGame(normalizedGame, analysisSport as 'NHL' | 'NBA', injuryReport);
 
     const responseData = {
       prediction,
