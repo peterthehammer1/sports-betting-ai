@@ -392,9 +392,11 @@ export default function Dashboard() {
                   key={s}
                   onClick={() => {
                     setSport(s);
-                    // NFL goes directly to Super Bowl landing page
+                    // NFL goes to Super Bowl landing, other sports go to games
                     if (s === 'NFL') {
                       setView('landing');
+                    } else {
+                      setView('games');
                     }
                   }}
                   className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
