@@ -11,6 +11,7 @@ import { ExpertPredictions } from './ExpertPredictions';
 import { SuperBowlArticles } from './SuperBowlArticles';
 import { PredictionModels } from './PredictionModels';
 import { SuperBowlAIAnalysis } from './SuperBowlAIAnalysis';
+import { SuperBowlOddsWidget } from '@/components/widgets/OddsWidget';
 
 interface SuperBowlLandingProps {
   onNavigate: (view: string) => void;
@@ -273,6 +274,12 @@ function OverviewSection() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* FanDuel Betting Widget */}
+      <div>
+        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Bet on FanDuel</h3>
+        <SuperBowlOddsWidget />
       </div>
     </div>
   );

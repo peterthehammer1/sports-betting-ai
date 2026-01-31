@@ -3,93 +3,227 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
+type SportKey = 'americanfootball_nfl' | 'icehockey_nhl' | 'basketball_nba';
+
 interface OddsWidgetProps {
-  sport?: 'icehockey_nhl' | 'basketball_nba';
+  sport?: SportKey;
+  showSportToggle?: boolean;
 }
 
-export function OddsWidget({ sport = 'icehockey_nhl' }: OddsWidgetProps) {
-  const [selectedSport, setSelectedSport] = useState(sport);
+const REFERRAL_URL = 'https://fndl.co/kt63uos';
+
+export function OddsWidget({ sport = 'americanfootball_nfl', showSportToggle = true }: OddsWidgetProps) {
+  const [selectedSport, setSelectedSport] = useState<SportKey>(sport);
   
   const accessKey = 'wk_9d760740132f8b2d029be2522af76f66';
-  const fanduelAffiliateUrl = encodeURIComponent('https://fndl.co/kt63uos');
+  const fanduelAffiliateUrl = encodeURIComponent(REFERRAL_URL);
   
   const widgetUrl = `https://widget.the-odds-api.com/v1/sports/${selectedSport}/events/?accessKey=${accessKey}&bookmakerKeys=fanduel&affiliateUrl_fanduel=${fanduelAffiliateUrl}&oddsFormat=american&markets=h2h%2Cspreads%2Ctotals&marketNames=h2h%3AMoneyline%2Cspreads%3ASpreads%2Ctotals%3AOver%2FUnder`;
 
+  const sportLabels: Record<SportKey, string> = {
+    americanfootball_nfl: '🏈 Super Bowl',
+    icehockey_nhl: '🏒 NHL',
+    basketball_nba: '🏀 NBA',
+  };
+
   return (
     <div className="max-w-md">
-      <div className="bg-[#161d29] border border-slate-700/40 rounded-lg overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         {/* Header with FanDuel branding */}
-        <div className="px-4 py-3 border-b border-slate-700/40 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-slate-200 p-0.5 flex-shrink-0">
+        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+          <a 
+            href={REFERRAL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-7 h-7 rounded bg-[#1493FF] p-1 flex-shrink-0">
               <Image
-                src="/FanDuel Logos/Sportsbook/Secondary/fanduel_sportsbook_logo_vert_blue.svg"
+                src="/FanDuel Logos/Sportsbook/Secondary/fanduel_sportsbook_logo_vert_white.svg"
                 alt="FanDuel"
                 width={20}
                 height={20}
                 className="w-full h-full object-contain"
               />
             </div>
-            <h3 className="text-slate-200 font-medium text-sm">FanDuel Odds</h3>
-          </div>
+            <h3 className="text-slate-800 font-semibold text-sm">FanDuel Sportsbook</h3>
+          </a>
           
-          <div className="flex bg-[#0c1017] rounded p-0.5">
-            <button
-              onClick={() => setSelectedSport('icehockey_nhl')}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
-                selectedSport === 'icehockey_nhl'
-                  ? 'bg-[#2a3444] text-slate-200'
-                  : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              NHL
-            </button>
-            <button
-              onClick={() => setSelectedSport('basketball_nba')}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
-                selectedSport === 'basketball_nba'
-                  ? 'bg-[#2a3444] text-slate-200'
-                  : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              NBA
-            </button>
-          </div>
+          {showSportToggle && (
+            <div className="flex bg-slate-200 rounded-lg p-0.5">
+              {(Object.keys(sportLabels) as SportKey[]).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setSelectedSport(key)}
+                  className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${
+                    selectedSport === key
+                      ? 'bg-white text-slate-800 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-700'
+                  }`}
+                >
+                  {key === 'americanfootball_nfl' ? 'NFL' : key === 'icehockey_nhl' ? 'NHL' : 'NBA'}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Promo Banner - Compact */}
+        {/* Promo Banner */}
         <a 
-          href="https://fndl.co/kt63uos"
+          href={REFERRAL_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-between gap-3 px-4 py-2.5 bg-[#1e2836] border-b border-slate-700/40 hover:bg-[#2a3444] transition-colors"
+          className="flex items-center justify-between gap-3 px-4 py-3 bg-gradient-to-r from-[#1493FF] to-[#0D7FE8] hover:from-[#0D7FE8] hover:to-[#0A6BC4] transition-all"
         >
           <div>
-            <p className="text-slate-200 text-sm font-medium">
-              Get $150 in Bonus Bets
+            <p className="text-white text-sm font-semibold">
+              🎁 Get $150 in Bonus Bets
             </p>
-            <p className="text-slate-500 text-xs">
-              New users only. Terms apply.
+            <p className="text-white/70 text-xs">
+              New users only. Bet $5, Get $150!
             </p>
           </div>
-          <span className="px-3 py-1.5 rounded bg-[#4a6fa5] text-slate-100 text-xs font-medium flex-shrink-0">
-            Claim
+          <span className="px-4 py-2 rounded-lg bg-white text-[#1493FF] text-sm font-bold flex-shrink-0 shadow-sm hover:shadow-md transition-shadow">
+            Claim Now
           </span>
         </a>
 
-        {/* Widget - More compact */}
-        <div className="p-3">
-          <div className="rounded overflow-hidden border border-slate-700/30">
+        {/* Current Sport Label */}
+        <div className="px-4 py-2 bg-slate-50 border-b border-slate-100">
+          <p className="text-xs text-slate-600 font-medium">
+            {sportLabels[selectedSport]} Odds
+          </p>
+        </div>
+
+        {/* Widget */}
+        <div className="p-3 bg-white">
+          <div className="rounded-lg overflow-hidden border border-slate-200">
             <iframe
               title="FanDuel Odds"
               src={widgetUrl}
-              className="w-full h-[280px]"
+              className="w-full h-[300px]"
               style={{ border: 'none', backgroundColor: '#fff' }}
             />
           </div>
           
-          <p className="mt-2 text-[9px] text-slate-600 text-center">
-            19+ | Ontario | <a href="https://www.connexontario.ca/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-500">Gambling help: 1-866-531-2600</a>
+          <p className="mt-3 text-[10px] text-slate-500 text-center">
+            21+ | Where legal | <a href={REFERRAL_URL} target="_blank" rel="noopener noreferrer" className="text-[#1493FF] hover:underline">FanDuel.com</a> | Gambling Problem? <a href="https://www.ncpgambling.org/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-700">1-800-522-4700</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Dedicated Super Bowl widget for the landing page
+export function SuperBowlOddsWidget() {
+  return (
+    <div className="max-w-lg mx-auto">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-lg">
+        {/* Header */}
+        <div className="px-5 py-4 bg-gradient-to-r from-slate-800 to-slate-900 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#1493FF] p-1.5 flex-shrink-0">
+              <Image
+                src="/FanDuel Logos/Sportsbook/Secondary/fanduel_sportsbook_logo_vert_white.svg"
+                alt="FanDuel"
+                width={24}
+                height={24}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-sm">Super Bowl LX Odds</h3>
+              <p className="text-slate-400 text-xs">Powered by FanDuel Sportsbook</p>
+            </div>
+          </div>
+          <a 
+            href={REFERRAL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 rounded-lg bg-[#1493FF] text-white text-xs font-bold hover:bg-[#0D7FE8] transition-colors"
+          >
+            Bet Now
+          </a>
+        </div>
+
+        {/* Promo */}
+        <a 
+          href={REFERRAL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-between gap-3 px-5 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 transition-all"
+        >
+          <div>
+            <p className="text-white text-base font-bold">
+              🏈 Super Bowl Special: Bet $5, Get $150!
+            </p>
+            <p className="text-white/80 text-sm">
+              New customers only. Limited time offer.
+            </p>
+          </div>
+          <span className="px-5 py-2.5 rounded-lg bg-white text-emerald-600 text-sm font-bold flex-shrink-0 shadow-md">
+            Claim Bonus
+          </span>
+        </a>
+
+        {/* Odds Display - Custom Super Bowl layout */}
+        <div className="p-5">
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            {/* Seahawks */}
+            <a 
+              href={REFERRAL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-[#1493FF] hover:shadow-md transition-all text-center group"
+            >
+              <Image
+                src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png"
+                alt="Seahawks"
+                width={48}
+                height={48}
+                className="mx-auto mb-2"
+                unoptimized
+              />
+              <p className="font-bold text-slate-800">Seahawks</p>
+              <p className="text-2xl font-bold text-[#1493FF] group-hover:scale-105 transition-transform">-230</p>
+              <p className="text-xs text-slate-500">Spread: -4.5</p>
+            </a>
+            
+            {/* Patriots */}
+            <a 
+              href={REFERRAL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-[#1493FF] hover:shadow-md transition-all text-center group"
+            >
+              <Image
+                src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png"
+                alt="Patriots"
+                width={48}
+                height={48}
+                className="mx-auto mb-2"
+                unoptimized
+              />
+              <p className="font-bold text-slate-800">Patriots</p>
+              <p className="text-2xl font-bold text-[#1493FF] group-hover:scale-105 transition-transform">+190</p>
+              <p className="text-xs text-slate-500">Spread: +4.5</p>
+            </a>
+          </div>
+          
+          {/* Total */}
+          <a 
+            href={REFERRAL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block p-4 bg-slate-800 rounded-xl text-center hover:bg-slate-700 transition-colors"
+          >
+            <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Total Points</p>
+            <p className="text-white text-xl font-bold">Over/Under 46.5</p>
+          </a>
+          
+          <p className="mt-4 text-[10px] text-slate-500 text-center">
+            21+ | Where legal | <a href={REFERRAL_URL} target="_blank" rel="noopener noreferrer" className="text-[#1493FF] hover:underline">FanDuel.com</a>
           </p>
         </div>
       </div>

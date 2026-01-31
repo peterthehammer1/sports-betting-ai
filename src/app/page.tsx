@@ -652,7 +652,7 @@ export default function Dashboard() {
 
             {/* Selected Tool */}
             {selectedTool === 'betnow' && (
-              <OddsWidget sport={sport === 'NHL' ? 'icehockey_nhl' : 'basketball_nba'} />
+              <OddsWidget sport={sport === 'NFL' ? 'americanfootball_nfl' : sport === 'NHL' ? 'icehockey_nhl' : 'basketball_nba'} />
             )}
             {selectedTool === 'compare' && (
               <OddsCompare 
