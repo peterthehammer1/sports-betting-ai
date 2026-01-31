@@ -6,7 +6,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 
 interface Article {
   id: string;
@@ -300,7 +299,11 @@ const ARTICLE_CONTENT: Record<string, ArticleContent> = {
   },
 };
 
-export function SuperBowlArticles() {
+interface SuperBowlArticlesProps {
+  onNavigateToAnalysis?: () => void;
+}
+
+export function SuperBowlArticles({ onNavigateToAnalysis }: SuperBowlArticlesProps) {
   const [selectedArticle, setSelectedArticle] = useState<string | null>(null);
   const article = selectedArticle ? ARTICLES.find(a => a.id === selectedArticle) : null;
   const content = selectedArticle ? ARTICLE_CONTENT[selectedArticle] : null;
@@ -365,12 +368,15 @@ export function SuperBowlArticles() {
                 <p className="text-sm text-slate-500">
                   Last updated: January 2026 • Pete&apos;s Super Bowl Coverage
                 </p>
-                <Link
-                  href="/?sport=NFL&view=superbowl"
+                <button
+                  onClick={() => {
+                    setSelectedArticle(null);
+                    onNavigateToAnalysis?.();
+                  }}
                   className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors shadow-sm"
                 >
                   Get AI Predictions →
-                </Link>
+                </button>
               </div>
             </div>
           </article>

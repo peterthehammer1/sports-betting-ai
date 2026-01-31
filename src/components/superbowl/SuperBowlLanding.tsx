@@ -200,7 +200,7 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
         {activeTab === 'overview' && <OverviewSection />}
         {activeTab === 'experts' && <ExpertPredictions />}
         {activeTab === 'models' && <PredictionModels />}
-        {activeTab === 'articles' && <SuperBowlArticles />}
+        {activeTab === 'articles' && <SuperBowlArticles onNavigateToAnalysis={() => setActiveTab('ai-analysis')} />}
       </main>
 
       {/* Footer */}
