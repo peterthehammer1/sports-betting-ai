@@ -13,6 +13,7 @@ import { BettingGuide } from '@/components/education/BettingGuide';
 import { OddsWidget } from '@/components/widgets/OddsWidget';
 import { FanDuelBanner } from '@/components/promo/FanDuelBanner';
 import { SuperBowlCard } from '@/components/superbowl/SuperBowlCard';
+import { SuperBowlLanding } from '@/components/superbowl/SuperBowlLanding';
 import { PerformanceDashboard } from '@/components/tracker/PerformanceDashboard';
 import { OddsMovementChart } from '@/components/tracker/OddsMovementChart';
 import { InjuryReport } from '@/components/injuries/InjuryReport';
@@ -56,7 +57,7 @@ interface QuickPick {
 }
 
 type Sport = 'NHL' | 'NBA' | 'MLB' | 'EPL' | 'NFL';
-type View = 'games' | 'picks' | 'analysis' | 'props' | 'tools' | 'superbowl' | 'tracker';
+type View = 'landing' | 'games' | 'picks' | 'analysis' | 'props' | 'tools' | 'superbowl' | 'tracker';
 
 // Sport configurations for the UI
 const SPORTS_CONFIG: Record<Sport, { emoji: string; label: string; hasProps: boolean }> = {
@@ -85,8 +86,8 @@ interface NbaPlayerPropsData {
 }
 
 export default function Dashboard() {
-  const [sport, setSport] = useState<Sport>('NHL');
-  const [view, setView] = useState<View>('games');
+  const [sport, setSport] = useState<Sport>('NFL');
+  const [view, setView] = useState<View>('landing');
   const [games, setGames] = useState<NormalizedOdds[]>([]);
   const [scores, setScores] = useState<Record<string, NormalizedScore>>({});
   const [quickPicks, setQuickPicks] = useState<QuickPick[]>([]);
@@ -351,8 +352,11 @@ export default function Dashboard() {
     setScores({});
     setInjuries(null);
     setInjuryCount(0);
-    setView('games');
-  }, [sport]);
+    // When sport changes, go to games view (unless we're on landing or tools which are sport-agnostic)
+    if (view !== 'landing' && view !== 'tools' && view !== 'tracker') {
+      setView('games');
+    }
+  }, [sport, view]);
 
   const handleGameSelect = (gameId: string) => {
     fetchGameAnalysis(gameId);
@@ -360,11 +364,11 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#0c1017]">
-      {/* FanDuel Promo Banner */}
-      <FanDuelBanner />
+      {/* FanDuel Promo Banner - hide on landing */}
+      {view !== 'landing' && <FanDuelBanner />}
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#0c1017]/95 backdrop-blur-sm border-b border-slate-800/60">
+      {/* Header - Modified for landing page */}
+      <header className={`sticky top-0 z-40 bg-[#0c1017]/95 backdrop-blur-sm border-b border-slate-800/60 ${view === 'landing' ? 'py-2' : ''}`}>
         <div className="max-w-6xl mx-auto px-4 py-3 sm:px-6 sm:py-4">
           {/* Top Row - Logo, Title and Sport Toggle */}
           <div className="flex items-center justify-between gap-3">
@@ -404,6 +408,11 @@ export default function Dashboard() {
           {/* Navigation Tabs */}
           <div className="mt-3 flex gap-1 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
             <NavTab 
+              active={view === 'landing'} 
+              onClick={() => setView('landing')}
+              label="🏈 Super Bowl LX"
+            />
+            <NavTab 
               active={view === 'games'} 
               onClick={() => setView('games')}
               label="Games"
@@ -433,14 +442,6 @@ export default function Dashboard() {
               onClick={() => setView('tools')}
               label="Tools"
             />
-            <NavTab 
-              active={view === 'superbowl'} 
-              onClick={() => {
-                setView('superbowl');
-                if (!superBowlGame) fetchSuperBowl();
-              }}
-              label="🏈 Super Bowl"
-            />
           </div>
 
           {/* Status bar */}
@@ -459,9 +460,9 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 py-6 sm:px-6">
-        {/* Error State */}
-        {error && (
+      <main className={view === 'landing' ? '' : 'max-w-6xl mx-auto px-4 py-6 sm:px-6'}>
+        {/* Error State - hide on landing page */}
+        {error && view !== 'landing' && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg animate-slide-up">
             <div className="flex items-center gap-3">
               <span className="text-red-400">⚠️</span>
@@ -470,8 +471,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Loading State */}
-        {loadingOdds && games.length === 0 && (
+        {/* Loading State - hide on landing page */}
+        {loadingOdds && games.length === 0 && view !== 'landing' && (
           <div className="flex flex-col justify-center items-center py-20">
             <div className="w-8 h-8 border-2 border-slate-600 border-t-blue-500 rounded-full animate-spin" />
             <span className="mt-4 text-slate-400 text-sm">
@@ -493,6 +494,14 @@ export default function Dashboard() {
               </p>
             </div>
           </div>
+        )}
+
+        {/* Super Bowl Landing View - Default landing page */}
+        {view === 'landing' && (
+          <SuperBowlLanding 
+            onNavigate={(newView) => setView(newView as View)}
+            onSportChange={(newSport) => setSport(newSport as Sport)}
+          />
         )}
 
         {/* Games View */}
@@ -665,18 +674,26 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Super Bowl View */}
+        {/* Super Bowl View - Legacy props card (redirects to landing) */}
         {view === 'superbowl' && (
           <div className="animate-slide-up">
             <div className="mb-5">
               <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                🏈 Super Bowl LIX
+                🏈 Super Bowl LX
               </h2>
               <p className="text-sm text-slate-400">
-                All betting lines and player props
+                Seahawks vs Patriots • February 8, 2026
               </p>
             </div>
             <SuperBowlCard game={superBowlGame} loading={loadingSuperBowl} />
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => setView('landing')}
+                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition-colors"
+              >
+                📊 View Full Super Bowl Analysis Hub →
+              </button>
+            </div>
           </div>
         )}
 
@@ -694,17 +711,19 @@ export default function Dashboard() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="mt-auto py-6 border-t border-slate-800 safe-area-bottom">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-            <p>
-              For entertainment purposes only. Please gamble responsibly.
-            </p>
-            <p>© 2026 Pete&apos;s AI Sports Picks</p>
+      {/* Footer - hide on landing page which has its own footer */}
+      {view !== 'landing' && (
+        <footer className="mt-auto py-6 border-t border-slate-800 safe-area-bottom">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+              <p>
+                For entertainment purposes only. Please gamble responsibly.
+              </p>
+              <p>© 2026 Pete&apos;s AI Sports Picks</p>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }
