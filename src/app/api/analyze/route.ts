@@ -17,7 +17,9 @@ import { createOddsApiClient } from '@/lib/api/odds';
 import { createAnalysisClient } from '@/lib/analysis/claude';
 import { getCachedGameAnalysis, cacheGameAnalysis, isRedisConfigured } from '@/lib/cache/redis';
 import { fetchInjuries, getGameInjuries, formatInjuriesForAI } from '@/lib/api/injuries';
+import { saveGameAnalysisPicks } from '@/lib/tracking/savePicks';
 import type { SportKey } from '@/types/odds';
+import type { Sport } from '@/types/tracker';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // Allow up to 60 seconds for Claude analysis
@@ -145,6 +147,47 @@ export async function POST(request: NextRequest) {
 
     // Cache the result
     await cacheGameAnalysis(gameId, sport, responseData);
+
+    // Save picks to tracker (for NBA, NHL, NFL)
+    if (['NBA', 'NHL', 'NFL'].includes(sport)) {
+      try {
+        const gameInfo = {
+          gameId,
+          sport: sport as Sport,
+          homeTeam: normalizedGame.homeTeam,
+          awayTeam: normalizedGame.awayTeam,
+          gameTime: normalizedGame.commenceTime.toISOString(),
+        };
+        
+        const savedPicks = await saveGameAnalysisPicks(gameInfo, {
+          winner: prediction.winner ? {
+            pick: prediction.winner.pick,
+            confidence: prediction.winner.confidence,
+            reasoning: prediction.winner.reasoning || '',
+            odds: prediction.winner.pick === normalizedGame.homeTeam 
+              ? (normalizedGame.moneyline.bestHome?.americanOdds || -150)
+              : (normalizedGame.moneyline.bestAway?.americanOdds || 150),
+          } : undefined,
+          spread: prediction.spread ? {
+            pick: `${prediction.spread.pick} ${prediction.spread.line > 0 ? '+' : ''}${prediction.spread.line}`,
+            line: prediction.spread.line,
+            confidence: prediction.spread.confidence,
+            reasoning: prediction.spread.reasoning || '',
+          } : undefined,
+          total: prediction.total ? {
+            pick: prediction.total.pick,
+            line: prediction.total.line,
+            confidence: prediction.total.confidence,
+            reasoning: prediction.total.reasoning || '',
+          } : undefined,
+        });
+        
+        console.log(`Saved ${savedPicks.length} picks for ${sport} game ${gameId}`);
+      } catch (trackingError) {
+        console.error('Failed to save picks to tracker:', trackingError);
+        // Don't fail the request if tracking fails
+      }
+    }
 
     return NextResponse.json({
       ...responseData,

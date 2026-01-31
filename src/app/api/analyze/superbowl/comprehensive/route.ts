@@ -6,6 +6,7 @@
 
 import { NextResponse } from 'next/server';
 import { getCachedGameAnalysis, cacheGameAnalysis, isRedisConfigured } from '@/lib/cache/redis';
+import { saveSuperBowlPicks } from '@/lib/tracking/savePicks';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 90;
@@ -358,6 +359,15 @@ Return ONLY valid JSON, no other text.`;
 
     // Cache for 24 hours
     await cacheGameAnalysis(cacheKey, 'NFL', { analysis });
+
+    // Save picks to tracker (only for new analysis, not cached)
+    try {
+      const savedPicks = await saveSuperBowlPicks(analysis);
+      console.log(`Saved ${savedPicks.length} Super Bowl picks to tracker`);
+    } catch (trackingError) {
+      console.error('Failed to save picks to tracker:', trackingError);
+      // Don't fail the request if tracking fails
+    }
 
     return NextResponse.json({
       analysis,

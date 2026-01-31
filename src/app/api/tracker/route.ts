@@ -4,9 +4,10 @@ import {
   getPicks, 
   getPendingPicks,
   calculatePerformanceStats,
+  updatePickStatus,
   isRedisConfigured 
 } from '@/lib/cache/redis';
-import type { TrackedPick, SavePickRequest } from '@/types/tracker';
+import type { TrackedPick, SavePickRequest, PickStatus } from '@/types/tracker';
 
 export const dynamic = 'force-dynamic';
 
@@ -113,6 +114,67 @@ export async function POST(request: Request) {
     console.error('Tracker POST error:', error);
     return NextResponse.json(
       { error: 'Failed to save pick' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * PATCH /api/tracker - Settle a pick (mark as won/lost/push)
+ */
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const { pickId, status, actualScore, actualValue } = body as {
+      pickId: string;
+      status: PickStatus;
+      actualScore?: { home: number; away: number };
+      actualValue?: number;
+    };
+
+    if (!pickId || !status) {
+      return NextResponse.json(
+        { error: 'pickId and status are required' },
+        { status: 400 }
+      );
+    }
+
+    if (!['won', 'lost', 'push', 'void'].includes(status)) {
+      return NextResponse.json(
+        { error: 'Invalid status. Must be: won, lost, push, or void' },
+        { status: 400 }
+      );
+    }
+
+    if (!isRedisConfigured()) {
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Pick settled (demo mode - not persisted)',
+        pickId,
+        status
+      });
+    }
+
+    const result = actualScore || actualValue ? { actualScore, actualValue } : undefined;
+    const success = await updatePickStatus(pickId, status, result);
+
+    if (success) {
+      return NextResponse.json({ 
+        success: true, 
+        message: `Pick ${pickId} marked as ${status}`,
+        pickId,
+        status
+      });
+    } else {
+      return NextResponse.json(
+        { error: 'Failed to update pick. Pick may not exist.' },
+        { status: 404 }
+      );
+    }
+  } catch (error) {
+    console.error('Tracker PATCH error:', error);
+    return NextResponse.json(
+      { error: 'Failed to settle pick' },
       { status: 500 }
     );
   }
