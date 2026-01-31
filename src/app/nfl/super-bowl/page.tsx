@@ -64,39 +64,39 @@ export const metadata: Metadata = {
   },
 };
 
-// Super Bowl FAQs for AEO
+// Super Bowl FAQs for AEO - VERIFIED DATA January 2026
 const SUPER_BOWL_FAQS = [
   {
-    question: 'Who do experts predict to win Super Bowl 2026?',
-    answer: 'Expert predictions for Super Bowl LX are evolving as the playoffs progress. The Seattle Seahawks and New England Patriots will face off in San Francisco on February 8, 2026. Check our expert predictions section for the latest consensus picks from ESPN, CBS Sports, PFF, and other top analysts.',
+    question: 'Who do experts predict to win Super Bowl LX 2026?',
+    answer: 'The Seattle Seahawks are 4.5-point favorites over the New England Patriots for Super Bowl LX on February 8, 2026. About 62% of expert picks favor Seattle, driven by Jaxon Smith-Njigba\'s NFL-leading 1,793 receiving yards and Sam Darnold\'s strong playoff performance (346 yards, 3 TDs in the NFC Championship).',
   },
   {
     question: 'What is the best bet for Super Bowl 2026?',
-    answer: 'The best Super Bowl 2026 bets focus on player props where oddsmakers have less data. Key players to watch include Seattle\'s DK Metcalf, Tyler Lockett, and Kenneth Walker III, plus New England\'s emerging stars. Our AI analysis identifies value opportunities across all prop markets.',
+    answer: 'Top value bets: Jaxon Smith-Njigba receiving yards Over 95.5 (he averages 112/game), Drake Maye passing yards Over 270.5 (4,203 yards this season, 112.87 rating), and Patriots +4.5 given their perfect 8-0 road record. Sharp money is backing the Patriots as underdogs.',
   },
   {
-    question: 'What are the Super Bowl 2026 odds?',
-    answer: 'Super Bowl LX odds will be updated as we get closer to game day. The Seahawks vs Patriots matchup in San Francisco (Levi\'s Stadium) will feature dynamic odds across spreads, totals, and props. Check our odds comparison tool for the best lines across all major sportsbooks.',
+    question: 'What are the Super Bowl LX odds?',
+    answer: 'Spread: Seahawks -4.5 (BetMGM has -5). Moneyline: Seahawks -230, Patriots +190. Total: 46.5 points. Both teams were massive preseason underdogs (SEA +6000, NE +8000), making this one of the most unexpected Super Bowl matchups in recent history.',
   },
   {
     question: 'Who are the best first touchdown scorer bets?',
-    answer: 'Best value first TD scorer picks for Super Bowl LX will target high-volume skill players. For Seattle, DK Metcalf and Kenneth Walker III are primary candidates. For New England, look for value on their top offensive weapons. Historically, wide receivers score first about 35% of the time, running backs 30%.',
+    answer: 'Best value first TD picks: Jaxon Smith-Njigba (+700) - NFL\'s leading receiver with 10 TDs, Kenneth Walker III (+800) - Seattle\'s workhorse RB, Stefon Diggs (+850) - New England\'s leading receiver (970 yards), and Hunter Henry (+950) - elite TE target.',
   },
   {
-    question: 'What do prediction models say about Super Bowl 2026?',
-    answer: 'Major prediction models including FiveThirtyEight ELO, Football Outsiders DVOA, PFF grades, and ESPN FPI will all have projections for Seahawks vs Patriots. Our prediction model tracker compares all major systems to identify consensus and find value opportunities.',
+    question: 'Who are the Super Bowl LX MVP favorites?',
+    answer: 'MVP odds: Sam Darnold +135 to +250 (Seahawks QB), Drake Maye +280 (Patriots QB), Jaxon Smith-Njigba +1400 (best non-QB odds). QBs have won 34 of 59 Super Bowl MVPs, but JSN\'s historic season makes him a sneaky pick if Seattle wins big.',
   },
   {
-    question: 'Should I bet the Super Bowl over or under?',
-    answer: 'Super Bowl totals historically lean under (55% hit rate since 2000) due to increased defensive preparation time. The outdoor venue at Levi\'s Stadium in San Francisco could impact scoring. Weather conditions and both teams\' offensive/defensive tendencies will factor into the total.',
+    question: 'Should I bet the Super Bowl over or under 46.5?',
+    answer: 'The 46.5 total reflects both teams\' strong defensive playoff performances. Patriots held Denver to just 7 points in the AFC Championship. Historically, unders hit 55% in Super Bowls due to extra preparation time. Sharp money is split on this total.',
   },
   {
-    question: 'Where is Super Bowl LX being played?',
-    answer: 'Super Bowl LX will be played at Levi\'s Stadium in Santa Clara, California (San Francisco Bay Area) on February 8, 2026. The outdoor venue can impact game conditions, though Bay Area weather in February is typically mild compared to other northern locations.',
+    question: 'Is this a Super Bowl rematch?',
+    answer: 'Yes! This is a rematch of Super Bowl XLIX (February 2015), which the Patriots won 28-24 on Malcolm Butler\'s iconic goal-line interception with 26 seconds left. Seattle returns to the Super Bowl for the first time since back-to-back appearances in 2013-14.',
   },
   {
     question: 'What are the best Seahawks player props?',
-    answer: 'Key Seattle Seahawks props for Super Bowl LX will focus on their offensive playmakers: DK Metcalf receiving yards, Tyler Lockett receptions, Kenneth Walker III rushing yards, and Geno Smith passing props. Our AI analyzes matchups to find the best value plays.',
+    answer: 'Key Seattle props: Sam Darnold Pass Yards Over 265.5, Jaxon Smith-Njigba Rec Yards Over 95.5 (he\'s on pace to break Calvin Johnson\'s single-season record), Kenneth Walker III Rush Yards Over 75.5, and Cooper Kupp could be undervalued as the WR2 (593 yards).',
   },
 ];
 

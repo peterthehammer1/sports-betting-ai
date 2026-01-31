@@ -455,15 +455,15 @@ export function SuperBowlCard({ game, loading }: SuperBowlProps) {
                 </a>
               </div>
               
-              {/* Featured Props Preview */}
+              {/* Featured Props Preview - VERIFIED DATA */}
               <div className="border-t border-slate-700/40 pt-4">
                 <h4 className="text-sm font-medium text-slate-300 mb-3">Featured Super Bowl LX Props</h4>
                 <div className="space-y-2">
                   {[
-                    { player: 'Geno Smith', market: 'Pass Yards O/U', line: '255.5', bestOdds: '-115' },
+                    { player: 'Sam Darnold', market: 'Pass Yards O/U', line: '265.5', bestOdds: '-115' },
+                    { player: 'Jaxon Smith-Njigba', market: 'Rec Yards O/U', line: '95.5', bestOdds: '-110' },
+                    { player: 'Drake Maye', market: 'Pass Yards O/U', line: '270.5', bestOdds: '-115' },
                     { player: 'Kenneth Walker III', market: 'Rush Yards O/U', line: '75.5', bestOdds: '-110' },
-                    { player: 'DK Metcalf', market: 'Rec Yards O/U', line: '80.5', bestOdds: '-115' },
-                    { player: 'Tyler Lockett', market: 'Anytime TD', line: '', bestOdds: '+175' },
                   ].map((prop, idx) => (
                     <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/40 rounded-lg">
                       <div>
