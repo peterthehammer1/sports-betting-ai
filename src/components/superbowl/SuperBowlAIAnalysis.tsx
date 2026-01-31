@@ -165,12 +165,14 @@ export function SuperBowlAIAnalysis() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-xl flex items-center justify-center">
-            <span className="text-white text-lg">🤖</span>
-          </div>
+          <img 
+            src="/Pete/PeterCartoon1.png" 
+            alt="Pete" 
+            className="w-11 h-11 rounded-xl object-cover"
+          />
           <div>
-            <h2 className="text-lg font-bold text-white">AI Analysis</h2>
-            <p className="text-xs text-slate-500">Powered by Claude • Super Bowl LX</p>
+            <h2 className="text-lg font-bold text-white">Pete&apos;s AI Analysis</h2>
+            <p className="text-xs text-slate-500">Super Bowl LX Predictions</p>
           </div>
         </div>
         <button
