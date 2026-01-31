@@ -11,6 +11,7 @@ import { ExpertPredictions } from './ExpertPredictions';
 import { SuperBowlArticles } from './SuperBowlArticles';
 import { PredictionModels } from './PredictionModels';
 import { SuperBowlAIAnalysis } from './SuperBowlAIAnalysis';
+import { SuperBowlTDScorers } from './SuperBowlTDScorers';
 import { SuperBowlOddsWidget } from '@/components/widgets/OddsWidget';
 
 interface SuperBowlLandingProps {
@@ -59,13 +60,14 @@ const LINES = {
   patriotsML: +190,
 };
 
-type Tab = 'ai-analysis' | 'overview' | 'experts' | 'models' | 'articles';
+type Tab = 'ai-analysis' | 'td-scorers' | 'overview' | 'experts' | 'models' | 'articles';
 
 export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLandingProps) {
   const [activeTab, setActiveTab] = useState<Tab>('ai-analysis');
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'ai-analysis', label: 'AI Analysis' },
+    { id: 'td-scorers', label: 'TD Scorers' },
     { id: 'overview', label: 'Matchup' },
     { id: 'experts', label: 'Expert Picks' },
     { id: 'models', label: 'Models' },
@@ -194,6 +196,7 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 py-8">
         {activeTab === 'ai-analysis' && <SuperBowlAIAnalysis />}
+        {activeTab === 'td-scorers' && <SuperBowlTDScorers />}
         {activeTab === 'overview' && <OverviewSection />}
         {activeTab === 'experts' && <ExpertPredictions />}
         {activeTab === 'models' && <PredictionModels />}

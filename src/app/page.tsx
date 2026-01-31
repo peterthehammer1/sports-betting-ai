@@ -429,14 +429,17 @@ export default function Dashboard() {
                 label="Games"
               />
             )}
-            <NavTab 
-              active={view === 'analysis'} 
-              onClick={() => setView('analysis')}
-              disabled={!selectedPrediction}
-              label="Analysis"
-            />
-            {/* Player Props - Available for sports with props */}
-            {SPORTS_CONFIG[sport]?.hasProps && (
+            {/* Analysis - hide for NFL since it's in Super Bowl landing */}
+            {sport !== 'NFL' && (
+              <NavTab 
+                active={view === 'analysis'} 
+                onClick={() => setView('analysis')}
+                disabled={!selectedPrediction}
+                label="Analysis"
+              />
+            )}
+            {/* Player Props - Available for sports with props, hide for NFL */}
+            {SPORTS_CONFIG[sport]?.hasProps && sport !== 'NFL' && (
               <NavTab 
                 active={view === 'props'} 
                 onClick={() => setView('props')}
