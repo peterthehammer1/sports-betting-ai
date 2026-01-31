@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { ExpertPredictions } from './ExpertPredictions';
 import { SuperBowlArticles } from './SuperBowlArticles';
 import { PredictionModels } from './PredictionModels';
+import { SuperBowlAIAnalysis } from './SuperBowlAIAnalysis';
 
 interface SuperBowlLandingProps {
   onNavigate: (view: string) => void;
@@ -57,16 +58,17 @@ const LINES = {
   patriotsML: +190,
 };
 
-type Tab = 'overview' | 'experts' | 'models' | 'articles';
+type Tab = 'ai-analysis' | 'overview' | 'experts' | 'models' | 'articles';
 
 export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLandingProps) {
-  const [activeTab, setActiveTab] = useState<Tab>('overview');
+  const [activeTab, setActiveTab] = useState<Tab>('ai-analysis');
 
   const tabs: { id: Tab; label: string }[] = [
-    { id: 'overview', label: 'Overview' },
+    { id: 'ai-analysis', label: 'AI Analysis' },
+    { id: 'overview', label: 'Matchup' },
     { id: 'experts', label: 'Expert Picks' },
-    { id: 'models', label: 'Prediction Models' },
-    { id: 'articles', label: 'Betting Guides' },
+    { id: 'models', label: 'Models' },
+    { id: 'articles', label: 'Guides' },
   ];
 
   return (
@@ -193,6 +195,7 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
 
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 py-8">
+        {activeTab === 'ai-analysis' && <SuperBowlAIAnalysis />}
         {activeTab === 'overview' && <OverviewSection />}
         {activeTab === 'experts' && <ExpertPredictions />}
         {activeTab === 'models' && <PredictionModels />}
