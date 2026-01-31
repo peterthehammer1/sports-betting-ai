@@ -10,8 +10,8 @@ export function OrganizationSchema() {
     '@type': 'Organization',
     name: "Pete's AI Sports Picks",
     alternateName: ['Pete Sports Picks', 'Pete AI Picks', 'Pete Betting Picks'],
-    url: 'https://petesaisportspicks.com',
-    logo: 'https://petesaisportspicks.com/Pete/PeterCartoon1.png',
+    url: 'https://petesbets.com',
+    logo: 'https://petesbets.com/Pete/PeterCartoon1.png',
     description: 'AI-powered sports betting analysis and predictions for NFL, NBA, NHL, MLB, and Soccer.',
     foundingDate: '2024',
     sameAs: [
@@ -39,13 +39,13 @@ export function WebSiteSchema() {
     '@type': 'WebSite',
     name: "Pete's AI Sports Picks",
     alternateName: 'Pete Sports Picks',
-    url: 'https://petesaisportspicks.com',
+    url: 'https://petesbets.com',
     description: 'Expert AI-powered sports betting predictions, odds comparison, and player prop analysis for NFL Super Bowl, NBA, NHL, and MLB.',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://petesaisportspicks.com/?search={search_term_string}',
+        urlTemplate: 'https://petesbets.com/?search={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
     },
@@ -191,13 +191,13 @@ export function ArticleSchema({
       name: "Pete's AI Sports Picks",
       logo: {
         '@type': 'ImageObject',
-        url: 'https://petesaisportspicks.com/Pete/PeterCartoon1.png',
+        url: 'https://petesbets.com/Pete/PeterCartoon1.png',
       },
     },
-    image: image || 'https://petesaisportspicks.com/og-image.png',
+    image: image || 'https://petesbets.com/og-image.png',
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': 'https://petesaisportspicks.com',
+      '@id': 'https://petesbets.com',
     },
   };
 

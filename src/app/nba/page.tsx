@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'NBA Betting Predictions Today | Free Expert Picks & Player Props',
     description: 'AI-powered NBA betting analysis with free picks, player props, and odds comparison for every game.',
-    url: 'https://petesaisportspicks.com/nba',
+    url: 'https://petesbets.com/nba',
     type: 'website',
   },
   alternates: {
@@ -41,8 +41,8 @@ export default function NBAPage() {
       <FAQSchema faqs={NBA_BETTING_FAQS} />
       <BreadcrumbSchema
         items={[
-          { name: 'Home', url: 'https://petesaisportspicks.com' },
-          { name: 'NBA Picks', url: 'https://petesaisportspicks.com/nba' },
+          { name: 'Home', url: 'https://petesbets.com' },
+          { name: 'NBA Picks', url: 'https://petesbets.com/nba' },
         ]}
       />
 

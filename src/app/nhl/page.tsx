@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'NHL Betting Predictions Today | Free Expert Picks & Goal Scorer Props',
     description: 'AI-powered NHL betting analysis with free picks, goal scorer props, and odds comparison.',
-    url: 'https://petesaisportspicks.com/nhl',
+    url: 'https://petesbets.com/nhl',
   },
   alternates: { canonical: '/nhl' },
 };
@@ -36,8 +36,8 @@ export default function NHLPage() {
     <>
       <FAQSchema faqs={NHL_BETTING_FAQS} />
       <BreadcrumbSchema items={[
-        { name: 'Home', url: 'https://petesaisportspicks.com' },
-        { name: 'NHL Picks', url: 'https://petesaisportspicks.com/nhl' },
+        { name: 'Home', url: 'https://petesbets.com' },
+        { name: 'NHL Picks', url: 'https://petesbets.com/nhl' },
       ]} />
 
       <main className="min-h-screen bg-[#0c1017] text-white">

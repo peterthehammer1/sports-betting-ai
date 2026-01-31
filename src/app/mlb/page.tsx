@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'MLB Betting Predictions Today | Free Expert Picks & Player Props',
     description: 'AI-powered MLB betting analysis with free picks, player props, and odds comparison.',
-    url: 'https://petesaisportspicks.com/mlb',
+    url: 'https://petesbets.com/mlb',
   },
   alternates: { canonical: '/mlb' },
 };
@@ -49,8 +49,8 @@ export default function MLBPage() {
     <>
       <FAQSchema faqs={MLB_FAQS} />
       <BreadcrumbSchema items={[
-        { name: 'Home', url: 'https://petesaisportspicks.com' },
-        { name: 'MLB Picks', url: 'https://petesaisportspicks.com/mlb' },
+        { name: 'Home', url: 'https://petesbets.com' },
+        { name: 'MLB Picks', url: 'https://petesbets.com/mlb' },
       ]} />
 
       <main className="min-h-screen bg-[#0c1017] text-white">

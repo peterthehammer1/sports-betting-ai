@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Super Bowl 2025 Betting Predictions | Free Expert Picks & Props',
     description: 'AI-powered Super Bowl betting analysis with free picks, player props, and odds comparison. Get expert predictions for the big game.',
-    url: 'https://petesaisportspicks.com/nfl/super-bowl',
+    url: 'https://petesbets.com/nfl/super-bowl',
     type: 'article',
   },
   alternates: {
@@ -72,9 +72,9 @@ export default function SuperBowlPage() {
       <FAQSchema faqs={SUPER_BOWL_FAQS} />
       <BreadcrumbSchema
         items={[
-          { name: 'Home', url: 'https://petesaisportspicks.com' },
-          { name: 'NFL', url: 'https://petesaisportspicks.com/nfl' },
-          { name: 'Super Bowl', url: 'https://petesaisportspicks.com/nfl/super-bowl' },
+          { name: 'Home', url: 'https://petesbets.com' },
+          { name: 'NFL', url: 'https://petesbets.com/nfl' },
+          { name: 'Super Bowl', url: 'https://petesbets.com/nfl/super-bowl' },
         ]}
       />
 

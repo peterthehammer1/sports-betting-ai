@@ -1,11 +1,11 @@
-# Pete's AI Sports Picks - robots.txt
-# https://petesaisportspicks.com
+# Pete's Bets - robots.txt
+# https://petesbets.com
 
 User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://petesaisportspicks.com/sitemap.xml
+Sitemap: https://petesbets.com/sitemap.xml
 
 # Block API routes from indexing
 Disallow: /api/

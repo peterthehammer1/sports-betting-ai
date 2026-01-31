@@ -72,7 +72,7 @@ export const metadata: Metadata = {
   publisher: "Pete's AI Sports Picks",
   
   // Canonical URL
-  metadataBase: new URL("https://petesaisportspicks.com"),
+  metadataBase: new URL("https://petesbets.com"),
   alternates: {
     canonical: "/",
   },

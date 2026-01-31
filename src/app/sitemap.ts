@@ -6,7 +6,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://petesaisportspicks.com';
+  const baseUrl = 'https://petesbets.com';
   const currentDate = new Date().toISOString();
 
   // Static pages
