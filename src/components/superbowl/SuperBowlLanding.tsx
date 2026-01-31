@@ -78,13 +78,6 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
         <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-5" />
         
         <div className="relative max-w-5xl mx-auto px-4 py-10 sm:py-14">
-          {/* Event Badge */}
-          <div className="text-center mb-8">
-            <span className="inline-block px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 bg-amber-500/20 rounded-full border border-amber-500/30 uppercase">
-              Super Bowl LX
-            </span>
-          </div>
-
           {/* Matchup */}
           <div className="flex items-center justify-center gap-6 sm:gap-10 lg:gap-16">
             {/* Seahawks */}
