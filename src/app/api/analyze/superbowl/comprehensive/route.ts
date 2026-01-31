@@ -63,7 +63,7 @@ export async function POST() {
   }
 
   try {
-    const cacheKey = 'superbowl-lx-comprehensive-v3';
+    const cacheKey = 'superbowl-lx-comprehensive-v4';
     
     // Check cache (24 hour TTL for comprehensive analysis)
     const cached = await getCachedGameAnalysis(cacheKey, 'NFL') as { analysis: unknown } | null;
@@ -116,7 +116,7 @@ Provide comprehensive analysis in this EXACT JSON format:
     "pick": "Over",
     "line": 46.5,
     "confidence": 58,
-    "projectedScore": "27-24",
+    "projectedScore": "27-20",
     "analysis": "2-3 sentences on total analysis",
     "keyFactors": ["Factor 1", "Factor 2", "Factor 3"]
   },
@@ -301,8 +301,8 @@ Provide comprehensive analysis in this EXACT JSON format:
   },
   "finalScore": {
     "seahawks": 27,
-    "patriots": 24,
-    "reasoning": "Close game throughout. Seahawks pull away in 4th quarter behind JSN and Walker. Patriots keep it close with Maye's late drive but fall short."
+    "patriots": 20,
+    "reasoning": "Seattle's offense controls the game with JSN and Walker dominating. Seahawks build a 10-point lead in the 4th, Patriots score late but can't recover the onside kick. Seattle covers -4.5 comfortably."
   }
 }
 
