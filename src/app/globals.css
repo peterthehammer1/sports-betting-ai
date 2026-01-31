@@ -1,21 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  /* Professional dark theme - deep, sophisticated colors */
-  --background: #0c1017;
-  --background-secondary: #141a24;
-  --background-card: #161d29;
-  --background-elevated: #1e2836;
-  --foreground: #e2e8f0;
-  --foreground-muted: #7a8a9e;
-  /* Muted accent colors - sophisticated, not bright */
-  --accent-primary: #4a6fa5;
-  --accent-primary-dim: #3d5a87;
-  --accent-secondary: #5a6b8a;
-  --accent-gold: #a38f5c;
-  --accent-green: #4a8a6e;
-  --accent-red: #9e5a5a;
-  --border-color: rgba(120, 140, 160, 0.12);
+  /* Professional Light Sports Theme - Clean & Modern */
+  --background: #f7f9fc;
+  --background-secondary: #ffffff;
+  --background-card: #ffffff;
+  --background-elevated: #f1f5f9;
+  --foreground: #1e293b;
+  --foreground-muted: #64748b;
+  
+  /* Professional accent colors */
+  --accent-primary: #1e40af;
+  --accent-primary-dim: #1d4ed8;
+  --accent-secondary: #475569;
+  --accent-gold: #b45309;
+  --accent-green: #059669;
+  --accent-red: #dc2626;
+  --border-color: rgba(148, 163, 184, 0.25);
+  
+  /* Header gradient */
+  --header-bg: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+  
   /* Safe area insets for notched phones */
   --safe-area-inset-top: env(safe-area-inset-top, 0px);
   --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
@@ -55,16 +60,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--background-elevated);
+  background: #cbd5e1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #94a3b8;
 }
 
 /* Hide scrollbar for horizontal scroll areas */
@@ -81,12 +86,12 @@ body {
 .glass-card {
   background: var(--background-card);
   border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .glass-card:hover {
-  border-color: rgba(148, 163, 184, 0.2);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  border-color: rgba(148, 163, 184, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 /* Subtle pulse for live indicators */
@@ -106,7 +111,7 @@ body {
 }
 
 .shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.03), transparent);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -210,22 +215,27 @@ button,
 
 /* Value indicator badges */
 .value-high {
-  background: rgba(74, 138, 110, 0.15);
-  border: 1px solid rgba(74, 138, 110, 0.25);
-  color: #5a9a7e;
+  background: rgba(5, 150, 105, 0.1);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  color: #059669;
 }
 
 .value-medium {
-  background: rgba(74, 111, 165, 0.15);
-  border: 1px solid rgba(74, 111, 165, 0.25);
-  color: #6a8fc5;
+  background: rgba(30, 64, 175, 0.1);
+  border: 1px solid rgba(30, 64, 175, 0.2);
+  color: #1e40af;
 }
 
 /* Odds display styling */
 .odds-positive {
-  color: #5a9a7e;
+  color: #059669;
 }
 
 .odds-negative {
-  color: #c5cdd8;
+  color: #475569;
+}
+
+/* Light theme dark header */
+.header-gradient {
+  background: var(--header-bg);
 }

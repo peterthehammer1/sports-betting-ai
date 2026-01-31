@@ -72,15 +72,15 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0d12]">
+    <div className="min-h-screen bg-[#f7f9fc]">
       {/* Hero Section */}
-      <section className="relative border-b border-slate-800/50">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 to-transparent" />
+      <section className="relative bg-gradient-to-b from-slate-800 to-slate-900 border-b border-slate-200">
+        <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-5" />
         
         <div className="relative max-w-5xl mx-auto px-4 py-10 sm:py-14">
           {/* Event Badge */}
           <div className="text-center mb-8">
-            <span className="inline-block px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-500/90 bg-amber-500/10 rounded-full border border-amber-500/20 uppercase">
+            <span className="inline-block px-4 py-1.5 text-xs font-semibold tracking-widest text-amber-400 bg-amber-500/20 rounded-full border border-amber-500/30 uppercase">
               Super Bowl LX
             </span>
           </div>
@@ -89,59 +89,63 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
           <div className="flex items-center justify-center gap-6 sm:gap-10 lg:gap-16">
             {/* Seahawks */}
             <div className="text-center">
-              <Image
-                src={SEAHAWKS.logo}
-                alt={SEAHAWKS.name}
-                width={100}
-                height={100}
-                className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 mx-auto"
-                unoptimized
-              />
+              <div className="bg-white/10 rounded-2xl p-3 backdrop-blur-sm">
+                <Image
+                  src={SEAHAWKS.logo}
+                  alt={SEAHAWKS.name}
+                  width={100}
+                  height={100}
+                  className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 mx-auto"
+                  unoptimized
+                />
+              </div>
               <h2 className="mt-3 text-lg sm:text-xl font-bold text-white">{SEAHAWKS.shortName}</h2>
-              <p className="text-xs text-slate-500">{SEAHAWKS.record}</p>
+              <p className="text-xs text-slate-400">{SEAHAWKS.record}</p>
             </div>
 
             {/* Center Info */}
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-light text-slate-600 mb-3">vs</div>
+              <div className="text-2xl sm:text-3xl font-light text-slate-400 mb-3">vs</div>
               <div className="space-y-1">
-                <div className="text-xs text-slate-500">{GAME_INFO.date}</div>
-                <div className="text-xs text-slate-600">{GAME_INFO.time}</div>
+                <div className="text-xs text-slate-300">{GAME_INFO.date}</div>
+                <div className="text-xs text-slate-400">{GAME_INFO.time}</div>
               </div>
             </div>
 
             {/* Patriots */}
             <div className="text-center">
-              <Image
-                src={PATRIOTS.logo}
-                alt={PATRIOTS.name}
-                width={100}
-                height={100}
-                className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 mx-auto"
-                unoptimized
-              />
+              <div className="bg-white/10 rounded-2xl p-3 backdrop-blur-sm">
+                <Image
+                  src={PATRIOTS.logo}
+                  alt={PATRIOTS.name}
+                  width={100}
+                  height={100}
+                  className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 mx-auto"
+                  unoptimized
+                />
+              </div>
               <h2 className="mt-3 text-lg sm:text-xl font-bold text-white">{PATRIOTS.shortName}</h2>
-              <p className="text-xs text-slate-500">{PATRIOTS.record}</p>
+              <p className="text-xs text-slate-400">{PATRIOTS.record}</p>
             </div>
           </div>
 
           {/* Quick Lines */}
           <div className="mt-8 flex justify-center">
-            <div className="inline-flex items-center gap-6 px-6 py-3 bg-slate-900/60 rounded-lg border border-slate-800/50">
+            <div className="inline-flex items-center gap-6 px-6 py-3 bg-white/10 rounded-xl backdrop-blur-sm border border-white/10">
               <div className="text-center">
-                <div className="text-xs text-slate-500 mb-0.5">Spread</div>
+                <div className="text-xs text-slate-400 mb-0.5">Spread</div>
                 <div className="text-sm font-semibold text-white">{LINES.spread.team} {LINES.spread.value}</div>
               </div>
-              <div className="w-px h-8 bg-slate-700/50" />
+              <div className="w-px h-8 bg-white/20" />
               <div className="text-center">
-                <div className="text-xs text-slate-500 mb-0.5">Total</div>
+                <div className="text-xs text-slate-400 mb-0.5">Total</div>
                 <div className="text-sm font-semibold text-white">{LINES.total}</div>
               </div>
-              <div className="w-px h-8 bg-slate-700/50" />
+              <div className="w-px h-8 bg-white/20" />
               <div className="text-center">
-                <div className="text-xs text-slate-500 mb-0.5">Moneyline</div>
+                <div className="text-xs text-slate-400 mb-0.5">Moneyline</div>
                 <div className="text-sm font-semibold text-white">
-                  <span className="text-slate-400">SEA</span> {LINES.seahawksML}
+                  <span className="text-slate-300">SEA</span> {LINES.seahawksML}
                 </div>
               </div>
             </div>
@@ -150,7 +154,7 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
       </section>
 
       {/* Navigation Tabs */}
-      <nav className="sticky top-[60px] z-30 bg-[#0a0d12]/95 backdrop-blur-sm border-b border-slate-800/50">
+      <nav className="sticky top-[60px] z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex gap-1 overflow-x-auto py-2">
             {tabs.map((tab) => (
@@ -160,7 +164,7 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'bg-slate-800 text-white'
-                    : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/50'
+                    : 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'
                 }`}
               >
                 {tab.label}
@@ -171,7 +175,7 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
             <div className="flex-1" />
             
             {/* Other Sports */}
-            <div className="flex items-center gap-1 pl-4 border-l border-slate-800/50">
+            <div className="flex items-center gap-1 pl-4 border-l border-slate-200">
               {[
                 { sport: 'NBA', label: 'NBA' },
                 { sport: 'NHL', label: 'NHL' },
@@ -183,7 +187,7 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
                     onSportChange(s.sport);
                     onNavigate('games');
                   }}
-                  className="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded transition-colors"
+                  className="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors"
                 >
                   {s.label}
                 </button>
@@ -203,23 +207,23 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/50 py-8">
+      <footer className="border-t border-slate-200 py-8 bg-white">
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
             <button
               onClick={() => onNavigate('tools')}
-              className="px-4 py-2 text-sm text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-800 rounded-lg transition-colors"
+              className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
             >
               Betting Calculator
             </button>
             <button
               onClick={() => onNavigate('tracker')}
-              className="px-4 py-2 text-sm text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-800 rounded-lg transition-colors"
+              className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
             >
               Pick Tracker
             </button>
           </div>
-          <p className="text-center text-xs text-slate-600">
+          <p className="text-center text-xs text-slate-500">
             For entertainment purposes only. Please gamble responsibly.
           </p>
         </div>
@@ -233,9 +237,9 @@ function OverviewSection() {
   return (
     <div className="space-y-8">
       {/* Context Banner */}
-      <div className="p-4 bg-slate-900/50 rounded-lg border border-slate-800/50">
-        <p className="text-sm text-slate-400 text-center">
-          <span className="text-amber-500/80 font-medium">Super Bowl XLIX Rematch</span>
+      <div className="p-4 bg-amber-50 rounded-xl border border-amber-200">
+        <p className="text-sm text-slate-700 text-center">
+          <span className="text-amber-700 font-semibold">Super Bowl XLIX Rematch</span>
           {' '}— The Patriots won 28-24 on Malcolm Butler&apos;s goal-line interception. Seattle returns to the Super Bowl for the first time since 2014.
         </p>
       </div>
@@ -248,7 +252,7 @@ function OverviewSection() {
 
       {/* Key Stats */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Key Numbers</h3>
+        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Key Numbers</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatCard label="Spread" value="SEA -4.5" sublabel="Consensus line" />
           <StatCard label="Total" value="46.5" sublabel="O/U points" />
@@ -259,7 +263,7 @@ function OverviewSection() {
 
       {/* MVP Odds */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">MVP Odds</h3>
+        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">MVP Odds</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { name: 'Sam Darnold', team: 'SEA', odds: '+175' },
@@ -267,11 +271,11 @@ function OverviewSection() {
             { name: 'Jaxon Smith-Njigba', team: 'SEA', odds: '+1400' },
             { name: 'Kenneth Walker III', team: 'SEA', odds: '+2000' },
           ].map((player) => (
-            <div key={player.name} className="p-3 bg-slate-900/30 rounded-lg border border-slate-800/30">
-              <div className="text-sm font-medium text-white">{player.name}</div>
+            <div key={player.name} className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="text-sm font-medium text-slate-800">{player.name}</div>
               <div className="flex items-center justify-between mt-1">
                 <span className="text-xs text-slate-500">{player.team}</span>
-                <span className="text-sm font-semibold text-emerald-500">{player.odds}</span>
+                <span className="text-sm font-semibold text-emerald-600">{player.odds}</span>
               </div>
             </div>
           ))}
@@ -284,22 +288,22 @@ function OverviewSection() {
 // Team Card Component
 function TeamCard({ team, side }: { team: typeof SEAHAWKS; side: 'home' | 'away' }) {
   return (
-    <div className="p-5 bg-slate-900/30 rounded-xl border border-slate-800/30">
+    <div className="p-5 bg-white rounded-xl border border-slate-200 shadow-sm">
       <div className="flex items-center gap-3 mb-4">
         <Image src={team.logo} alt={team.name} width={40} height={40} unoptimized />
         <div>
-          <h3 className="font-semibold text-white">{team.name}</h3>
+          <h3 className="font-semibold text-slate-800">{team.name}</h3>
           <p className="text-xs text-slate-500">{team.record}</p>
         </div>
       </div>
       <div className="space-y-2">
         {team.players.map((player) => (
-          <div key={player.name} className="flex items-center justify-between py-1.5 border-b border-slate-800/30 last:border-0">
+          <div key={player.name} className="flex items-center justify-between py-1.5 border-b border-slate-100 last:border-0">
             <div>
-              <span className="text-sm text-white">{player.name}</span>
-              <span className="text-xs text-slate-600 ml-1.5">{player.pos}</span>
+              <span className="text-sm text-slate-700">{player.name}</span>
+              <span className="text-xs text-slate-400 ml-1.5">{player.pos}</span>
             </div>
-            <span className="text-xs text-slate-400">{player.stat}</span>
+            <span className="text-xs text-slate-500">{player.stat}</span>
           </div>
         ))}
       </div>
@@ -310,10 +314,10 @@ function TeamCard({ team, side }: { team: typeof SEAHAWKS; side: 'home' | 'away'
 // Stat Card Component
 function StatCard({ label, value, sublabel }: { label: string; value: string; sublabel: string }) {
   return (
-    <div className="p-4 bg-slate-900/30 rounded-lg border border-slate-800/30 text-center">
+    <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm text-center">
       <div className="text-xs text-slate-500 mb-1">{label}</div>
-      <div className="text-xl font-bold text-white">{value}</div>
-      <div className="text-xs text-slate-600 mt-0.5">{sublabel}</div>
+      <div className="text-xl font-bold text-slate-800">{value}</div>
+      <div className="text-xs text-slate-400 mt-0.5">{sublabel}</div>
     </div>
   );
 }

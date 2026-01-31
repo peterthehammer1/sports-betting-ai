@@ -364,12 +364,12 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0c1017]">
+    <div className="min-h-screen bg-[#f7f9fc]">
       {/* FanDuel Promo Banner - hide on landing */}
       {view !== 'landing' && <FanDuelBanner />}
 
-      {/* Header - Modified for landing page */}
-      <header className={`sticky top-0 z-40 bg-[#0c1017]/95 backdrop-blur-sm border-b border-slate-800/60 ${view === 'landing' ? 'py-2' : ''}`}>
+      {/* Header - Professional dark header on light background */}
+      <header className={`sticky top-0 z-40 header-gradient shadow-lg ${view === 'landing' ? 'py-2' : ''}`}>
         <div className="max-w-6xl mx-auto px-4 py-3 sm:px-6 sm:py-4">
           {/* Top Row - Logo, Title and Sport Toggle */}
           <div className="flex items-center justify-between gap-3">
@@ -378,15 +378,15 @@ export default function Dashboard() {
               <img 
                 src="/Pete/PeterCartoon1.png" 
                 alt="Pete" 
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0 ring-2 ring-white/20"
               />
-              <h1 className="text-base sm:text-lg font-semibold text-slate-200 truncate">
+              <h1 className="text-base sm:text-lg font-semibold text-white truncate">
                 Pete&apos;s AI Sports Picks
               </h1>
             </div>
             
             {/* Sport Toggle - Expanded with all sports */}
-            <div className="flex bg-[#141a24] rounded-lg p-0.5 flex-shrink-0 overflow-x-auto">
+            <div className="flex bg-white/10 rounded-lg p-0.5 flex-shrink-0 overflow-x-auto backdrop-blur-sm">
               {(Object.keys(SPORTS_CONFIG) as Sport[]).map((s) => (
                 <button
                   key={s}
@@ -399,8 +399,8 @@ export default function Dashboard() {
                   }}
                   className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                     sport === s
-                      ? 'bg-[#2a3444] text-slate-200'
-                      : 'text-slate-500 hover:text-slate-300'
+                      ? 'bg-white text-slate-800 shadow-sm'
+                      : 'text-white/70 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   <span className="flex items-center gap-1">
@@ -452,9 +452,9 @@ export default function Dashboard() {
           </div>
 
           {/* Status bar */}
-          <div className="mt-2 flex items-center gap-3 text-xs text-slate-600">
+          <div className="mt-2 flex items-center gap-3 text-xs text-white/60">
             <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 bg-[#4a8a6e] rounded-full pulse-glow" />
+              <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full pulse-glow" />
               <span>Live</span>
             </div>
             {lastFetch && (
@@ -470,10 +470,10 @@ export default function Dashboard() {
       <main className={view === 'landing' ? '' : 'max-w-6xl mx-auto px-4 py-6 sm:px-6'}>
         {/* Error State - hide on landing page and when we have games */}
         {error && view !== 'landing' && games.length === 0 && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg animate-slide-up">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl animate-slide-up">
             <div className="flex items-center gap-3">
-              <span className="text-red-400">⚠️</span>
-              <p className="text-sm text-red-400">{error}</p>
+              <span className="text-red-500">⚠️</span>
+              <p className="text-sm text-red-600">{error}</p>
             </div>
           </div>
         )}
@@ -481,8 +481,8 @@ export default function Dashboard() {
         {/* Loading State - hide on landing page */}
         {loadingOdds && games.length === 0 && view !== 'landing' && (
           <div className="flex flex-col justify-center items-center py-20">
-            <div className="w-8 h-8 border-2 border-slate-600 border-t-blue-500 rounded-full animate-spin" />
-            <span className="mt-4 text-slate-400 text-sm">
+            <div className="w-8 h-8 border-2 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
+            <span className="mt-4 text-slate-500 text-sm">
               Loading {sport} games...
             </span>
           </div>
@@ -490,13 +490,13 @@ export default function Dashboard() {
 
         {/* Analysis Loading Overlay */}
         {(loadingAnalysis || loadingProps) && (
-          <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 text-center max-w-sm w-full animate-slide-up">
-              <div className="w-10 h-10 mx-auto border-2 border-slate-600 border-t-blue-500 rounded-full animate-spin" />
-              <p className="mt-4 font-medium text-white">
+          <div className="fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white border border-slate-200 rounded-xl p-6 text-center max-w-sm w-full shadow-xl animate-slide-up">
+              <div className="w-10 h-10 mx-auto border-2 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
+              <p className="mt-4 font-medium text-slate-800">
                 {loadingProps ? 'Analyzing Player Props' : 'Running AI Analysis'}
               </p>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-sm text-slate-500">
                 This may take a few seconds...
               </p>
             </div>
@@ -773,8 +773,8 @@ function NavTab({
       disabled={disabled}
       className={`px-3 sm:px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed touch-manipulation border-b-2 -mb-[1px] ${
         active
-          ? 'text-slate-200 border-slate-400'
-          : 'text-slate-500 border-transparent hover:text-slate-400'
+          ? 'text-white border-white'
+          : 'text-white/60 border-transparent hover:text-white/90'
       }`}
     >
       {label}
