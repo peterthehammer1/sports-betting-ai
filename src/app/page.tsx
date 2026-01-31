@@ -352,6 +352,7 @@ export default function Dashboard() {
     setScores({});
     setInjuries(null);
     setInjuryCount(0);
+    setError(null); // Clear any errors when sport changes
     // When sport changes, go to games view (unless we're on landing or tools which are sport-agnostic)
     if (view !== 'landing' && view !== 'tools' && view !== 'tracker') {
       setView('games');
@@ -461,8 +462,8 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className={view === 'landing' ? '' : 'max-w-6xl mx-auto px-4 py-6 sm:px-6'}>
-        {/* Error State - hide on landing page */}
-        {error && view !== 'landing' && (
+        {/* Error State - hide on landing page and when we have games */}
+        {error && view !== 'landing' && games.length === 0 && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg animate-slide-up">
             <div className="flex items-center gap-3">
               <span className="text-red-400">⚠️</span>
@@ -513,7 +514,7 @@ export default function Dashboard() {
                   {sport} Games
                 </h2>
                 <p className="text-sm text-slate-400">
-                  {games.length} games with odds available
+                  {games.length} game{games.length !== 1 ? 's' : ''} with odds available
                 </p>
               </div>
               
@@ -525,6 +526,22 @@ export default function Dashboard() {
               />
             </div>
 
+            {/* NFL Super Bowl Banner */}
+            {sport === 'NFL' && (
+              <div className="mb-6 p-4 bg-slate-900/60 rounded-lg border border-slate-800/50 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-white">Super Bowl LX Analysis</p>
+                  <p className="text-xs text-slate-500">Expert picks, prediction models, and betting guides</p>
+                </div>
+                <button
+                  onClick={() => setView('landing')}
+                  className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg transition-colors"
+                >
+                  View Analysis
+                </button>
+              </div>
+            )}
+
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {games.map((game) => (
                 <GameCard
@@ -534,7 +551,11 @@ export default function Dashboard() {
                   score={scores[game.gameId]}
                   injuries={getGameInjuryInfo(game.homeTeam, game.awayTeam)}
                   onSelect={handleGameSelect}
-                  onPropsSelect={sport === 'NHL' ? fetchPlayerPropsAnalysis : fetchNbaPlayerPropsAnalysis}
+                  onPropsSelect={
+                    sport === 'NHL' ? fetchPlayerPropsAnalysis : 
+                    sport === 'NBA' ? fetchNbaPlayerPropsAnalysis : 
+                    undefined
+                  }
                 />
               ))}
             </div>
