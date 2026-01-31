@@ -419,11 +419,14 @@ export default function Dashboard() {
               onClick={() => setView('landing')}
               label="🏈 Super Bowl LX"
             />
-            <NavTab 
-              active={view === 'games'} 
-              onClick={() => setView('games')}
-              label="Games"
-            />
+            {/* Hide Games tab for NFL since Super Bowl is the only game */}
+            {sport !== 'NFL' && (
+              <NavTab 
+                active={view === 'games'} 
+                onClick={() => setView('games')}
+                label="Games"
+              />
+            )}
             <NavTab 
               active={view === 'analysis'} 
               onClick={() => setView('analysis')}
