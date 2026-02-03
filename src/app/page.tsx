@@ -256,14 +256,24 @@ export default function Dashboard() {
       }
 
       const data = await res.json();
+      
+      // Validate the prediction data exists
+      if (!data.prediction) {
+        console.error('API response missing prediction:', data);
+        throw new Error('Analysis response was incomplete. Please try again.');
+      }
+      
       setSelectedPrediction(data.prediction);
       setView('analysis');
     } catch (err) {
+      console.error('Analysis fetch error:', err);
       if (err instanceof Error && err.name === 'AbortError') {
         setError('Analysis timed out. Please try again.');
       } else {
         setError(err instanceof Error ? err.message : 'Analysis failed');
       }
+      // Make sure we stay on games view if analysis fails
+      setView('games');
     } finally {
       setLoadingAnalysis(false);
     }

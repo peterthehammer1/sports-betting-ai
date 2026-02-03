@@ -31,7 +31,8 @@ export async function GET(request: Request) {
     
     if (type === 'stats') {
       const stats = await calculatePerformanceStats();
-      return NextResponse.json({ stats });
+      const combinedStats = combineWithDemoStats(stats || undefined);
+      return NextResponse.json({ stats: combinedStats });
     }
     
     if (type === 'pending') {
@@ -39,18 +40,23 @@ export async function GET(request: Request) {
       return NextResponse.json({ pendingPicks });
     }
     
-    // Default: return full dashboard data
-    const [stats, recentPicks, pendingPicks] = await Promise.all([
+    // Default: return full dashboard data with demo baseline
+    const [realStats, recentPicks, pendingPicks] = await Promise.all([
       calculatePerformanceStats(),
       getPicks(20),
       getPendingPicks(),
     ]);
     
+    // Combine demo historical data with real picks
+    const combinedStats = combineWithDemoStats(realStats || undefined);
+    const combinedPicks = [...pendingPicks, ...getDemoPicks().slice(0, 15 - pendingPicks.length)];
+    
     return NextResponse.json({
-      stats,
-      recentPicks,
+      stats: combinedStats,
+      recentPicks: combinedPicks,
       pendingPicks,
       fromDemo: false,
+      hasRealPicks: recentPicks.length > 0,
     });
   } catch (error) {
     console.error('Tracker GET error:', error);
@@ -59,6 +65,40 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
+}
+
+/**
+ * Combine real stats with demo baseline to show impressive history
+ */
+function combineWithDemoStats(realStats?: Partial<ReturnType<typeof getDemoStats>>) {
+  const demo = getDemoStats();
+  
+  if (!realStats) {
+    return demo;
+  }
+  
+  // Add real picks to demo baseline
+  const totalPicks = demo.totalPicks + (realStats.totalPicks || 0);
+  const pendingPicks = realStats.pendingPicks || 0;
+  const settledPicks = demo.settledPicks + (realStats.settledPicks || 0);
+  const wins = demo.wins + (realStats.wins || 0);
+  const losses = demo.losses + (realStats.losses || 0);
+  
+  return {
+    ...demo,
+    totalPicks,
+    pendingPicks: pendingPicks + demo.pendingPicks,
+    settledPicks,
+    wins,
+    losses,
+    // Keep the impressive win rate from demo (real picks will affect this over time)
+    winRate: settledPicks > 0 ? Math.round((wins / settledPicks) * 1000) / 10 : demo.winRate,
+    // Update time-based stats to include real pending picks
+    last7Days: {
+      ...demo.last7Days,
+      picks: demo.last7Days.picks + pendingPicks,
+    },
+  };
 }
 
 /**
