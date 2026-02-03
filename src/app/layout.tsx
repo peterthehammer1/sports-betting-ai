@@ -142,10 +142,9 @@ export const metadata: Metadata = {
     },
   },
   
-  // Verification (add your codes when you register)
+  // Verification codes
   verification: {
-    google: "your-google-verification-code", // Get from Google Search Console
-    // yandex: "your-yandex-code",
+    google: "nBkxTa7I1tGKFqOCJyrPf9fd-v4aQNC_Eib23ZNmqZs",
     // bing: "your-bing-code",
   },
   
