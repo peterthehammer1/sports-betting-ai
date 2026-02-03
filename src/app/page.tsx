@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { GameCard } from '@/components/games/GameCard';
 import { PredictionCard } from '@/components/predictions/PredictionCard';
 import { QuickPicks } from '@/components/predictions/QuickPicks';
@@ -363,22 +363,33 @@ export default function Dashboard() {
     }
   };
 
+  // Track previous sport to detect actual sport changes
+  const prevSportRef = useRef(sport);
+  
   useEffect(() => {
-    fetchOdds();
-    fetchInjuries(); // Fetch injuries for the current sport
-    setQuickPicks([]); // Clear picks when sport changes
-    setSelectedPrediction(null);
-    setSelectedPropsAnalysis(null);
-    setSelectedNbaPropsAnalysis(null);
-    setScores({});
-    setInjuries(null);
-    setInjuryCount(0);
-    setError(null); // Clear any errors when sport changes
-    // When sport changes, go to games view (unless we're on landing or tools which are sport-agnostic)
-    if (view !== 'landing' && view !== 'tools' && view !== 'tracker') {
-      setView('games');
+    // Only reset state when sport ACTUALLY changes (not on view changes)
+    const sportChanged = prevSportRef.current !== sport;
+    prevSportRef.current = sport;
+    
+    if (sportChanged) {
+      fetchOdds();
+      fetchInjuries(); // Fetch injuries for the current sport
+      setQuickPicks([]); // Clear picks when sport changes
+      setSelectedPrediction(null);
+      setSelectedPropsAnalysis(null);
+      setSelectedNbaPropsAnalysis(null);
+      setScores({});
+      setInjuries(null);
+      setInjuryCount(0);
+      setError(null); // Clear any errors when sport changes
+      // When sport changes, go to appropriate view
+      if (sport === 'NFL') {
+        setView('landing');
+      } else {
+        setView('games');
+      }
     }
-  }, [sport, view]);
+  }, [sport]);
 
   const handleGameSelect = (gameId: string) => {
     fetchGameAnalysis(gameId);
