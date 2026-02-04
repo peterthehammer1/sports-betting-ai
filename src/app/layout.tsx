@@ -4,7 +4,8 @@ import "./globals.css";
 import { 
   OrganizationSchema, 
   WebSiteSchema, 
-  RatingSchema,
+  SoftwareAppSchema,
+  BettingServiceSchema,
   FAQSchema,
   SPORTS_BETTING_FAQS 
 } from "@/components/seo/StructuredData";
@@ -28,35 +29,47 @@ export const metadata: Metadata = {
   },
   // Comprehensive description with keywords
   description: "Get free AI-powered sports betting predictions for Super Bowl 2025, NFL, NBA, NHL, and MLB. Expert picks, player props, odds comparison, and betting analysis. Beat the sportsbooks with data-driven insights.",
-  // Extended keyword list for search engines
+  // Extended keyword list for search engines - Comprehensive coverage
   keywords: [
-    // Super Bowl keywords (high search volume during season)
+    // Super Bowl keywords (high search volume)
     "Super Bowl betting predictions",
-    "Super Bowl 2025 picks",
+    "Super Bowl 2026 picks",
+    "Super Bowl LX predictions",
     "Super Bowl player props",
     "Super Bowl odds",
     "Super Bowl betting advice",
+    "Super Bowl prop bets",
+    "Super Bowl spread",
+    "Super Bowl over under",
     // NFL keywords
     "NFL betting predictions",
     "NFL picks today",
     "NFL player props",
     "free NFL picks",
+    "NFL expert picks",
+    "NFL spread picks",
+    "NFL moneyline picks",
     // NBA keywords
     "NBA betting predictions",
     "NBA picks today",
     "NBA player props",
     "NBA betting advice",
     "free NBA picks",
+    "NBA points props",
+    "NBA parlay picks",
     // NHL keywords
     "NHL betting predictions",
     "NHL picks today",
     "NHL first goal scorer",
     "NHL player props",
     "free NHL picks",
+    "NHL puck line",
+    "NHL over under",
     // MLB keywords
     "MLB betting predictions",
     "MLB picks today",
     "MLB player props",
+    "MLB strikeout props",
     // General sports betting
     "sports betting tips",
     "AI sports predictions",
@@ -66,6 +79,17 @@ export const metadata: Metadata = {
     "line shopping",
     "parlay builder",
     "betting calculator",
+    // Long-tail keywords
+    "best bets today",
+    "sports betting picks free",
+    "expert sports picks",
+    "computer generated picks",
+    "data driven sports betting",
+    "sports betting analysis",
+    // Question-based (AEO)
+    "who will win Super Bowl",
+    "best NFL bets this week",
+    "NBA best bets tonight",
   ],
   authors: [{ name: "Pete's AI Sports Picks", url: "https://petesaisportspicks.com" }],
   creator: "Pete's AI Sports Picks",
@@ -184,10 +208,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Structured Data for SEO */}
+        {/* Structured Data for SEO - Comprehensive Schema Markup */}
         <OrganizationSchema />
         <WebSiteSchema />
-        <RatingSchema />
+        <SoftwareAppSchema />
+        <BettingServiceSchema />
         <FAQSchema faqs={SPORTS_BETTING_FAQS} />
         
         {/* Preconnect to external resources for performance */}

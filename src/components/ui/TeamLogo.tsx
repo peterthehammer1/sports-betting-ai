@@ -42,15 +42,20 @@ export function TeamLogo({ teamName, sport = 'nba', size = 'md', showName = fals
     );
   }
   
+  // SEO-optimized alt text
+  const sportName = sport === 'nba' ? 'NBA' : sport === 'nhl' ? 'NHL' : 'NFL';
+  const altText = `${teamName} ${sportName} team logo - betting predictions and picks`;
+  
   return (
     <div className={`flex items-center gap-1.5 ${className}`}>
       <div className={`${sizeClasses.container} relative flex-shrink-0`}>
         <Image
           src={teamData.logo}
-          alt={teamName}
+          alt={altText}
           fill
           className="object-contain"
           unoptimized
+          loading="lazy"
         />
       </div>
       {showName && <span className="text-slate-300 font-medium">{teamName}</span>}

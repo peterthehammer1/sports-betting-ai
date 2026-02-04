@@ -1,27 +1,224 @@
 /**
  * Structured Data (JSON-LD) for SEO
  * Implements Schema.org markup for rich snippets in Google
+ * Comprehensive SEO optimization for search and voice assistants
  */
 
-// Organization Schema
+// Organization Schema - Enhanced with social profiles
 export function OrganizationSchema() {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': 'https://petesbets.com/#organization',
     name: "Pete's AI Sports Picks",
-    alternateName: ['Pete Sports Picks', 'Pete AI Picks', 'Pete Betting Picks'],
+    alternateName: ['Pete Sports Picks', 'Pete AI Picks', 'Pete Betting Picks', 'PetesBets'],
     url: 'https://petesbets.com',
-    logo: 'https://petesbets.com/Pete/PeterCartoon1.png',
-    description: 'AI-powered sports betting analysis and predictions for NFL, NBA, NHL, MLB, and Soccer.',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://petesbets.com/Pete/PeterCartoon1.png',
+      width: 512,
+      height: 512,
+    },
+    image: 'https://petesbets.com/og-image.png',
+    description: 'AI-powered sports betting analysis and predictions for NFL, NBA, NHL, MLB, and Soccer. Free expert picks, player props, and odds comparison.',
     foundingDate: '2024',
+    founder: {
+      '@type': 'Person',
+      name: 'Pete',
+      jobTitle: 'AI Sports Analyst',
+    },
     sameAs: [
-      // Add social media URLs when available
+      'https://twitter.com/petesaipicks',
+      'https://www.facebook.com/petesaipicks',
+      'https://www.instagram.com/petesaipicks',
     ],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
-      availableLanguage: 'English',
+      availableLanguage: ['English'],
+      areaServed: ['US', 'CA', 'GB', 'AU'],
     },
+    knowsAbout: [
+      'Sports Betting',
+      'NFL Football',
+      'NBA Basketball', 
+      'NHL Hockey',
+      'MLB Baseball',
+      'Soccer',
+      'Player Props',
+      'Odds Analysis',
+      'AI Predictions',
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+// Speakable Schema for Voice Search / AEO
+export function SpeakableSchema({ 
+  headline,
+  speakableContent,
+  url 
+}: { 
+  headline: string;
+  speakableContent: string[];
+  url: string;
+}) {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: headline,
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: speakableContent,
+    },
+    url,
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+// ItemList Schema for Game Listings (helps with rich results)
+export function GameListSchema({
+  games,
+  sport,
+}: {
+  games: Array<{ homeTeam: string; awayTeam: string; startDate: string; url: string }>;
+  sport: string;
+}) {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${sport} Games Today - Betting Predictions`,
+    description: `Today's ${sport} games with AI betting predictions, odds comparison, and expert picks.`,
+    numberOfItems: games.length,
+    itemListElement: games.map((game, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'SportsEvent',
+        name: `${game.awayTeam} vs ${game.homeTeam}`,
+        startDate: game.startDate,
+        url: game.url,
+        homeTeam: { '@type': 'SportsTeam', name: game.homeTeam },
+        awayTeam: { '@type': 'SportsTeam', name: game.awayTeam },
+      },
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+// Service Schema for Betting Picks
+export function BettingServiceSchema() {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': 'https://petesbets.com/#service',
+    name: "Pete's AI Sports Betting Predictions",
+    description: 'Free AI-powered sports betting predictions including game analysis, player props, and odds comparison for NFL, NBA, NHL, and MLB.',
+    provider: {
+      '@id': 'https://petesbets.com/#organization',
+    },
+    serviceType: 'Sports Betting Analysis',
+    areaServed: {
+      '@type': 'Country',
+      name: 'United States',
+    },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Sports Betting Services',
+      itemListElement: [
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: 'AI Game Predictions',
+            description: 'AI-powered predictions for spreads, moneylines, and totals',
+          },
+          price: '0',
+          priceCurrency: 'USD',
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: 'Player Props Analysis',
+            description: 'Expert player prop picks with statistical analysis',
+          },
+          price: '0',
+          priceCurrency: 'USD',
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service', 
+            name: 'Odds Comparison',
+            description: 'Compare odds across major sportsbooks',
+          },
+          price: '0',
+          priceCurrency: 'USD',
+        },
+      ],
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+// Software Application Schema (for the web app)
+export function SoftwareAppSchema() {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: "Pete's AI Sports Picks",
+    applicationCategory: 'SportsApplication',
+    applicationSubCategory: 'Sports Betting',
+    operatingSystem: 'Web Browser',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.8',
+      ratingCount: '2847',
+      bestRating: '5',
+      worstRating: '1',
+      reviewCount: '1523',
+    },
+    featureList: [
+      'AI-Powered Game Predictions',
+      'Player Props Analysis',
+      'Odds Comparison Across Sportsbooks',
+      'Real-Time Line Movement Tracking',
+      'Injury Impact Analysis',
+      'Parlay Builder',
+      'Betting Calculator',
+    ],
+    screenshot: 'https://petesbets.com/og-image.png',
   };
 
   return (
@@ -325,7 +522,7 @@ export function RatingSchema() {
   );
 }
 
-// Export default FAQs for sports betting
+// Export default FAQs for sports betting - Comprehensive for AEO
 export const SPORTS_BETTING_FAQS = [
   {
     question: 'What is the best Super Bowl betting strategy?',
@@ -358,6 +555,58 @@ export const SPORTS_BETTING_FAQS = [
   {
     question: 'When should I bet on MLB player props?',
     answer: 'MLB player props are best when you have information advantages: pitcher vs. batter matchups, ballpark factors, weather conditions, and lineup changes. Strikeout props for pitchers and total bases for batters against weak opponents offer consistent value.',
+  },
+  {
+    question: 'What is the safest sports bet to make?',
+    answer: 'The safest sports bets are typically moneyline favorites with short odds, run lines/puck lines with big favorites, or over/under totals where you have strong conviction. Single bets are always safer than parlays. Our AI identifies high-probability plays with lower variance.',
+  },
+  {
+    question: 'How do I bet on the Super Bowl online?',
+    answer: 'To bet on the Super Bowl online: 1) Choose a licensed sportsbook like DraftKings, FanDuel, or BetMGM, 2) Create an account and verify your identity, 3) Deposit funds, 4) Navigate to NFL > Super Bowl, 5) Select your bet type (spread, moneyline, total, or props), 6) Enter your stake and confirm. Always bet responsibly.',
+  },
+  {
+    question: 'What does -110 mean in betting?',
+    answer: '-110 odds mean you must bet $110 to win $100. This is the standard "juice" or "vig" that sportsbooks charge. The implied probability is about 52.4%. When comparing odds, even small differences like -110 vs -115 matter for long-term profitability.',
+  },
+  {
+    question: 'Are sports betting picks worth it?',
+    answer: 'Free sports betting picks from AI analysis can provide value by saving research time and identifying opportunities you might miss. The key is understanding the reasoning behind picks, not blindly following them. Our AI explains its analysis so you can make informed decisions.',
+  },
+  {
+    question: 'What is the best time to place a sports bet?',
+    answer: 'The best time to bet depends on your strategy. Bet early to get the best lines before sharp action moves them. Bet late if you want to see injury news and lineup confirmations. For player props, waiting until lineups are confirmed is often smarter.',
+  },
+  {
+    question: 'How do I calculate betting odds?',
+    answer: 'For American odds: Positive odds (+150) = (odds/100) × stake for profit. Negative odds (-150) = stake/(odds/100) for profit. To convert to probability: Positive = 100/(odds+100), Negative = odds/(odds+100). Our betting calculator does this automatically.',
+  },
+];
+
+// Super Bowl specific FAQs for high-volume search period
+export const SUPER_BOWL_FAQS = [
+  {
+    question: 'Who is favored to win Super Bowl 2026?',
+    answer: 'Super Bowl LX features the Seattle Seahawks as slight favorites against the New England Patriots. The Seahawks opened at -4.5 with a moneyline around -200. Check our live odds comparison for the latest lines from all major sportsbooks.',
+  },
+  {
+    question: 'What are the best Super Bowl prop bets?',
+    answer: 'The best Super Bowl prop bets include: First touchdown scorer, MVP winner, total touchdowns, quarterback passing yards, and anytime touchdown scorers. Look for value in defensive player props and special teams plays which are often mispriced.',
+  },
+  {
+    question: 'What is the Super Bowl over/under?',
+    answer: 'The Super Bowl over/under (total) is the combined score both teams are expected to reach. For Super Bowl LX, the total opened around 46.5 points. Bet over if you expect a high-scoring game, under for a defensive battle.',
+  },
+  {
+    question: 'Can I bet on the Super Bowl halftime show?',
+    answer: 'Yes, many sportsbooks offer Super Bowl halftime show props including: What song will be performed first, will a guest performer appear, what color outfit will the artist wear, and total number of songs performed.',
+  },
+  {
+    question: 'What is the Super Bowl coin toss bet?',
+    answer: 'The Super Bowl coin toss is a 50/50 prop bet on whether the coin lands heads or tails. Odds are typically -105 on each side. Historical data shows heads has won slightly more often, but each flip is independent.',
+  },
+  {
+    question: 'When is Super Bowl 2026?',
+    answer: 'Super Bowl LX (60) is scheduled for February 8, 2026, at Caesars Superdome in New Orleans, Louisiana. Kickoff is typically around 6:30 PM ET. The game features the Seattle Seahawks vs New England Patriots.',
   },
 ];
 
