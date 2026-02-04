@@ -11,7 +11,7 @@ import { NextResponse } from 'next/server';
 import { savePick, getPicks, isRedisConfigured } from '@/lib/cache/redis';
 import { createOddsApiClient } from '@/lib/api/odds';
 import type { TrackedPick, Sport } from '@/types/tracker';
-import type { SportKey, MarketType } from '@/types/odds';
+import type { SportKey } from '@/types/odds';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120; // 2 minutes for multiple AI calls
@@ -24,6 +24,13 @@ interface GameForPicking {
   awayTeam: string;
   commenceTime: string;
   sport: Sport;
+}
+
+// Type for AI prediction response
+interface GamePredictionResult {
+  winner?: { pick: string; confidence: number; reasoning: string };
+  spread?: { pick: string; line: number; confidence: number; reasoning: string };
+  total?: { pick: string; line: number; confidence: number; reasoning: string };
 }
 
 /**
@@ -125,8 +132,8 @@ async function getGameAnalysis(game: GameForPicking) {
 async function selectBestPicks(
   games: GameForPicking[],
   count: number
-): Promise<Array<{ game: GameForPicking; prediction: any }>> {
-  const analyzed: Array<{ game: GameForPicking; prediction: any; confidence: number }> = [];
+): Promise<Array<{ game: GameForPicking; prediction: GamePredictionResult }>> {
+  const analyzed: Array<{ game: GameForPicking; prediction: GamePredictionResult; confidence: number }> = [];
 
   // Analyze games (limit to save API calls)
   for (const game of games.slice(0, 4)) {
@@ -154,10 +161,10 @@ async function selectBestPicks(
  */
 async function saveDailyPick(
   game: GameForPicking,
-  prediction: any,
+  prediction: GamePredictionResult,
   pickType: 'winner' | 'spread' | 'total'
 ): Promise<TrackedPick | null> {
-  const pickData = prediction[pickType];
+  const pickData = prediction[pickType] as { pick: string; confidence: number; reasoning: string; line?: number } | undefined;
   if (!pickData || pickData.confidence < 60) return null;
 
   const pick: TrackedPick = {
@@ -172,10 +179,10 @@ async function saveDailyPick(
     pick: pickType === 'winner' 
       ? `${pickData.pick} ML`
       : pickType === 'spread'
-      ? `${pickData.pick} ${pickData.line > 0 ? '+' : ''}${pickData.line}`
-      : `${pickData.pick} ${prediction.total.line}`,
+      ? `${pickData.pick} ${(pickData.line || 0) > 0 ? '+' : ''}${pickData.line || 0}`
+      : `${pickData.pick} ${prediction.total?.line || 0}`,
     odds: pickType === 'winner' ? (pickData.pick === game.homeTeam ? -150 : 150) : -110,
-    line: pickType !== 'winner' ? pickData.line : undefined,
+    line: pickType !== 'winner' ? (pickData.line || 0) : undefined,
     confidence: pickData.confidence,
     reasoning: pickData.reasoning || '',
     isValueBet: pickData.confidence >= 70,

@@ -36,16 +36,6 @@ export function PlayerAvatar({
   const number = sport === 'nba' ? getPlayerNumber(playerName) : null;
   const sizeClasses = sizeMap[size];
   
-  // Fallback avatar with initials
-  const FallbackAvatar = () => (
-    <div 
-      className={`${sizeClasses.container} rounded-full flex items-center justify-center text-white font-bold ${sizeClasses.text}`}
-      style={{ backgroundColor: teamColor || '#2a3444' }}
-    >
-      {initials}
-    </div>
-  );
-  
   return (
     <div className={`relative inline-block ${className}`}>
       {headshotUrl && !imageError ? (
@@ -60,7 +50,12 @@ export function PlayerAvatar({
           />
         </div>
       ) : (
-        <FallbackAvatar />
+        <div 
+          className={`${sizeClasses.container} rounded-full flex items-center justify-center text-white font-bold ${sizeClasses.text}`}
+          style={{ backgroundColor: teamColor || '#2a3444' }}
+        >
+          {initials}
+        </div>
       )}
       
       {/* Jersey number badge */}

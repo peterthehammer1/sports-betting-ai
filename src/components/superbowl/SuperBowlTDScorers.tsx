@@ -183,7 +183,7 @@ export function SuperBowlTDScorers() {
           </div>
           <div>
             <p className="font-medium text-slate-700 mb-1">Anytime TD Strategy</p>
-            <p>Focus on volume and red zone usage. Star WRs and primary RBs are safest. Don't chase long odds unless there's a clear path to the end zone.</p>
+            <p>Focus on volume and red zone usage. Star WRs and primary RBs are safest. Do not chase long odds unless there is a clear path to the end zone.</p>
           </div>
         </div>
       </section>

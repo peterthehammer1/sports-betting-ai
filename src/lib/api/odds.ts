@@ -48,7 +48,7 @@ interface ApiQuota {
   requestsUsed: number;
 }
 
-let lastQuota: ApiQuota = { requestsRemaining: 500, requestsUsed: 0 };
+const lastQuota: ApiQuota = { requestsRemaining: 500, requestsUsed: 0 };
 
 /**
  * Create an instance of the Odds API client
@@ -415,8 +415,8 @@ export function createOddsApiClient(config: OddsApiConfig) {
     const overOdds: TotalOdds[] = [];
     const underOdds: TotalOdds[] = [];
 
-    let spreadLines: number[] = [];
-    let totalLines: number[] = [];
+    const spreadLines: number[] = [];
+    const totalLines: number[] = [];
 
     for (const bookmaker of game.bookmakers) {
       for (const market of bookmaker.markets) {
