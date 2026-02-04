@@ -11,8 +11,10 @@ import { getCachedOdds, cacheOdds, isRedisConfigured } from '@/lib/cache/redis';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export async function GET() {
+export async function GET(request: Request) {
   const apiKey = process.env.THE_ODDS_API_KEY;
+  const { searchParams } = new URL(request.url);
+  const forceFresh = searchParams.get('fresh') === 'true';
 
   if (!apiKey) {
     return NextResponse.json(
@@ -22,16 +24,18 @@ export async function GET() {
   }
 
   try {
-    // Check cache first
-    const cached = await getCachedOdds('NBA');
-    if (cached) {
-      console.log('Returning cached NBA odds');
-      const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
-      return NextResponse.json({
-        ...cachedData,
-        fromCache: true,
-        cacheEnabled: true,
-      });
+    // Check cache first (unless fresh=true)
+    if (!forceFresh) {
+      const cached = await getCachedOdds('NBA');
+      if (cached) {
+        console.log('Returning cached NBA odds');
+        const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
+        return NextResponse.json({
+          ...cachedData,
+          fromCache: true,
+          cacheEnabled: true,
+        });
+      }
     }
 
     const client = createOddsApiClient({ apiKey });

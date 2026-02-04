@@ -14,10 +14,9 @@ const redis = new Redis({
 });
 
 // Cache TTL in seconds
-// Extended TTLs to ensure data persists when API quota is exceeded
-const ANALYSIS_CACHE_TTL = 7 * 24 * 60 * 60; // 7 days for analysis
-const ODDS_CACHE_TTL = 7 * 24 * 60 * 60; // 7 days for odds (persists even with quota exceeded)
-const PROPS_CACHE_TTL = 7 * 24 * 60 * 60; // 7 days for player props
+const ANALYSIS_CACHE_TTL = 24 * 60 * 60; // 24 hours for analysis
+const ODDS_CACHE_TTL = 15 * 60; // 15 minutes for odds - needs to be fresh!
+const PROPS_CACHE_TTL = 60 * 60; // 1 hour for player props
 
 // Cache key prefixes
 const KEYS = {
@@ -66,6 +65,30 @@ export async function cacheOdds(sport: string, data: unknown) {
     await redis.set(key, JSON.stringify(data), { ex: ODDS_CACHE_TTL });
   } catch (error) {
     console.error('Redis set error:', error);
+  }
+}
+
+/**
+ * Clear cached odds for all sports (for forcing fresh data)
+ */
+export async function clearOddsCache() {
+  if (!isRedisConfigured()) return { cleared: 0 };
+  
+  try {
+    const sports = ['icehockey_nhl', 'basketball_nba', 'americanfootball_nfl', 'baseball_mlb', 'soccer_epl'];
+    let cleared = 0;
+    
+    for (const sport of sports) {
+      const key = `${KEYS.ODDS}${sport}`;
+      const deleted = await redis.del(key);
+      if (deleted) cleared++;
+    }
+    
+    console.log(`Cleared ${cleared} odds cache entries`);
+    return { cleared };
+  } catch (error) {
+    console.error('Redis clear cache error:', error);
+    return { cleared: 0, error: String(error) };
   }
 }
 
