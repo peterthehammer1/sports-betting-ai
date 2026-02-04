@@ -103,7 +103,7 @@ export function createAnalysisClient(config: ClaudeApiConfig) {
 
   /**
    * Parse JSON from Claude's response
-   * Handles markdown code blocks and extra text
+   * Handles markdown code blocks, extra text, and malformed JSON
    */
   function parseJsonResponse<T>(text: string): T {
     let cleaned = text.trim();
@@ -129,11 +129,35 @@ export function createAnalysisClient(config: ClaudeApiConfig) {
       }
     }
     
+    // Try to fix common JSON issues
+    // Remove trailing commas before } or ]
+    cleaned = cleaned.replace(/,\s*([\]}])/g, '$1');
+    // Fix unescaped quotes in strings (basic attempt)
+    cleaned = cleaned.replace(/:\s*"([^"]*?)"/g, (match, content) => {
+      // Escape any unescaped quotes within the string
+      const escaped = content.replace(/(?<!\\)"/g, '\\"');
+      return `: "${escaped}"`;
+    });
+    
     try {
       return JSON.parse(cleaned);
     } catch (e) {
-      console.error('Failed to parse Claude response:', text);
-      throw new Error('Invalid JSON response from Claude');
+      console.error('Failed to parse Claude response:', text.substring(0, 500));
+      console.error('Cleaned text:', cleaned.substring(0, 500));
+      
+      // Try one more time with aggressive cleaning
+      try {
+        // Remove any control characters
+        const ultraCleaned = cleaned
+          .replace(/[\x00-\x1F\x7F]/g, ' ')
+          .replace(/\n/g, ' ')
+          .replace(/\r/g, ' ')
+          .replace(/\t/g, ' ');
+        return JSON.parse(ultraCleaned);
+      } catch (e2) {
+        console.error('Still failed after aggressive cleaning');
+        throw new Error('Invalid JSON response from Claude - please try again');
+      }
     }
   }
 

@@ -132,11 +132,39 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Analyze with Claude - map sport to analysis type
+    // Analyze with Claude - map sport to analysis type with retry logic
     const analysisClient = createAnalysisClient({ apiKey: anthropicApiKey });
     // For analysis, treat EPL as a generic sport, NFL/MLB get their own handling
     const analysisSport = (sport === 'EPL' || sport === 'MLB') ? 'NBA' : sport; // Use NBA format for non-traditional sports
-    const { prediction, meta } = await analysisClient.analyzeGame(normalizedGame, analysisSport as 'NHL' | 'NBA', injuryReport);
+    
+    // Retry logic for Claude analysis (sometimes JSON parsing fails)
+    let prediction, meta;
+    let lastError: Error | null = null;
+    const maxRetries = 2;
+    
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const result = await analysisClient.analyzeGame(normalizedGame, analysisSport as 'NHL' | 'NBA', injuryReport);
+        prediction = result.prediction;
+        meta = result.meta;
+        break; // Success, exit loop
+      } catch (analysisError) {
+        lastError = analysisError as Error;
+        console.error(`Analysis attempt ${attempt + 1} failed:`, lastError.message);
+        
+        if (attempt < maxRetries) {
+          // Wait a bit before retrying
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+    }
+    
+    if (!prediction || !meta) {
+      return NextResponse.json(
+        { error: lastError?.message || 'Analysis failed after retries - please try again' },
+        { status: 500 }
+      );
+    }
 
     const responseData = {
       prediction,
