@@ -396,29 +396,35 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f9fc]">
+    <div className="min-h-screen bg-[var(--background)] hero-gradient">
       {/* FanDuel Promo Banner - hide on landing */}
       {view !== 'landing' && <FanDuelBanner />}
 
-      {/* Header - Professional dark header on light background */}
-      <header className={`sticky top-0 z-40 header-gradient shadow-lg ${view === 'landing' ? 'py-2' : ''}`}>
+      {/* Header - Sleek modern glassmorphism header */}
+      <header className={`sticky top-0 z-40 bg-[rgba(10,14,20,0.85)] backdrop-blur-xl border-b border-white/5 ${view === 'landing' ? 'py-2' : ''}`}>
         <div className="max-w-6xl mx-auto px-4 py-3 sm:px-6 sm:py-4">
           {/* Top Row - Logo, Title and Sport Toggle */}
           <div className="flex items-center justify-between gap-3">
             {/* Logo and Title */}
-            <div className="flex items-center gap-2.5 min-w-0">
-              <img 
-                src="/Pete/PeterCartoon1.png" 
-                alt="Pete" 
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0 ring-2 ring-white/20"
-              />
-              <h1 className="text-base sm:text-lg font-semibold text-white truncate">
-                Pete&apos;s AI Sports Picks
-              </h1>
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="relative">
+                <img 
+                  src="/Pete/PeterCartoon1.png" 
+                  alt="Pete" 
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover flex-shrink-0 ring-2 ring-cyan-500/30"
+                />
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0a0e14]" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-lg font-bold gradient-text truncate">
+                  Pete&apos;s AI Sports Picks
+                </h1>
+                <p className="text-xs text-slate-500 hidden sm:block">AI-Powered Predictions</p>
+              </div>
             </div>
             
-            {/* Sport Toggle - Expanded with all sports */}
-            <div className="flex bg-white/10 rounded-lg p-0.5 flex-shrink-0 overflow-x-auto backdrop-blur-sm">
+            {/* Sport Toggle - Modern pill design */}
+            <div className="flex bg-white/5 rounded-xl p-1 flex-shrink-0 overflow-x-auto backdrop-blur-sm border border-white/5">
               {(Object.keys(SPORTS_CONFIG) as Sport[]).map((s) => (
                 <button
                   key={s}
@@ -431,14 +437,14 @@ export default function Dashboard() {
                       setView('games');
                     }
                   }}
-                  className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                     sport === s
-                      ? 'bg-white text-slate-800 shadow-sm'
-                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                      ? 'sport-pill-active text-white'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  <span className="flex items-center gap-1">
-                    <span>{SPORTS_CONFIG[s].emoji}</span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="text-base">{SPORTS_CONFIG[s].emoji}</span>
                     <span className="hidden sm:inline">{SPORTS_CONFIG[s].label}</span>
                   </span>
                 </button>
@@ -446,8 +452,8 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="mt-3 flex gap-1 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+          {/* Navigation Tabs - Modern underline style */}
+          <div className="mt-4 flex gap-1 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
             <NavTab 
               active={view === 'landing'} 
               onClick={() => setView('landing')}
@@ -491,11 +497,14 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* Status bar */}
-          <div className="mt-2 flex items-center gap-3 text-xs text-white/60">
-            <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full pulse-glow" />
-              <span>Live</span>
+          {/* Status bar - Modern with glow */}
+          <div className="mt-3 flex items-center gap-4 text-xs text-slate-500">
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                <div className="absolute inset-0 w-2 h-2 bg-emerald-500 rounded-full animate-ping opacity-75" />
+              </div>
+              <span className="text-emerald-400 font-medium">Live</span>
             </div>
             {lastFetch && (
               <span>
@@ -508,17 +517,19 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className={view === 'landing' ? '' : 'max-w-6xl mx-auto px-4 py-6 sm:px-6'}>
-        {/* Error State - show for all errors except on landing page */}
+        {/* Error State - Modern glass card */}
         {error && view !== 'landing' && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl animate-slide-up">
+          <div className="mb-6 glass-card p-4 rounded-xl animate-slide-up border-l-4 border-red-500">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-red-500">⚠️</span>
-                <p className="text-sm text-red-600">{error}</p>
+                <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center">
+                  <span className="text-red-400">⚠️</span>
+                </div>
+                <p className="text-sm text-red-400">{error}</p>
               </div>
               <button 
                 onClick={() => setError(null)}
-                className="text-red-400 hover:text-red-600 p-1"
+                className="text-slate-500 hover:text-white p-1.5 hover:bg-white/10 rounded-lg transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -528,27 +539,37 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Loading State - hide on landing page */}
+        {/* Loading State - Modern spinner */}
         {loadingOdds && games.length === 0 && view !== 'landing' && (
           <div className="flex flex-col justify-center items-center py-20">
-            <div className="w-8 h-8 border-2 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
-            <span className="mt-4 text-slate-500 text-sm">
+            <div className="relative w-12 h-12">
+              <div className="absolute inset-0 rounded-full border-2 border-cyan-500/20" />
+              <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-cyan-500 animate-spin" />
+            </div>
+            <span className="mt-4 text-slate-400 text-sm">
               Loading {sport} games...
             </span>
           </div>
         )}
 
-        {/* Analysis Loading Overlay */}
+        {/* Analysis Loading Overlay - Sleek modal */}
         {(loadingAnalysis || loadingProps) && (
-          <div className="fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white border border-slate-200 rounded-xl p-6 text-center max-w-sm w-full shadow-xl animate-slide-up">
-              <div className="w-10 h-10 mx-auto border-2 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
-              <p className="mt-4 font-medium text-slate-800">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <div className="glass-card rounded-2xl p-8 text-center max-w-sm w-full animate-scale-up">
+              <div className="relative w-16 h-16 mx-auto mb-5">
+                <div className="absolute inset-0 rounded-full border-2 border-cyan-500/20" />
+                <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-cyan-500 animate-spin" />
+                <div className="absolute inset-3 rounded-full border-2 border-transparent border-t-purple-500 animate-spin" style={{animationDirection: 'reverse', animationDuration: '0.8s'}} />
+              </div>
+              <p className="font-semibold text-white text-lg">
                 {loadingProps ? 'Analyzing Player Props' : 'Running AI Analysis'}
               </p>
-              <p className="mt-1 text-sm text-slate-500">
-                This may take a few seconds...
+              <p className="mt-2 text-sm text-slate-400">
+                Crunching the numbers...
               </p>
+              <div className="mt-4 w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full animate-pulse" style={{width: '60%'}} />
+              </div>
             </div>
           </div>
         )}
@@ -564,13 +585,14 @@ export default function Dashboard() {
         {/* Games View */}
         {view === 'games' && games.length > 0 && (
           <div className="animate-slide-up">
-            <div className="mb-5 flex items-center justify-between flex-wrap gap-3">
+            <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
               <div>
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                  <span className="text-2xl">{SPORTS_CONFIG[sport].emoji}</span>
                   {sport} Games
                 </h2>
-                <p className="text-sm text-slate-400">
-                  {games.length} game{games.length !== 1 ? 's' : ''} with odds available
+                <p className="text-sm text-slate-500 mt-1">
+                  {games.length} game{games.length !== 1 ? 's' : ''} with live odds
                 </p>
               </div>
               
@@ -584,14 +606,16 @@ export default function Dashboard() {
 
             {/* NFL Super Bowl Banner */}
             {sport === 'NFL' && (
-              <div className="mb-6 p-4 bg-slate-900/60 rounded-lg border border-slate-800/50 flex items-center justify-between">
+              <div className="mb-6 glass-card gradient-border p-5 rounded-xl flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-white">Super Bowl LX Analysis</p>
-                  <p className="text-xs text-slate-500">Expert picks, prediction models, and betting guides</p>
+                  <p className="font-semibold text-white flex items-center gap-2">
+                    <span className="text-lg">🏈</span> Super Bowl LX Analysis
+                  </p>
+                  <p className="text-sm text-slate-400 mt-1">Expert picks, prediction models, and betting guides</p>
                 </div>
                 <button
                   onClick={() => setView('landing')}
-                  className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg transition-colors"
+                  className="btn-primary text-sm"
                 >
                   View Analysis
                 </button>
@@ -671,25 +695,26 @@ export default function Dashboard() {
 
         {/* Tools View */}
         {view === 'tools' && (
-          <div className="animate-slide-up space-y-5">
-            {/* Tool Selector */}
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="animate-slide-up space-y-6">
+            {/* Tool Selector - Modern pill style */}
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
               {[
-                { id: 'betnow', label: 'Bet Now' },
-                { id: 'compare', label: 'Line Shopping' },
-                { id: 'calculator', label: 'Calculator' },
-                { id: 'parlay', label: 'Parlay Builder' },
-                { id: 'guide', label: 'Guide' },
+                { id: 'betnow', label: 'Bet Now', icon: '💰' },
+                { id: 'compare', label: 'Line Shopping', icon: '📊' },
+                { id: 'calculator', label: 'Calculator', icon: '🧮' },
+                { id: 'parlay', label: 'Parlay Builder', icon: '🎯' },
+                { id: 'guide', label: 'Guide', icon: '📚' },
               ].map((tool) => (
                 <button
                   key={tool.id}
                   onClick={() => setSelectedTool(tool.id as typeof selectedTool)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
                     selectedTool === tool.id
-                      ? 'bg-[#2a3444] text-slate-200'
-                      : 'bg-[#161d29] text-slate-500 hover:text-slate-300'
+                      ? 'glass-card text-white glow-cyan'
+                      : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
                   }`}
                 >
+                  <span>{tool.icon}</span>
                   {tool.label}
                 </button>
               ))}
@@ -723,11 +748,14 @@ export default function Dashboard() {
         {/* Tracker View */}
         {view === 'tracker' && (
           <div className="animate-slide-up space-y-6">
-            <div className="mb-2">
-              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                📊 Performance Tracker
+            <div className="mb-4">
+              <h2 className="text-xl font-bold text-white flex items-center gap-3">
+                <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-lg">
+                  📊
+                </span>
+                Performance Tracker
               </h2>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-500 mt-2">
                 Track AI pick accuracy and ROI over time
               </p>
             </div>
@@ -737,8 +765,9 @@ export default function Dashboard() {
             
             {/* Odds Movement for selected game */}
             {games.length > 0 && (
-              <div>
-                <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+              <div className="mt-8">
+                <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <span className="w-1.5 h-4 bg-gradient-to-b from-cyan-500 to-purple-500 rounded-full" />
                   Line Movement
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -754,34 +783,41 @@ export default function Dashboard() {
         {/* Super Bowl View - Legacy props card (redirects to landing) */}
         {view === 'superbowl' && (
           <div className="animate-slide-up">
-            <div className="mb-5">
-              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                🏈 Super Bowl LX
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-white flex items-center gap-3">
+                <span className="text-2xl">🏈</span>
+                Super Bowl LX
               </h2>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-500 mt-1">
                 Seahawks vs Patriots • February 8, 2026
               </p>
             </div>
             <SuperBowlCard game={superBowlGame} loading={loadingSuperBowl} />
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center">
               <button
                 onClick={() => setView('landing')}
-                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition-colors"
+                className="btn-primary inline-flex items-center gap-2"
               >
-                📊 View Full Super Bowl Analysis Hub →
+                <span>📊</span>
+                View Full Super Bowl Analysis Hub
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
               </button>
             </div>
           </div>
         )}
 
-        {/* Empty State */}
-        {!loadingOdds && games.length === 0 && !error && (
-          <div className="text-center py-16">
-            <div className="text-4xl mb-4">{sport === 'NHL' ? '🏒' : '🏀'}</div>
-            <p className="text-slate-300 font-medium">
+        {/* Empty State - Modern design */}
+        {!loadingOdds && games.length === 0 && !error && view !== 'landing' && (
+          <div className="text-center py-20">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/5 flex items-center justify-center">
+              <span className="text-4xl">{SPORTS_CONFIG[sport].emoji}</span>
+            </div>
+            <p className="text-white font-semibold text-lg">
               No {sport} games available
             </p>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-slate-500 text-sm mt-2">
               Check back later for upcoming matchups
             </p>
           </div>
@@ -790,13 +826,17 @@ export default function Dashboard() {
 
       {/* Footer - hide on landing page which has its own footer */}
       {view !== 'landing' && (
-        <footer className="mt-auto py-6 border-t border-slate-800 safe-area-bottom">
+        <footer className="mt-auto py-8 border-t border-white/5 safe-area-bottom">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-              <p>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+              <p className="flex items-center gap-2">
+                <span className="text-amber-500">⚠️</span>
                 For entertainment purposes only. Please gamble responsibly.
               </p>
-              <p>© 2026 Pete&apos;s AI Sports Picks</p>
+              <p className="flex items-center gap-1">
+                © 2026 
+                <span className="gradient-text font-medium">Pete&apos;s AI Sports Picks</span>
+              </p>
             </div>
           </div>
         </footer>
@@ -805,7 +845,7 @@ export default function Dashboard() {
   );
 }
 
-// Navigation Tab Component
+// Navigation Tab Component - Modern underline style
 function NavTab({ 
   active, 
   onClick, 
@@ -821,10 +861,10 @@ function NavTab({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`px-3 sm:px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed touch-manipulation border-b-2 -mb-[1px] ${
+      className={`relative px-4 py-2.5 text-sm font-medium transition-all whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed touch-manipulation ${
         active
-          ? 'text-white border-white'
-          : 'text-white/60 border-transparent hover:text-white/90'
+          ? 'text-white tab-active'
+          : 'text-slate-500 hover:text-white'
       }`}
     >
       {label}
