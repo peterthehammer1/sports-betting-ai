@@ -35,6 +35,7 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const league = searchParams.get('league') || 'epl';
+  const forceFresh = searchParams.get('fresh') === 'true';
 
   const leagueConfig = SOCCER_LEAGUES[league.toLowerCase()];
   if (!leagueConfig) {
@@ -50,16 +51,18 @@ export async function GET(request: Request) {
   const cacheKey = `SOCCER_${league.toUpperCase()}`;
 
   try {
-    // Check cache first
-    const cached = await getCachedOdds(cacheKey);
-    if (cached) {
-      console.log(`Returning cached ${league} odds`);
-      const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
-      return NextResponse.json({
-        ...cachedData,
-        fromCache: true,
-        cacheEnabled: true,
-      });
+    // Check cache first (unless fresh=true)
+    if (!forceFresh) {
+      const cached = await getCachedOdds(cacheKey);
+      if (cached) {
+        console.log(`Returning cached ${league} odds`);
+        const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
+        return NextResponse.json({
+          ...cachedData,
+          fromCache: true,
+          cacheEnabled: true,
+        });
+      }
     }
 
     // Fetch odds - include draw for soccer

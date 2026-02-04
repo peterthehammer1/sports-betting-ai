@@ -75,8 +75,15 @@ export async function clearOddsCache() {
   if (!isRedisConfigured()) return { cleared: 0 };
   
   try {
-    // Use the same keys used in cacheOdds() calls
-    const sports = ['NHL', 'NBA', 'NFL', 'MLB', 'soccer_epl', 'icehockey_nhl', 'basketball_nba', 'americanfootball_nfl'];
+    // Use the same keys used in cacheOdds() calls - include all variations
+    const sports = [
+      'NHL', 'NBA', 'NFL', 'MLB', 
+      'icehockey_nhl', 'basketball_nba', 'americanfootball_nfl',
+      // Soccer leagues
+      'SOCCER_EPL', 'SOCCER_MLS', 'SOCCER_LALIGA', 'SOCCER_BUNDESLIGA',
+      'SOCCER_SERIEA', 'SOCCER_LIGUE1', 'SOCCER_UCL',
+      'soccer_epl',
+    ];
     let cleared = 0;
     
     for (const sport of sports) {
