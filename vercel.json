@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/picks/daily",
+      "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/picks/settle",
+      "schedule": "0 */3 * * *"
+    }
+  ]
+}

@@ -52,9 +52,78 @@ export function PerformanceDashboard() {
   }
 
   const { stats, recentPicks, pendingPicks } = data;
+  
+  // Get today's picks
+  const today = new Date().toDateString();
+  const todaysPicks = pendingPicks.filter(p => 
+    new Date(p.createdAt).toDateString() === today
+  );
 
   return (
     <div className="space-y-4">
+      {/* Pete's Daily Picks - Featured Section */}
+      <div className="bg-gradient-to-r from-amber-50 via-amber-50/50 to-white rounded-xl border border-amber-200 overflow-hidden shadow-sm">
+        <div className="px-5 py-4 border-b border-amber-100 bg-amber-50/50 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img 
+              src="/Pete/PeterCartoon1.png" 
+              alt="Pete" 
+              className="w-10 h-10 rounded-full object-cover ring-2 ring-amber-200"
+            />
+            <div>
+              <h2 className="text-lg font-bold text-amber-800">Pete&apos;s Daily Picks</h2>
+              <p className="text-xs text-amber-600">AI-powered selections updated daily</p>
+            </div>
+          </div>
+          <span className="px-3 py-1 bg-amber-100 rounded-full text-xs font-bold text-amber-700 border border-amber-200">
+            🔥 {todaysPicks.length > 0 ? `${todaysPicks.length} NEW` : `${pendingPicks.length} PENDING`}
+          </span>
+        </div>
+        
+        {pendingPicks.length > 0 ? (
+          <div className="p-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {pendingPicks.slice(0, 6).map((pick) => (
+              <div 
+                key={pick.id} 
+                className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                    pick.sport === 'NHL' ? 'bg-blue-100 text-blue-700' :
+                    pick.sport === 'NBA' ? 'bg-orange-100 text-orange-700' :
+                    'bg-green-100 text-green-700'
+                  }`}>
+                    {pick.sport}
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    {new Date(pick.gameTime).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                  </span>
+                </div>
+                <p className="font-bold text-slate-800 text-sm mb-1">{pick.pick}</p>
+                <p className="text-xs text-slate-500 mb-2">{pick.homeTeam} vs {pick.awayTeam}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    <span className={`w-2 h-2 rounded-full ${
+                      pick.confidence >= 70 ? 'bg-emerald-500' :
+                      pick.confidence >= 60 ? 'bg-amber-500' :
+                      'bg-slate-400'
+                    }`} />
+                    <span className="text-xs font-medium text-slate-600">{pick.confidence}% conf</span>
+                  </div>
+                  <span className="text-xs font-mono text-slate-500">
+                    {pick.odds > 0 ? '+' : ''}{pick.odds}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-6 text-center">
+            <p className="text-slate-500 text-sm">No pending picks - check back soon!</p>
+          </div>
+        )}
+      </div>
+
       {/* Header with Stats Summary */}
       <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl p-5 text-white">
         <div className="flex items-center justify-between mb-4">
