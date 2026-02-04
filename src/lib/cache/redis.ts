@@ -75,13 +75,17 @@ export async function clearOddsCache() {
   if (!isRedisConfigured()) return { cleared: 0 };
   
   try {
-    const sports = ['icehockey_nhl', 'basketball_nba', 'americanfootball_nfl', 'baseball_mlb', 'soccer_epl'];
+    // Use the same keys used in cacheOdds() calls
+    const sports = ['NHL', 'NBA', 'NFL', 'MLB', 'soccer_epl', 'icehockey_nhl', 'basketball_nba', 'americanfootball_nfl'];
     let cleared = 0;
     
     for (const sport of sports) {
       const key = `${KEYS.ODDS}${sport}`;
       const deleted = await redis.del(key);
-      if (deleted) cleared++;
+      if (deleted) {
+        cleared++;
+        console.log(`Cleared cache for ${sport}`);
+      }
     }
     
     console.log(`Cleared ${cleared} odds cache entries`);
