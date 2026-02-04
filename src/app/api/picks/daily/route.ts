@@ -9,7 +9,9 @@
 
 import { NextResponse } from 'next/server';
 import { savePick, getPicks, isRedisConfigured } from '@/lib/cache/redis';
+import { createOddsApiClient } from '@/lib/api/odds';
 import type { TrackedPick, Sport } from '@/types/tracker';
+import type { SportKey, MarketType } from '@/types/odds';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120; // 2 minutes for multiple AI calls
@@ -32,47 +34,41 @@ function generatePickId(): string {
 }
 
 /**
- * Fetch today's games for a sport
+ * Fetch today's games for a sport directly from The Odds API
  */
-async function fetchGamesForSport(sport: Sport, baseUrl: string): Promise<GameForPicking[]> {
-  const sportEndpoints: Record<Sport, string> = {
-    NHL: '/api/odds/nhl',
-    NBA: '/api/odds/nba',
-    NFL: '/api/odds/nfl',
-  };
+async function fetchGamesForSport(sport: Sport): Promise<GameForPicking[]> {
+  const apiKey = process.env.THE_ODDS_API_KEY;
+  if (!apiKey) {
+    console.error('THE_ODDS_API_KEY not configured');
+    return [];
+  }
 
   try {
-    const res = await fetch(`${baseUrl}${sportEndpoints[sport]}`);
-    if (!res.ok) return [];
+    const oddsClient = createOddsApiClient({ apiKey });
     
-    const data = await res.json();
-    const games = data.games || [];
+    // Use sport-specific methods
+    let games;
+    if (sport === 'NHL') {
+      games = await oddsClient.getNhlOdds(['h2h', 'spreads', 'totals']);
+    } else if (sport === 'NBA') {
+      games = await oddsClient.getNbaOdds(['h2h', 'spreads', 'totals']);
+    } else {
+      games = await oddsClient.getNflOdds(['h2h', 'spreads', 'totals']);
+    }
     
-    // Filter to upcoming games (not started yet) or games starting within 48 hours
-    const now = new Date();
-    const twoDaysOut = new Date(now.getTime() + 48 * 60 * 60 * 1000);
+    console.log(`Fetched ${games.length} ${sport} games from Odds API`);
     
-    // Sort by game time and take upcoming games
-    const sortedGames = games
-      .map((g: { gameId: string; homeTeam: string; awayTeam: string; commenceTime: string | Date }) => ({
-        gameId: g.gameId,
-        homeTeam: g.homeTeam,
-        awayTeam: g.awayTeam,
-        commenceTime: typeof g.commenceTime === 'string' ? g.commenceTime : g.commenceTime.toISOString(),
+    // Map to our format and take up to 6 games
+    return games.slice(0, 6).map(game => {
+      const normalized = oddsClient.normalizeGameOdds(game);
+      return {
+        gameId: normalized.gameId,
+        homeTeam: normalized.homeTeam,
+        awayTeam: normalized.awayTeam,
+        commenceTime: normalized.commenceTime.toISOString(),
         sport,
-      }))
-      .sort((a: GameForPicking, b: GameForPicking) => 
-        new Date(a.commenceTime).getTime() - new Date(b.commenceTime).getTime()
-      );
-    
-    // Get games that haven't started or are within 48 hours
-    const upcomingGames = sortedGames.filter((g: GameForPicking) => {
-      const gameTime = new Date(g.commenceTime);
-      return gameTime > new Date(now.getTime() - 2 * 60 * 60 * 1000); // Allow games up to 2 hours ago (in progress)
+      };
     });
-    
-    // If no upcoming games, just take the latest games available
-    return upcomingGames.length > 0 ? upcomingGames.slice(0, 6) : sortedGames.slice(-6);
   } catch (error) {
     console.error(`Failed to fetch ${sport} games:`, error);
     return [];
@@ -80,20 +76,43 @@ async function fetchGamesForSport(sport: Sport, baseUrl: string): Promise<GameFo
 }
 
 /**
- * Get AI analysis for a game
+ * Get AI analysis for a game using Claude directly
  */
-async function getGameAnalysis(game: GameForPicking, baseUrl: string) {
-  try {
-    const res = await fetch(`${baseUrl}/api/analyze`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ gameId: game.gameId, sport: game.sport }),
-    });
+async function getGameAnalysis(game: GameForPicking) {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const oddsApiKey = process.env.THE_ODDS_API_KEY;
+  
+  if (!apiKey || !oddsApiKey) {
+    console.error('API keys not configured');
+    return null;
+  }
 
-    if (!res.ok) return null;
+  try {
+    const sportKeys: Record<Sport, SportKey> = {
+      NHL: 'icehockey_nhl',
+      NBA: 'basketball_nba',
+      NFL: 'americanfootball_nfl',
+    };
     
-    const data = await res.json();
-    return data.prediction;
+    const oddsClient = createOddsApiClient({ apiKey: oddsApiKey });
+    const gameData = await oddsClient.getGameOdds(sportKeys[game.sport], game.gameId, ['h2h', 'spreads', 'totals']);
+    
+    if (!gameData) {
+      console.log(`Game ${game.gameId} not found`);
+      return null;
+    }
+    
+    const normalizedGame = oddsClient.normalizeGameOdds(gameData);
+    
+    // Import and use analysis client
+    const { createAnalysisClient } = await import('@/lib/analysis/claude');
+    const analysisClient = createAnalysisClient({ apiKey });
+    
+    const analysisSport = game.sport === 'NFL' ? 'NBA' : game.sport; // NFL uses NBA format
+    const { prediction } = await analysisClient.analyzeGame(normalizedGame, analysisSport as 'NHL' | 'NBA', '');
+    
+    console.log(`Analyzed ${game.homeTeam} vs ${game.awayTeam}: ${prediction.winner?.pick} (${prediction.winner?.confidence}%)`);
+    return prediction;
   } catch (error) {
     console.error(`Failed to analyze game ${game.gameId}:`, error);
     return null;
@@ -105,14 +124,13 @@ async function getGameAnalysis(game: GameForPicking, baseUrl: string) {
  */
 async function selectBestPicks(
   games: GameForPicking[],
-  baseUrl: string,
   count: number
 ): Promise<Array<{ game: GameForPicking; prediction: any }>> {
   const analyzed: Array<{ game: GameForPicking; prediction: any; confidence: number }> = [];
 
-  // Analyze all games
-  for (const game of games.slice(0, 6)) { // Limit to 6 to save API calls
-    const prediction = await getGameAnalysis(game, baseUrl);
+  // Analyze games (limit to save API calls)
+  for (const game of games.slice(0, 4)) {
+    const prediction = await getGameAnalysis(game);
     if (prediction) {
       // Get highest confidence pick from this game
       const maxConfidence = Math.max(
@@ -121,6 +139,7 @@ async function selectBestPicks(
         prediction.total?.confidence || 0
       );
       analyzed.push({ game, prediction, confidence: maxConfidence });
+      console.log(`${game.sport}: ${game.awayTeam} @ ${game.homeTeam} - max conf: ${maxConfidence}%`);
     }
   }
 
@@ -170,10 +189,6 @@ async function saveDailyPick(
 
 export async function POST(request: Request) {
   try {
-    // Get base URL from request
-    const url = new URL(request.url);
-    const baseUrl = `${url.protocol}//${url.host}`;
-    
     // Check for auth (simple secret key)
     const authHeader = request.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET;
@@ -181,6 +196,14 @@ export async function POST(request: Request) {
     // Allow if no secret configured (dev) or if secret matches
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check API keys
+    if (!process.env.THE_ODDS_API_KEY) {
+      return NextResponse.json({ error: 'THE_ODDS_API_KEY not configured' }, { status: 500 });
+    }
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return NextResponse.json({ error: 'ANTHROPIC_API_KEY not configured' }, { status: 500 });
     }
 
     if (!isRedisConfigured()) {
@@ -200,12 +223,12 @@ export async function POST(request: Request) {
     for (const sport of ['NHL', 'NBA'] as Sport[]) {
       console.log(`Processing ${sport} daily picks...`);
       
-      const games = await fetchGamesForSport(sport, baseUrl);
-      console.log(`Found ${games.length} ${sport} games for today`);
+      const games = await fetchGamesForSport(sport);
+      console.log(`Found ${games.length} ${sport} games`);
       
       if (games.length === 0) continue;
 
-      const bestPicks = await selectBestPicks(games, baseUrl, PICKS_PER_SPORT);
+      const bestPicks = await selectBestPicks(games, PICKS_PER_SPORT);
       
       for (const { game, prediction } of bestPicks) {
         // Pick the highest confidence bet type for each game
