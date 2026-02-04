@@ -48,22 +48,31 @@ async function fetchGamesForSport(sport: Sport, baseUrl: string): Promise<GameFo
     const data = await res.json();
     const games = data.games || [];
     
-    // Filter to games starting in next 24 hours
+    // Filter to upcoming games (not started yet) or games starting within 48 hours
     const now = new Date();
-    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const twoDaysOut = new Date(now.getTime() + 48 * 60 * 60 * 1000);
     
-    return games
-      .filter((g: { commenceTime: string | Date }) => {
-        const gameTime = new Date(g.commenceTime);
-        return gameTime > now && gameTime < tomorrow;
-      })
+    // Sort by game time and take upcoming games
+    const sortedGames = games
       .map((g: { gameId: string; homeTeam: string; awayTeam: string; commenceTime: string | Date }) => ({
         gameId: g.gameId,
         homeTeam: g.homeTeam,
         awayTeam: g.awayTeam,
         commenceTime: typeof g.commenceTime === 'string' ? g.commenceTime : g.commenceTime.toISOString(),
         sport,
-      }));
+      }))
+      .sort((a: GameForPicking, b: GameForPicking) => 
+        new Date(a.commenceTime).getTime() - new Date(b.commenceTime).getTime()
+      );
+    
+    // Get games that haven't started or are within 48 hours
+    const upcomingGames = sortedGames.filter((g: GameForPicking) => {
+      const gameTime = new Date(g.commenceTime);
+      return gameTime > new Date(now.getTime() - 2 * 60 * 60 * 1000); // Allow games up to 2 hours ago (in progress)
+    });
+    
+    // If no upcoming games, just take the latest games available
+    return upcomingGames.length > 0 ? upcomingGames.slice(0, 6) : sortedGames.slice(-6);
   } catch (error) {
     console.error(`Failed to fetch ${sport} games:`, error);
     return [];
