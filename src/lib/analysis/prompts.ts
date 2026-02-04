@@ -186,7 +186,21 @@ IMPORTANT RULES:
 - Rank best bets by combination of confidence and value
 - Be conservative with confidence - rarely exceed 75
 - If data is limited, acknowledge this in reasoning
-- Always provide at least 3 key factors and 2 risks`;
+- Always provide at least 3 key factors and 2 risks
+
+CRITICAL - SCORE PREDICTION MUST BE CONSISTENT WITH ALL OTHER PICKS:
+1. The predicted score must show your winner prediction winning the game
+2. The predicted score must align with your SPREAD pick:
+   - If you pick Team A +1.5, the score should show Team A losing by 1 or winning
+   - If you pick Team A -1.5, the score should show Team A winning by 2+
+3. The predicted score total (home + away) must align with your TOTAL pick:
+   - If you pick UNDER 6, the total score must be 5 or less
+   - If you pick OVER 6, the total score must be 7 or more
+4. Example: If picking Florida to WIN, Boston +1.5, and UNDER 6:
+   - Valid score: Florida 3, Boston 2 (Florida wins, Boston loses by 1 so +1.5 covers, total is 5 which is under 6)
+   - Invalid score: Florida 4, Boston 2 (total is 6 which is NOT under 6, and Boston loses by 2 so +1.5 doesn't cover)
+
+Double-check your score prediction matches ALL your picks before responding!`;
 
   return prompt;
 }
