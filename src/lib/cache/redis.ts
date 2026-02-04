@@ -15,7 +15,7 @@ const redis = new Redis({
 
 // Cache TTL in seconds
 const ANALYSIS_CACHE_TTL = 24 * 60 * 60; // 24 hours for analysis
-const ODDS_CACHE_TTL = 15 * 60; // 15 minutes for odds - needs to be fresh!
+const ODDS_CACHE_TTL = 60 * 60; // 1 hour for odds - balances freshness vs API costs
 const PROPS_CACHE_TTL = 60 * 60; // 1 hour for player props
 
 // Cache key prefixes
