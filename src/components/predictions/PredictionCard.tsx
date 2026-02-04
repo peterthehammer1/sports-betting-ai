@@ -9,161 +9,136 @@ interface PredictionCardProps {
 }
 
 export function PredictionCard({ prediction, onClose }: PredictionCardProps) {
+  const isHomePick = prediction.winner.pick === prediction.homeTeam;
+  
   return (
-    <div className="glass-card rounded-2xl overflow-hidden">
-      {/* Header */}
-      <div className="relative overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-600 via-blue-600 to-purple-700" />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
-        
-        <div className="relative px-5 sm:px-6 py-5 sm:py-6">
-          <div className="flex justify-between items-start">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-2 py-1 text-[10px] font-bold text-white/80 bg-white/10 rounded-full uppercase tracking-wider">
-                  {prediction.sport}
-                </span>
-                <span className="px-2 py-1 text-[10px] font-bold text-slate-300 bg-slate-500/20 rounded-full uppercase tracking-wider">
-                  AI Analysis
-                </span>
-              </div>
-              <div className="flex items-center gap-3 mt-2">
-                <TeamLogo 
-                  teamName={prediction.awayTeam} 
-                  sport={prediction.sport.toLowerCase() as 'nba' | 'nhl'} 
-                  size="lg" 
-                />
-                <h2 className="text-xl sm:text-2xl font-bold text-white">
-                  {prediction.awayTeam}
-                </h2>
-              </div>
-              <div className="flex items-center gap-2 mt-1 text-sm text-white/60">
-                <span>@</span>
-                <TeamLogo 
-                  teamName={prediction.homeTeam} 
-                  sport={prediction.sport.toLowerCase() as 'nba' | 'nhl'} 
-                  size="sm" 
-                />
-                <span>{prediction.homeTeam}</span>
-              </div>
-            </div>
-            {onClose && (
-              <button
-                onClick={onClose}
-                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden max-w-2xl mx-auto">
+      {/* Compact Header */}
+      <div className="bg-slate-800 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="px-2 py-0.5 text-[10px] font-bold text-cyan-300 bg-cyan-500/20 rounded uppercase">
+            {prediction.sport}
+          </span>
+          <span className="text-xs text-slate-400">AI Analysis</span>
+        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
+      </div>
+
+      {/* Matchup - Equal sizing for both teams */}
+      <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
+        <div className="flex items-center justify-between gap-4">
+          <TeamDisplay 
+            team={prediction.awayTeam} 
+            sport={prediction.sport} 
+            isPick={!isHomePick}
+          />
+          <div className="flex flex-col items-center">
+            <span className="text-xs font-medium text-slate-400">@</span>
           </div>
+          <TeamDisplay 
+            team={prediction.homeTeam} 
+            sport={prediction.sport} 
+            isPick={isHomePick}
+            isHome
+          />
         </div>
       </div>
 
-      <div className="p-5 sm:p-6 space-y-6">
-        {/* Winner Prediction - Hero Section */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 border border-cyan-500/20 p-5 sm:p-6">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl" />
-          
-          <div className="relative">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-2xl">🏆</span>
-              <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Winner Prediction</h3>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <p className="text-2xl sm:text-3xl font-bold text-white">
-                  {prediction.winner.pick}
-                </p>
-                <p className="text-sm text-gray-400 mt-2 max-w-md">
-                  {prediction.winner.reasoning}
-                </p>
+      <div className="p-4 space-y-4">
+        {/* Winner Pick - Clear and prominent */}
+        <div className="bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-lg p-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
+                <span className="text-lg">🏆</span>
               </div>
-              <ConfidenceRing confidence={prediction.winner.confidence} />
+              <div>
+                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Pete&apos;s Pick</p>
+                <p className="text-xl font-bold text-slate-900">{prediction.winner.pick}</p>
+              </div>
             </div>
+            <ConfidenceCircle confidence={prediction.winner.confidence} />
           </div>
+          <p className="text-sm text-slate-600 mt-3 leading-relaxed">{prediction.winner.reasoning}</p>
         </div>
 
-        {/* Score Prediction */}
-        <Section title="📊 Predicted Score" icon="score">
-          <div className="flex items-center justify-center gap-6 sm:gap-10 py-4">
-            <ScoreTeam team={prediction.awayTeam} score={prediction.score.away} sport={prediction.sport} />
-            <div className="flex flex-col items-center">
-              <span className="text-xs text-gray-500 uppercase tracking-wider mb-1">Final</span>
-              <span className="text-2xl font-bold text-gray-500">—</span>
+        {/* Predicted Score - Compact */}
+        <div className="bg-slate-50 rounded-lg p-3">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Predicted Score</p>
+          <div className="flex items-center justify-center gap-6">
+            <div className="text-center">
+              <TeamLogo teamName={prediction.awayTeam} sport={prediction.sport.toLowerCase() as 'nba' | 'nhl'} size="sm" />
+              <p className="text-2xl font-bold text-slate-800 mt-1">{prediction.score.away}</p>
             </div>
-            <ScoreTeam team={prediction.homeTeam} score={prediction.score.home} isHome sport={prediction.sport} />
+            <span className="text-slate-400 font-medium">-</span>
+            <div className="text-center">
+              <TeamLogo teamName={prediction.homeTeam} sport={prediction.sport.toLowerCase() as 'nba' | 'nhl'} size="sm" />
+              <p className="text-2xl font-bold text-slate-800 mt-1">{prediction.score.home}</p>
+            </div>
           </div>
-          <div className="text-center">
-            <ConfidenceBadge confidence={prediction.score.confidence} />
-            <p className="text-sm text-gray-400 mt-2">{prediction.score.reasoning}</p>
-          </div>
-        </Section>
+          <p className="text-xs text-slate-500 text-center mt-2">{prediction.score.confidence}% conf</p>
+        </div>
 
-        {/* Spread & Total Grid */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <BetCard
-            icon="📏"
-            title="Spread Pick"
+        {/* Spread & Total - Side by side */}
+        <div className="grid grid-cols-2 gap-3">
+          <CompactBetCard
+            label="Spread"
             pick={`${prediction.spread.pick} ${prediction.spread.line > 0 ? '+' : ''}${prediction.spread.line}`}
-            reasoning={prediction.spread.reasoning}
             confidence={prediction.spread.confidence}
+            reasoning={prediction.spread.reasoning}
           />
-          <BetCard
-            icon="📈"
-            title="Total Pick"
+          <CompactBetCard
+            label="Total"
             pick={`${prediction.total.pick} ${prediction.total.line}`}
-            subtitle={`Predicted: ${prediction.total.predictedTotal}`}
-            reasoning={prediction.total.reasoning}
             confidence={prediction.total.confidence}
+            reasoning={prediction.total.reasoning}
+            subtitle={`Proj: ${prediction.total.predictedTotal}`}
           />
         </div>
 
-        {/* Best Bets */}
+        {/* Best Bets - Compact list */}
         {prediction.bestBets && prediction.bestBets.length > 0 && (
-          <Section title="⭐ Best Bets" icon="star">
-            <div className="space-y-3">
-              {prediction.bestBets.map((bet, idx) => (
-                <BestBetCard key={idx} bet={bet} />
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Top Bets</p>
+            <div className="space-y-2">
+              {prediction.bestBets.slice(0, 3).map((bet, idx) => (
+                <CompactBestBet key={idx} bet={bet} />
               ))}
             </div>
-          </Section>
+          </div>
         )}
 
-        {/* Value Bets */}
+        {/* Value Bets - Compact */}
         {prediction.valueBets && prediction.valueBets.length > 0 && (
-          <Section title="💰 Value Bets" icon="money">
-            <div className="space-y-3">
-              {prediction.valueBets.map((vb, idx) => (
-                <ValueBetCard key={idx} valueBet={vb} />
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Value Bets</p>
+            <div className="space-y-2">
+              {prediction.valueBets.slice(0, 2).map((vb, idx) => (
+                <CompactValueBet key={idx} valueBet={vb} />
               ))}
             </div>
-          </Section>
+          </div>
         )}
 
-        {/* Key Factors & Risks */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <InsightCard
-            title="🔑 Key Factors"
-            items={prediction.keyFactors}
-            type="positive"
-          />
-          <InsightCard
-            title="⚠️ Risks"
-            items={prediction.risks}
-            type="warning"
-          />
+        {/* Key Factors & Risks - Collapsible style */}
+        <div className="grid grid-cols-2 gap-3">
+          <CompactInsights title="Key Factors" items={prediction.keyFactors} type="positive" />
+          <CompactInsights title="Risks" items={prediction.risks} type="warning" />
         </div>
 
         {/* Footer */}
-        <div className="pt-4 border-t border-white/5">
-          <p className="text-xs text-gray-500 text-center">
-            Analysis generated {new Date(prediction.analyzedAt).toLocaleString()}
-          </p>
-        </div>
+        <p className="text-[10px] text-slate-400 text-center pt-2 border-t border-slate-100">
+          Analysis generated {new Date(prediction.analyzedAt).toLocaleString()}
+        </p>
       </div>
     </div>
   );
@@ -171,197 +146,144 @@ export function PredictionCard({ prediction, onClose }: PredictionCardProps) {
 
 // Sub-components
 
-function Section({ title, icon, children }: { title: string; icon?: string; children: React.ReactNode }) {
+function TeamDisplay({ team, sport, isPick, isHome }: { 
+  team: string; 
+  sport: string; 
+  isPick: boolean;
+  isHome?: boolean;
+}) {
+  const teamName = team.split(' ').pop() || team;
+  
   return (
-    <div>
-      <h3 className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
-        {title}
-      </h3>
-      {children}
+    <div className={`flex-1 flex items-center gap-2 ${isHome ? 'flex-row-reverse text-right' : ''}`}>
+      <div className={`relative ${isPick ? 'ring-2 ring-emerald-400 ring-offset-2 rounded-full' : ''}`}>
+        <TeamLogo 
+          teamName={team} 
+          sport={sport.toLowerCase() as 'nba' | 'nhl'} 
+          size="md" 
+        />
+        {isPick && (
+          <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
+            <span className="text-[8px] text-white">✓</span>
+          </span>
+        )}
+      </div>
+      <div>
+        <p className={`font-semibold text-slate-800 ${isPick ? 'text-emerald-700' : ''}`}>{teamName}</p>
+        {isHome && <p className="text-[10px] text-slate-400 uppercase">Home</p>}
+      </div>
     </div>
   );
 }
 
-function ConfidenceRing({ confidence }: { confidence: number }) {
+function ConfidenceCircle({ confidence }: { confidence: number }) {
   const getColor = (conf: number) => {
-    if (conf >= 70) return { ring: 'stroke-green-400', bg: 'text-green-400', glow: 'shadow-green-500/30' };
-    if (conf >= 60) return { ring: 'stroke-cyan-400', bg: 'text-cyan-400', glow: 'shadow-cyan-500/30' };
-    if (conf >= 55) return { ring: 'stroke-amber-400', bg: 'text-amber-400', glow: 'shadow-amber-500/30' };
-    return { ring: 'stroke-gray-400', bg: 'text-gray-400', glow: '' };
+    if (conf >= 70) return { ring: 'text-green-500', bg: 'bg-green-50', text: 'text-green-700' };
+    if (conf >= 60) return { ring: 'text-cyan-500', bg: 'bg-cyan-50', text: 'text-cyan-700' };
+    if (conf >= 55) return { ring: 'text-amber-500', bg: 'bg-amber-50', text: 'text-amber-700' };
+    return { ring: 'text-slate-400', bg: 'bg-slate-50', text: 'text-slate-600' };
   };
 
   const colors = getColor(confidence);
-  const circumference = 2 * Math.PI * 36;
+  const circumference = 2 * Math.PI * 18;
   const strokeDashoffset = circumference - (confidence / 100) * circumference;
 
   return (
-    <div className={`relative w-20 h-20 sm:w-24 sm:h-24 ${colors.glow} shadow-lg rounded-full`}>
-      <svg className="w-full h-full -rotate-90" viewBox="0 0 80 80">
-        <circle cx="40" cy="40" r="36" fill="none" stroke="currentColor" strokeWidth="4" className="text-white/5" />
+    <div className={`relative w-14 h-14 ${colors.bg} rounded-full`}>
+      <svg className="w-full h-full -rotate-90" viewBox="0 0 44 44">
+        <circle cx="22" cy="22" r="18" fill="none" stroke="currentColor" strokeWidth="3" className="text-slate-200" />
         <circle
-          cx="40" cy="40" r="36" fill="none" strokeWidth="4"
+          cx="22" cy="22" r="18" fill="none" strokeWidth="3"
           className={colors.ring}
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
-          style={{ transition: 'stroke-dashoffset 1s ease-out' }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className={`text-xl sm:text-2xl font-bold ${colors.bg} stat-number`}>{confidence}</span>
-        <span className="text-[10px] text-gray-500 uppercase tracking-wider">Conf</span>
+        <span className={`text-lg font-bold ${colors.text}`}>{confidence}</span>
       </div>
     </div>
   );
 }
 
-function ConfidenceBadge({ confidence, size = 'md' }: { confidence: number; size?: 'sm' | 'md' }) {
-  const getColor = (conf: number) => {
-    if (conf >= 70) return 'bg-green-500/20 text-green-400 border-green-500/30';
-    if (conf >= 60) return 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30';
-    if (conf >= 55) return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
-    return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-  };
-
-  const sizeClasses = size === 'sm' ? 'px-2 py-1 text-[10px]' : 'px-3 py-1.5 text-xs';
-
-  return (
-    <span className={`${getColor(confidence)} ${sizeClasses} rounded-full font-semibold border inline-flex items-center gap-1`}>
-      <span className="stat-number">{confidence}%</span>
-      <span className="opacity-60">conf</span>
-    </span>
-  );
-}
-
-function ScoreTeam({ team, score, isHome, sport }: { team: string; score: number; isHome?: boolean; sport?: string }) {
-  return (
-    <div className="text-center">
-      <div className="flex flex-col items-center gap-1">
-        <TeamLogo teamName={team} sport={(sport?.toLowerCase() || 'nba') as 'nba' | 'nhl'} size="md" />
-        <p className="text-xs text-gray-500 truncate max-w-[100px]">{team.split(' ').pop()}</p>
-      </div>
-      <p className="text-4xl sm:text-5xl font-bold text-white mt-1 stat-number">{score}</p>
-      {isHome && <p className="text-[10px] text-gray-500 mt-1">HOME</p>}
-    </div>
-  );
-}
-
-function BetCard({ icon, title, pick, subtitle, reasoning, confidence }: {
-  icon: string;
-  title: string;
+function CompactBetCard({ label, pick, confidence, reasoning, subtitle }: {
+  label: string;
   pick: string;
-  subtitle?: string;
-  reasoning: string;
   confidence: number;
+  reasoning: string;
+  subtitle?: string;
 }) {
   return (
-    <div className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg">{icon}</span>
-        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">{title}</h4>
+    <div className="bg-slate-50 rounded-lg p-3">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-xs font-semibold text-slate-500 uppercase">{label}</p>
+        <span className="text-xs text-slate-400">{confidence}%</span>
       </div>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1">
-          <p className="text-lg font-semibold text-white">{pick}</p>
-          {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
-          <p className="text-sm text-gray-400 mt-2">{reasoning}</p>
-        </div>
-        <ConfidenceBadge confidence={confidence} size="sm" />
-      </div>
+      <p className="font-semibold text-slate-800">{pick}</p>
+      {subtitle && <p className="text-[10px] text-slate-400">{subtitle}</p>}
+      <p className="text-xs text-slate-500 mt-1 line-clamp-2">{reasoning}</p>
     </div>
   );
 }
 
-function BestBetCard({ bet }: { bet: RankedBet }) {
-  const valueColors = {
-    HIGH: { bg: 'bg-green-500/10', border: 'border-green-500/30', accent: 'text-green-400', badge: 'bg-green-500/20' },
-    MEDIUM: { bg: 'bg-cyan-500/10', border: 'border-cyan-500/30', accent: 'text-cyan-400', badge: 'bg-cyan-500/20' },
-    LOW: { bg: 'bg-gray-500/10', border: 'border-gray-500/30', accent: 'text-gray-400', badge: 'bg-gray-500/20' },
-  };
-
-  const colors = valueColors[bet.value];
+function CompactBestBet({ bet }: { bet: RankedBet }) {
+  const valueColor = {
+    HIGH: 'bg-green-100 text-green-700',
+    MEDIUM: 'bg-cyan-100 text-cyan-700',
+    LOW: 'bg-slate-100 text-slate-600',
+  }[bet.value];
 
   return (
-    <div className={`${colors.bg} border ${colors.border} rounded-xl p-4`}>
-      <div className="flex items-start gap-3">
-        <div className={`w-8 h-8 rounded-lg ${colors.badge} flex items-center justify-center flex-shrink-0`}>
-          <span className={`text-sm font-bold ${colors.accent}`}>#{bet.rank}</span>
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <p className="font-semibold text-white">{bet.pick}</p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {bet.betType} • <span className={bet.odds > 0 ? 'text-green-400' : ''}>{bet.odds > 0 ? '+' : ''}{bet.odds}</span>
-              </p>
-            </div>
-            <div className="flex flex-col items-end gap-1">
-              <ConfidenceBadge confidence={bet.confidence} size="sm" />
-              <span className={`text-[10px] font-semibold ${colors.accent} uppercase`}>{bet.value}</span>
-            </div>
-          </div>
-          <p className="text-sm text-gray-400 mt-2">{bet.reasoning}</p>
-        </div>
+    <div className="flex items-center gap-3 bg-slate-50 rounded-lg p-2">
+      <span className={`w-6 h-6 rounded-full ${valueColor} flex items-center justify-center text-xs font-bold`}>
+        {bet.rank}
+      </span>
+      <div className="flex-1 min-w-0">
+        <p className="font-medium text-slate-800 text-sm truncate">{bet.pick}</p>
+        <p className="text-[10px] text-slate-500">
+          {bet.betType} • {bet.odds > 0 ? '+' : ''}{bet.odds} • {bet.confidence}% conf
+        </p>
       </div>
     </div>
   );
 }
 
-function ValueBetCard({ valueBet }: { valueBet: ValueBet }) {
+function CompactValueBet({ valueBet }: { valueBet: ValueBet }) {
   const edgePercent = (valueBet.edge * 100).toFixed(1);
 
   return (
-    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 p-4">
-      <div className="absolute top-0 right-0 w-20 h-20 bg-green-500/10 rounded-full blur-2xl" />
-      
-      <div className="relative">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1">
-            <p className="font-semibold text-white">
-              {valueBet.betType}: {valueBet.pick}
-            </p>
-            <div className="flex flex-wrap items-center gap-3 mt-2">
-              <StatPill label="Book" value={`${(valueBet.bookImpliedProb * 100).toFixed(1)}%`} />
-              <StatPill label="Est" value={`${(valueBet.claudeEstimatedProb * 100).toFixed(1)}%`} />
-              <span className="px-2 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold">
-                +{edgePercent}% edge
-              </span>
-            </div>
-          </div>
-          <ConfidenceBadge confidence={valueBet.confidence} size="sm" />
-        </div>
-        <p className="text-sm text-gray-400 mt-3">{valueBet.reasoning}</p>
+    <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2">
+      <div className="flex items-center justify-between">
+        <p className="font-medium text-slate-800 text-sm">{valueBet.betType}: {valueBet.pick}</p>
+        <span className="px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-700 text-[10px] font-bold">
+          +{edgePercent}% edge
+        </span>
       </div>
+      <p className="text-[10px] text-slate-500 mt-1">
+        Book: {(valueBet.bookImpliedProb * 100).toFixed(0)}% → Est: {(valueBet.claudeEstimatedProb * 100).toFixed(0)}% • {valueBet.confidence}% conf
+      </p>
     </div>
   );
 }
 
-function StatPill({ label, value }: { label: string; value: string }) {
-  return (
-    <span className="text-xs text-gray-400">
-      <span className="text-gray-500">{label}:</span> <span className="text-gray-300 stat-number">{value}</span>
-    </span>
-  );
-}
-
-function InsightCard({ title, items, type }: { title: string; items: string[]; type: 'positive' | 'warning' }) {
+function CompactInsights({ title, items, type }: { title: string; items: string[]; type: 'positive' | 'warning' }) {
   const styles = {
-    positive: { icon: '✓', iconColor: 'text-green-400', bg: 'bg-green-500/10' },
-    warning: { icon: '!', iconColor: 'text-amber-400', bg: 'bg-amber-500/10' },
+    positive: { icon: '✓', color: 'text-green-600', bg: 'bg-green-100' },
+    warning: { icon: '!', color: 'text-amber-600', bg: 'bg-amber-100' },
   };
-
   const style = styles[type];
 
   return (
-    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-      <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{title}</h4>
-      <ul className="space-y-2">
-        {items.map((item, idx) => (
-          <li key={idx} className="flex items-start gap-2 text-sm text-gray-300">
-            <span className={`w-5 h-5 rounded-full ${style.bg} flex items-center justify-center flex-shrink-0 mt-0.5`}>
-              <span className={`text-xs ${style.iconColor}`}>{style.icon}</span>
+    <div className="bg-slate-50 rounded-lg p-3">
+      <p className="text-xs font-semibold text-slate-500 uppercase mb-2">{title}</p>
+      <ul className="space-y-1">
+        {items.slice(0, 3).map((item, idx) => (
+          <li key={idx} className="flex items-start gap-1.5 text-xs text-slate-600">
+            <span className={`w-4 h-4 rounded-full ${style.bg} flex items-center justify-center flex-shrink-0 mt-0.5`}>
+              <span className={`text-[8px] ${style.color}`}>{style.icon}</span>
             </span>
-            <span>{item}</span>
+            <span className="line-clamp-2">{item}</span>
           </li>
         ))}
       </ul>
