@@ -29,36 +29,38 @@ export function OddsWidget({ sport = 'americanfootball_nfl', showSportToggle = t
   return (
     <div className="max-w-md">
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-        {/* Header with FanDuel branding */}
-        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-          <a 
-            href={REFERRAL_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          >
-            <div className="w-7 h-7 rounded bg-[#1493FF] p-1 flex-shrink-0">
-              <Image
-                src="/FanDuel Logos/Sportsbook/Secondary/fanduel_sportsbook_logo_vert_white.svg"
-                alt="FanDuel"
-                width={20}
-                height={20}
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <h3 className="text-slate-800 font-semibold text-sm">FanDuel Sportsbook</h3>
-          </a>
+        {/* Header with FanDuel branding - Large prominent logo */}
+        <a 
+          href={REFERRAL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-between px-4 py-3 bg-[#1493FF] hover:bg-[#0D7FE8] transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <Image
+              src="/FanDuel Logos/Sportsbook/Secondary/fanduel_sportsbook_logo_vert_white.svg"
+              alt="FanDuel Sportsbook"
+              width={36}
+              height={36}
+              className="w-9 h-9 object-contain"
+            />
+            <span className="text-white font-bold text-base">FanDuel Sportsbook</span>
+          </div>
           
           {showSportToggle && (
-            <div className="flex bg-slate-200 rounded-lg p-0.5">
+            <div className="flex bg-white/20 rounded-lg p-0.5">
               {(Object.keys(sportLabels) as SportKey[]).map((key) => (
                 <button
                   key={key}
-                  onClick={() => setSelectedSport(key)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSelectedSport(key);
+                  }}
                   className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${
                     selectedSport === key
-                      ? 'bg-white text-slate-800 shadow-sm'
-                      : 'text-slate-500 hover:text-slate-700'
+                      ? 'bg-white text-[#1493FF] shadow-sm'
+                      : 'text-white/80 hover:text-white'
                   }`}
                 >
                   {key === 'americanfootball_nfl' ? 'NFL' : key === 'icehockey_nhl' ? 'NHL' : 'NBA'}
@@ -66,7 +68,7 @@ export function OddsWidget({ sport = 'americanfootball_nfl', showSportToggle = t
               ))}
             </div>
           )}
-        </div>
+        </a>
 
         {/* Promo Banner */}
         <a 
@@ -120,32 +122,30 @@ export function SuperBowlOddsWidget() {
   return (
     <div className="max-w-lg mx-auto">
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-lg">
-        {/* Header */}
-        <div className="px-5 py-4 bg-gradient-to-r from-slate-800 to-slate-900 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#1493FF] p-1.5 flex-shrink-0">
-              <Image
-                src="/FanDuel Logos/Sportsbook/Secondary/fanduel_sportsbook_logo_vert_white.svg"
-                alt="FanDuel"
-                width={24}
-                height={24}
-                className="w-full h-full object-contain"
-              />
-            </div>
+        {/* Header - Large prominent FanDuel branding */}
+        <a 
+          href={REFERRAL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-between px-5 py-4 bg-[#1493FF] hover:bg-[#0D7FE8] transition-colors"
+        >
+          <div className="flex items-center gap-4">
+            <Image
+              src="/FanDuel Logos/Sportsbook/Secondary/fanduel_sportsbook_logo_vert_white.svg"
+              alt="FanDuel Sportsbook"
+              width={44}
+              height={44}
+              className="w-11 h-11 object-contain"
+            />
             <div>
-              <h3 className="text-white font-bold text-sm">Super Bowl LX Odds</h3>
-              <p className="text-slate-400 text-xs">Powered by FanDuel Sportsbook</p>
+              <h3 className="text-white font-bold text-base">Super Bowl LX Odds</h3>
+              <p className="text-white/70 text-xs">Powered by FanDuel Sportsbook</p>
             </div>
           </div>
-          <a 
-            href={REFERRAL_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 rounded-lg bg-[#1493FF] text-white text-xs font-bold hover:bg-[#0D7FE8] transition-colors"
-          >
+          <span className="px-4 py-2 rounded-lg bg-white text-[#1493FF] text-sm font-bold shadow-sm">
             Bet Now
-          </a>
-        </div>
+          </span>
+        </a>
 
         {/* Promo */}
         <a 
