@@ -516,19 +516,17 @@ export default function Dashboard() {
         <div className={view === 'landing' ? '' : 'flex gap-6'}>
           {/* Main content area */}
           <div className={view === 'landing' ? '' : 'flex-1 min-w-0'}>
-        {/* Error State - Modern glass card */}
+        {/* Error State */}
         {error && view !== 'landing' && (
-          <div className="mb-6 glass-card p-4 rounded-xl animate-slide-up border-l-4 border-red-500">
+          <div className="mb-6 bg-[#161b22] border border-slate-700 p-4 rounded-lg animate-slide-up border-l-4 border-l-red-600">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center">
-                  <span className="text-red-400">⚠️</span>
-                </div>
+                <span className="text-red-500">⚠️</span>
                 <p className="text-sm text-red-400">{error}</p>
               </div>
               <button 
                 onClick={() => setError(null)}
-                className="text-slate-500 hover:text-white p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                className="text-slate-500 hover:text-white p-1.5 hover:bg-slate-700 rounded transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -538,36 +536,35 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Loading State - Modern spinner (only for views that need games data) */}
+        {/* Loading State */}
         {loadingOdds && games.length === 0 && view !== 'landing' && view !== 'tracker' && view !== 'tools' && (
           <div className="flex flex-col justify-center items-center py-20">
-            <div className="relative w-12 h-12">
-              <div className="absolute inset-0 rounded-full border-2 border-cyan-500/20" />
-              <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-cyan-500 animate-spin" />
+            <div className="relative w-10 h-10">
+              <div className="absolute inset-0 rounded-full border-2 border-slate-700" />
+              <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-slate-400 animate-spin" />
             </div>
-            <span className="mt-4 text-slate-400 text-sm">
+            <span className="mt-4 text-slate-500 text-sm">
               Loading {sport} games...
             </span>
           </div>
         )}
 
-        {/* Analysis Loading Overlay - Sleek modal */}
+        {/* Analysis Loading Overlay */}
         {(loadingAnalysis || loadingProps) && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <div className="glass-card rounded-2xl p-8 text-center max-w-sm w-full animate-scale-up">
-              <div className="relative w-16 h-16 mx-auto mb-5">
-                <div className="absolute inset-0 rounded-full border-2 border-cyan-500/20" />
-                <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-cyan-500 animate-spin" />
-                <div className="absolute inset-3 rounded-full border-2 border-transparent border-t-purple-500 animate-spin" style={{animationDirection: 'reverse', animationDuration: '0.8s'}} />
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-[#161b22] border border-slate-700 rounded-lg p-8 text-center max-w-sm w-full animate-scale-up">
+              <div className="relative w-12 h-12 mx-auto mb-5">
+                <div className="absolute inset-0 rounded-full border-2 border-slate-700" />
+                <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-slate-400 animate-spin" />
               </div>
-              <p className="font-semibold text-white text-lg">
+              <p className="font-semibold text-white text-base">
                 {loadingProps ? 'Analyzing Player Props' : 'Running AI Analysis'}
               </p>
-              <p className="mt-2 text-sm text-slate-400">
+              <p className="mt-2 text-sm text-slate-500">
                 Crunching the numbers...
               </p>
-              <div className="mt-4 w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full animate-pulse" style={{width: '60%'}} />
+              <div className="mt-4 w-full bg-slate-800 rounded h-1 overflow-hidden">
+                <div className="h-full bg-slate-500 rounded animate-pulse" style={{width: '60%'}} />
               </div>
             </div>
           </div>
@@ -605,12 +602,12 @@ export default function Dashboard() {
 
             {/* NFL Super Bowl Banner */}
             {sport === 'NFL' && (
-              <div className="mb-6 glass-card gradient-border p-5 rounded-xl flex items-center justify-between">
+              <div className="mb-6 bg-[#161b22] border border-slate-700 p-5 rounded-lg flex items-center justify-between">
                 <div>
                   <p className="font-semibold text-white flex items-center gap-2">
                     <span className="text-lg">🏈</span> Super Bowl LX Analysis
                   </p>
-                  <p className="text-sm text-slate-400 mt-1">Expert picks, prediction models, and betting guides</p>
+                  <p className="text-sm text-slate-500 mt-1">Expert picks, prediction models, and betting guides</p>
                 </div>
                 <button
                   onClick={() => setView('landing')}
@@ -695,7 +692,7 @@ export default function Dashboard() {
         {/* Tools View */}
         {view === 'tools' && (
           <div className="animate-slide-up space-y-6">
-            {/* Tool Selector - Modern pill style */}
+            {/* Tool Selector */}
             <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
               {[
                 { id: 'betnow', label: 'Bet Now', icon: '💰' },
@@ -707,10 +704,10 @@ export default function Dashboard() {
                 <button
                   key={tool.id}
                   onClick={() => setSelectedTool(tool.id as typeof selectedTool)}
-                  className={`px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2 ${
                     selectedTool === tool.id
-                      ? 'glass-card text-white glow-cyan'
-                      : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+                      ? 'bg-slate-700 text-white border border-slate-600'
+                      : 'bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-800 border border-transparent'
                   }`}
                 >
                   <span>{tool.icon}</span>
@@ -749,7 +746,7 @@ export default function Dashboard() {
           <div className="animate-slide-up space-y-6">
             <div className="mb-4">
               <h2 className="text-xl font-bold text-white flex items-center gap-3">
-                <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-lg">
+                <span className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-lg">
                   📊
                 </span>
                 Performance Tracker
@@ -766,7 +763,7 @@ export default function Dashboard() {
             {games.length > 0 && (
               <div className="mt-8">
                 <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <span className="w-1.5 h-4 bg-gradient-to-b from-cyan-500 to-purple-500 rounded-full" />
+                  <span className="w-1 h-4 bg-slate-600 rounded-full" />
                   Line Movement
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
