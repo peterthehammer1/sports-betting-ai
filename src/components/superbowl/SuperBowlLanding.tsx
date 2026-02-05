@@ -143,7 +143,7 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
       </section>
 
       {/* Performance Banner - Highlight win rate */}
-      <PerformanceBanner />
+      <PerformanceBanner onNavigateToTracker={() => onNavigate('tracker')} />
 
       {/* Navigation Tabs - Modern dark style */}
       <nav className="sticky top-[60px] z-30 bg-[rgba(10,14,20,0.95)] backdrop-blur-xl border-b border-white/5">

@@ -7,6 +7,7 @@ import { getTeamLogoUrl } from '@/lib/utils/teamLogos';
 
 interface PerformanceBannerProps {
   className?: string;
+  onNavigateToTracker?: () => void;
 }
 
 interface LiveScore {
@@ -29,7 +30,7 @@ interface GameAnalysis {
   loading?: boolean;
 }
 
-export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
+export function PerformanceBanner({ className = '', onNavigateToTracker }: PerformanceBannerProps) {
   const [stats, setStats] = useState<{
     winRate: number;
     wins: number;
@@ -42,6 +43,7 @@ export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
   const [liveScores, setLiveScores] = useState<LiveScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedGame, setSelectedGame] = useState<LiveScore | null>(null);
+  const [selectedPick, setSelectedPick] = useState<TrackedPick | null>(null);
   const [gameAnalysis, setGameAnalysis] = useState<GameAnalysis | null>(null);
 
   useEffect(() => {
@@ -103,6 +105,7 @@ export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
 
   const closeModal = () => {
     setSelectedGame(null);
+    setSelectedPick(null);
     setGameAnalysis(null);
   };
 
@@ -209,9 +212,12 @@ export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
 
             {/* Right - View All Link */}
             <div className="pl-4 border-l border-slate-700">
-              <a href="#" className="text-[10px] text-slate-500 hover:text-white transition-colors uppercase tracking-wide whitespace-nowrap">
+              <button 
+                onClick={onNavigateToTracker}
+                className="text-[10px] text-slate-500 hover:text-white transition-colors uppercase tracking-wide whitespace-nowrap"
+              >
                 Full Stats →
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -242,16 +248,20 @@ export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
               )}
             </div>
 
-            {/* Recent Picks (compact) */}
+            {/* Recent Picks - as full game cards */}
             {recentPicks.length > 0 && (
-              <div className="flex items-center gap-2 px-4 py-2 border-l border-slate-700 bg-slate-800/30 flex-shrink-0 ml-auto">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wide">Recent</span>
-                <div className="flex items-center gap-1">
+              <>
+                <div className="flex items-center px-4 py-2 border-l border-slate-700 bg-slate-800/30 flex-shrink-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-white uppercase tracking-wide">Recent</span>
+                  </div>
+                </div>
+                <div className="flex items-stretch divide-x divide-slate-700/50">
                   {recentPicks.slice(0, 5).map((pick) => (
-                    <RecentPickChip key={pick.id} pick={pick} />
+                    <RecentPickCard key={pick.id} pick={pick} onClick={() => setSelectedPick(pick)} />
                   ))}
                 </div>
-              </div>
+              </>
             )}
           </div>
         </div>
@@ -262,6 +272,14 @@ export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
         <GameDetailModal 
           game={selectedGame} 
           analysis={gameAnalysis}
+          onClose={closeModal} 
+        />
+      )}
+
+      {/* Pick Detail Modal */}
+      {selectedPick && (
+        <PickDetailModal 
+          pick={selectedPick}
           onClose={closeModal} 
         />
       )}
@@ -632,38 +650,241 @@ function GameDetailModal({
   );
 }
 
-function RecentPickChip({ pick }: { pick: TrackedPick }) {
+// Recent Pick Card - matches ScoreCard styling for past games
+function RecentPickCard({ pick, onClick }: { pick: TrackedPick; onClick: () => void }) {
   const isWin = pick.status === 'won';
   const isLoss = pick.status === 'lost';
   const isPush = pick.status === 'push';
   
-  // Get short pick description
-  const shortPick = pick.pick.length > 15 ? pick.pick.substring(0, 15) + '...' : pick.pick;
+  // Get sport type for logo lookup
+  const sportType = pick.sport === 'NHL' ? 'NHL' : 
+                    pick.sport === 'NBA' ? 'NBA' : 
+                    pick.sport === 'NFL' ? 'NFL' : 
+                    pick.sport === 'MLB' ? 'MLB' : 'NHL';
   
-  // Format score if available
-  const scoreText = pick.result?.actualScore 
-    ? `${pick.result.actualScore.away}-${pick.result.actualScore.home}` 
-    : '';
+  // Get logos
+  const awayLogo = getTeamLogoUrl(pick.awayTeam, sportType as 'NHL' | 'NBA' | 'MLB' | 'NFL' | 'EPL');
+  const homeLogo = getTeamLogoUrl(pick.homeTeam, sportType as 'NHL' | 'NBA' | 'MLB' | 'NFL' | 'EPL');
+  
+  // Get scores
+  const awayScore = pick.result?.actualScore?.away ?? 0;
+  const homeScore = pick.result?.actualScore?.home ?? 0;
+  const awayWon = awayScore > homeScore;
+  const homeWon = homeScore > awayScore;
+  
+  // Format game date
+  const gameDate = new Date(pick.gameTime);
+  const gameDateStr = gameDate.toLocaleDateString([], {
+    month: 'short',
+    day: 'numeric'
+  });
 
   return (
     <div 
-      className={`flex items-center gap-1.5 px-2 py-1 rounded text-[10px] whitespace-nowrap ${
-        isWin ? 'bg-green-500/10 border border-green-500/20' :
-        isLoss ? 'bg-red-500/10 border border-red-500/20' :
-        isPush ? 'bg-slate-700/50 border border-slate-600' :
-        'bg-slate-800/50 border border-slate-700'
-      }`}
-      title={`${pick.pick} - ${pick.awayTeam} @ ${pick.homeTeam}`}
+      className="flex flex-col px-4 py-2.5 min-w-[180px] hover:bg-slate-800/50 transition-colors cursor-pointer"
+      onClick={onClick}
     >
-      <span className={`font-semibold ${
-        isWin ? 'text-green-500' : isLoss ? 'text-red-500' : 'text-slate-400'
-      }`}>
-        {isWin ? 'W' : isLoss ? 'L' : isPush ? 'P' : '-'}
-      </span>
-      <span className="text-slate-400">{pick.sport}</span>
-      {scoreText && (
-        <span className="text-slate-500 font-mono">{scoreText}</span>
-      )}
+      {/* Status Header */}
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">{pick.sport}</span>
+        <span className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
+          isWin ? 'bg-green-500/10 text-green-500' :
+          isLoss ? 'bg-red-500/10 text-red-500' :
+          isPush ? 'bg-slate-700 text-slate-400' :
+          'bg-slate-800 text-slate-400'
+        }`}>
+          {isWin ? '✓ WIN' : isLoss ? '✗ LOSS' : isPush ? 'PUSH' : 'PENDING'}
+        </span>
+      </div>
+      
+      {/* Away Team */}
+      <div className={`flex items-center justify-between gap-3 ${!awayWon ? 'opacity-50' : ''}`}>
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          <TeamLogo url={awayLogo} teamName={pick.awayTeam} size="md" />
+          <span className={`text-sm font-medium truncate ${awayWon ? 'text-white' : 'text-slate-400'}`}>
+            {pick.awayTeam}
+          </span>
+        </div>
+        <span className={`text-base font-bold font-mono tabular-nums ${awayWon ? 'text-white' : 'text-slate-400'}`}>
+          {awayScore}
+        </span>
+      </div>
+      
+      {/* Home Team */}
+      <div className={`flex items-center justify-between gap-3 mt-1.5 ${!homeWon ? 'opacity-50' : ''}`}>
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          <TeamLogo url={homeLogo} teamName={pick.homeTeam} size="md" />
+          <span className={`text-sm font-medium truncate ${homeWon ? 'text-white' : 'text-slate-400'}`}>
+            {pick.homeTeam}
+          </span>
+        </div>
+        <span className={`text-base font-bold font-mono tabular-nums ${homeWon ? 'text-white' : 'text-slate-400'}`}>
+          {homeScore}
+        </span>
+      </div>
+
+      {/* Date */}
+      <div className="mt-2 pt-1.5 border-t border-slate-700/50">
+        <span className="text-[9px] text-slate-500 uppercase tracking-wide">
+          {gameDateStr} • Click for Details →
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// Pick Detail Modal
+function PickDetailModal({ 
+  pick, 
+  onClose 
+}: { 
+  pick: TrackedPick;
+  onClose: () => void;
+}) {
+  const isWin = pick.status === 'won';
+  const isLoss = pick.status === 'lost';
+  const isPush = pick.status === 'push';
+  
+  // Get sport type for logo lookup
+  const sportType = pick.sport === 'NHL' ? 'NHL' : 
+                    pick.sport === 'NBA' ? 'NBA' : 
+                    pick.sport === 'NFL' ? 'NFL' : 
+                    pick.sport === 'MLB' ? 'MLB' : 'NHL';
+  
+  const awayLogo = getTeamLogoUrl(pick.awayTeam, sportType as 'NHL' | 'NBA' | 'MLB' | 'NFL' | 'EPL');
+  const homeLogo = getTeamLogoUrl(pick.homeTeam, sportType as 'NHL' | 'NBA' | 'MLB' | 'NFL' | 'EPL');
+  
+  // Get scores
+  const awayScore = pick.result?.actualScore?.away ?? 0;
+  const homeScore = pick.result?.actualScore?.home ?? 0;
+  const awayWon = awayScore > homeScore;
+  const homeWon = homeScore > awayScore;
+  
+  // Format game date
+  const gameDate = new Date(pick.gameTime);
+  const gameDateStr = gameDate.toLocaleDateString([], {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric'
+  });
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-[#161b22] border border-slate-700 rounded-lg max-w-lg w-full shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-3 border-b border-slate-700">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-white">{pick.sport}</span>
+            <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+              isWin ? 'bg-green-500/10 text-green-500' :
+              isLoss ? 'bg-red-500/10 text-red-500' :
+              isPush ? 'bg-slate-800 text-slate-400' :
+              'bg-amber-500/10 text-amber-500'
+            }`}>
+              {isWin ? '✓ WIN' : isLoss ? '✗ LOSS' : isPush ? 'PUSH' : 'PENDING'}
+            </span>
+            <span className="text-xs text-slate-400">{gameDateStr}</span>
+          </div>
+          <button 
+            onClick={onClose}
+            className="text-slate-500 hover:text-white p-1 hover:bg-slate-700 rounded transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Matchup */}
+        <div className="px-5 py-6">
+          <div className="flex items-center justify-between gap-4">
+            {/* Away Team */}
+            <div className={`flex-1 text-center ${!awayWon ? 'opacity-50' : ''}`}>
+              <div className="flex justify-center mb-3">
+                <TeamLogo url={awayLogo} teamName={pick.awayTeam} size="lg" />
+              </div>
+              <p className={`text-lg font-bold ${awayWon ? 'text-white' : 'text-slate-400'}`}>
+                {pick.awayTeam}
+              </p>
+              <p className={`text-4xl font-bold font-mono mt-2 ${awayWon ? 'text-white' : 'text-slate-500'}`}>
+                {awayScore}
+              </p>
+            </div>
+
+            {/* VS divider */}
+            <div className="flex-shrink-0 text-center px-4">
+              <p className="text-slate-600 text-sm font-medium">Final</p>
+            </div>
+
+            {/* Home Team */}
+            <div className={`flex-1 text-center ${!homeWon ? 'opacity-50' : ''}`}>
+              <div className="flex justify-center mb-3">
+                <TeamLogo url={homeLogo} teamName={pick.homeTeam} size="lg" />
+              </div>
+              <p className={`text-lg font-bold ${homeWon ? 'text-white' : 'text-slate-400'}`}>
+                {pick.homeTeam}
+              </p>
+              <p className={`text-4xl font-bold font-mono mt-2 ${homeWon ? 'text-white' : 'text-slate-500'}`}>
+                {homeScore}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Pick Details */}
+        <div className="px-5 py-4 border-t border-slate-700 bg-slate-800/30">
+          <div className="space-y-3">
+            {/* Our Pick */}
+            <div className={`p-3 rounded-lg ${
+              isWin ? 'bg-green-500/10 border border-green-500/20' :
+              isLoss ? 'bg-red-500/10 border border-red-500/20' :
+              'bg-slate-800 border border-slate-700'
+            }`}>
+              <p className={`text-xs font-semibold uppercase mb-1 ${
+                isWin ? 'text-green-500' : isLoss ? 'text-red-500' : 'text-slate-500'
+              }`}>
+                Our Pick
+              </p>
+              <p className="text-sm font-bold text-white">{pick.pick}</p>
+              <div className="flex items-center gap-3 mt-2 text-xs text-slate-400">
+                <span>Odds: {pick.odds > 0 ? '+' : ''}{pick.odds}</span>
+                <span>•</span>
+                <span>{pick.units} unit{pick.units !== 1 ? 's' : ''}</span>
+              </div>
+            </div>
+            
+            {/* Result */}
+            {(isWin || isLoss || isPush) && (
+              <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
+                <span className="text-sm text-slate-400">Result</span>
+                <span className={`text-sm font-bold ${
+                  isWin ? 'text-green-500' : isLoss ? 'text-red-500' : 'text-slate-400'
+                }`}>
+                  {isWin ? `+${(pick.odds > 0 ? pick.odds / 100 : 100 / Math.abs(pick.odds)).toFixed(2)}` : 
+                   isLoss ? `-${pick.units.toFixed(2)}` : 
+                   '0.00'} units
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-5 py-3 border-t border-slate-700 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
