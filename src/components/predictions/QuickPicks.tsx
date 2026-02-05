@@ -32,10 +32,13 @@ interface QuickPicksProps {
 export function QuickPicks({ picks, sport, onGameSelect, loading }: QuickPicksProps) {
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+      <div className="bg-slate-800/50 rounded-xl border border-slate-700 p-6">
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-3 text-gray-600 dark:text-gray-400">
+          <div className="relative w-6 h-6">
+            <div className="absolute inset-0 rounded-full border-2 border-slate-600" />
+            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-cyan-500 animate-spin" />
+          </div>
+          <span className="ml-3 text-slate-400 text-sm">
             Analyzing {sport} games with Claude...
           </span>
         </div>
@@ -45,8 +48,8 @@ export function QuickPicks({ picks, sport, onGameSelect, loading }: QuickPicksPr
 
   if (picks.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-        <p className="text-center text-gray-500 dark:text-gray-400">
+      <div className="bg-slate-800/50 rounded-xl border border-slate-700 p-6">
+        <p className="text-center text-slate-500 text-sm">
           No picks available
         </p>
       </div>
@@ -57,19 +60,19 @@ export function QuickPicks({ picks, sport, onGameSelect, loading }: QuickPicksPr
   const sortedPicks = [...picks].sort((a, b) => b.winnerConfidence - a.winnerConfidence);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+    <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-4">
+      <div className="px-5 py-4 border-b border-slate-700 bg-slate-900/30">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-white text-xl font-bold">🎯 Quick Picks</h2>
-            <p className="text-purple-100 text-sm">
+            <h2 className="text-white text-base font-semibold">Quick Picks</h2>
+            <p className="text-slate-500 text-xs">
               {picks.length} {sport} games analyzed
             </p>
           </div>
           <div className="text-right">
-            <p className="text-white text-sm font-medium">Top Pick</p>
-            <p className="text-purple-100 text-xs">
+            <p className="text-slate-400 text-xs font-medium">Top Pick</p>
+            <p className="text-white text-sm font-semibold">
               {sortedPicks[0]?.winnerPick} ({sortedPicks[0]?.winnerConfidence}%)
             </p>
           </div>
@@ -77,7 +80,7 @@ export function QuickPicks({ picks, sport, onGameSelect, loading }: QuickPicksPr
       </div>
 
       {/* Picks List */}
-      <div className="divide-y divide-gray-100 dark:divide-gray-700">
+      <div className="divide-y divide-slate-700/50">
         {sortedPicks.map((pick, idx) => (
           <QuickPickRow
             key={pick.gameId || idx}
@@ -106,20 +109,20 @@ function QuickPickRow({
   return (
     <div
       onClick={onSelect}
-      className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors ${
-        isTopPick ? 'bg-gradient-to-r from-yellow-50/50 to-transparent dark:from-yellow-900/10' : ''
+      className={`p-4 hover:bg-slate-700/30 cursor-pointer transition-colors ${
+        isTopPick ? 'bg-amber-500/5' : ''
       }`}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3">
         {/* Rank */}
-        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+        <div className={`flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center font-semibold text-xs ${
           rank === 1 
-            ? 'bg-yellow-400 text-yellow-900' 
+            ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' 
             : rank === 2 
-            ? 'bg-gray-300 text-gray-700'
+            ? 'bg-slate-600 text-slate-300'
             : rank === 3
-            ? 'bg-amber-600 text-white'
-            : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+            ? 'bg-amber-700/30 text-amber-500'
+            : 'bg-slate-700 text-slate-500'
         }`}>
           {rank}
         </div>
@@ -128,17 +131,17 @@ function QuickPickRow({
         <div className="flex-grow min-w-0">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-semibold text-gray-900 dark:text-white">
+              <p className="font-medium text-white text-sm">
                 {pick.awayTeam} @ {pick.homeTeam}
               </p>
               {gameTime && (
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-[10px] text-slate-500">
                   {gameTime.toLocaleDateString()} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
                 </p>
               )}
             </div>
             <div className="text-right">
-              <p className="font-bold text-gray-900 dark:text-white">
+              <p className="font-semibold text-white text-sm">
                 {pick.winnerPick}
               </p>
               <ConfidencePill confidence={pick.winnerConfidence} />
@@ -146,22 +149,22 @@ function QuickPickRow({
           </div>
 
           {/* Quick Take */}
-          <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+          <p className="text-xs text-slate-400 mt-2">
             {pick.quickTake}
           </p>
 
           {/* Best Bet & Odds */}
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 px-2 py-0.5 rounded">
+              <span className="text-[10px] font-medium text-purple-400 bg-purple-500/20 border border-purple-500/30 px-2 py-0.5 rounded">
                 Best Bet: {pick.bestBet.type}
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-[10px] text-slate-500">
                 {pick.bestBet.pick} ({pick.bestBet.confidence}%)
               </span>
             </div>
             {pick.odds && (
-              <div className="flex gap-3 text-xs text-gray-500 dark:text-gray-400">
+              <div className="flex gap-2 text-[10px] text-slate-500 font-mono">
                 {pick.odds.homeML && (
                   <span>ML: {pick.odds.homeML > 0 ? '+' : ''}{pick.odds.homeML}</span>
                 )}
@@ -177,8 +180,8 @@ function QuickPickRow({
         </div>
 
         {/* Arrow */}
-        <div className="flex-shrink-0 text-gray-400">
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex-shrink-0 text-slate-600">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </div>
@@ -189,14 +192,14 @@ function QuickPickRow({
 
 function ConfidencePill({ confidence }: { confidence: number }) {
   const getColor = (conf: number) => {
-    if (conf >= 70) return 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300';
-    if (conf >= 60) return 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300';
-    if (conf >= 55) return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300';
-    return 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300';
+    if (conf >= 70) return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+    if (conf >= 60) return 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30';
+    if (conf >= 55) return 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
+    return 'bg-slate-700 text-slate-400 border border-slate-600';
   };
 
   return (
-    <span className={`text-xs font-medium px-2 py-0.5 rounded ${getColor(confidence)}`}>
+    <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${getColor(confidence)}`}>
       {confidence}%
     </span>
   );

@@ -169,70 +169,70 @@ export function ExpertPredictions() {
   const patriotsPercent = 100 - seahawksPercent;
 
   return (
-    <section className="py-12">
-      <div className="max-w-6xl mx-auto px-4">
+    <section className="py-8">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold mb-3">Expert Super Bowl Predictions</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-semibold text-white mb-2">Expert Super Bowl Predictions</h2>
+          <p className="text-slate-500 max-w-2xl mx-auto text-sm">
             What the experts, models, and professional handicappers are predicting for Super Bowl LX. 
             Updated daily with the latest analysis.
           </p>
         </div>
 
         {/* Consensus Bar */}
-        <div className="bg-[#151c28] rounded-xl p-6 border border-slate-800 mb-8">
-          <h3 className="text-lg font-semibold mb-4 text-center">Expert Consensus</h3>
+        <div className="bg-slate-800/50 rounded-xl p-5 border border-slate-700 mb-6">
+          <h3 className="text-sm font-semibold mb-4 text-center text-slate-400 uppercase tracking-wide">Expert Consensus</h3>
           <div className="flex items-center gap-4">
-            <div className="text-center min-w-[80px]">
+            <div className="text-center min-w-[60px]">
               <img 
                 src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" 
                 alt="Seahawks" 
-                className="w-12 h-12 mx-auto mb-1"
+                className="w-10 h-10 mx-auto mb-1"
               />
-              <span className="text-sm text-slate-400">Seahawks</span>
+              <span className="text-xs text-slate-500">Seahawks</span>
             </div>
             <div className="flex-1">
-              <div className="flex h-8 rounded-full overflow-hidden bg-slate-700">
+              <div className="flex h-7 rounded-lg overflow-hidden bg-slate-700">
                 <div 
-                  className="bg-[#69be28] flex items-center justify-center text-sm font-semibold text-slate-900"
+                  className="bg-[#69be28] flex items-center justify-center text-xs font-semibold text-slate-900"
                   style={{ width: `${seahawksPercent}%` }}
                 >
                   {seahawksPercent}%
                 </div>
                 <div 
-                  className="bg-[#002244] flex items-center justify-center text-sm font-semibold"
+                  className="bg-[#002244] flex items-center justify-center text-xs font-semibold text-white"
                   style={{ width: `${patriotsPercent}%` }}
                 >
                   {patriotsPercent}%
                 </div>
               </div>
-              <div className="flex justify-between mt-2 text-xs text-slate-500">
+              <div className="flex justify-between mt-2 text-[10px] text-slate-600">
                 <span>{seahawksPicks} picks</span>
                 <span>{patriotsPicks} picks</span>
               </div>
             </div>
-            <div className="text-center min-w-[80px]">
+            <div className="text-center min-w-[60px]">
               <img 
                 src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" 
                 alt="Patriots" 
-                className="w-12 h-12 mx-auto mb-1"
+                className="w-10 h-10 mx-auto mb-1"
               />
-              <span className="text-sm text-slate-400">Patriots</span>
+              <span className="text-xs text-slate-500">Patriots</span>
             </div>
           </div>
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
+        <div className="flex flex-wrap justify-center gap-2 mb-6">
           {(['all', 'analyst', 'model', 'tout', 'consensus'] as const).map((cat) => (
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 filter === cat
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  ? 'bg-slate-700 text-white'
+                  : 'bg-slate-800/50 text-slate-500 hover:text-white hover:bg-slate-700/50'
               }`}
             >
               {cat === 'all' ? 'All Experts' : CATEGORY_STYLES[cat].label}
@@ -241,7 +241,7 @@ export function ExpertPredictions() {
         </div>
 
         {/* Predictions Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-4">
           {filteredPredictions.map((prediction, index) => {
             const style = CATEGORY_STYLES[prediction.category];
             const isSeahawks = prediction.pick.includes('Seahawks');
@@ -249,76 +249,76 @@ export function ExpertPredictions() {
             return (
               <article 
                 key={`${prediction.source}-${index}`}
-                className="bg-[#151c28] rounded-xl border border-slate-800 overflow-hidden hover:border-slate-700 transition-colors"
+                className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden hover:border-slate-600 transition-colors"
               >
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b border-slate-800">
+                <div className="flex items-center justify-between p-4 border-b border-slate-700">
                   <div className="flex items-center gap-3">
                     {prediction.logo ? (
                       <img 
                         src={prediction.logo} 
                         alt={prediction.source}
-                        className="w-10 h-10 rounded-lg object-contain bg-white p-1"
+                        className="w-9 h-9 rounded-lg object-contain bg-white p-1"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-lg bg-slate-700 flex items-center justify-center text-lg font-bold">
+                      <div className="w-9 h-9 rounded-lg bg-slate-700 flex items-center justify-center text-sm font-semibold text-slate-400">
                         {prediction.source.charAt(0)}
                       </div>
                     )}
                     <div>
-                      <h4 className="font-semibold">{prediction.source}</h4>
+                      <h4 className="font-medium text-white text-sm">{prediction.source}</h4>
                       {prediction.expert && (
-                        <p className="text-sm text-slate-400">{prediction.expert}</p>
+                        <p className="text-xs text-slate-500">{prediction.expert}</p>
                       )}
                     </div>
                   </div>
-                  <span className={`px-2 py-1 rounded text-xs ${style.bg} ${style.text}`}>
+                  <span className={`px-2 py-1 rounded text-[10px] font-medium ${style.bg} ${style.text}`}>
                     {style.label}
                   </span>
                 </div>
 
                 {/* Pick */}
                 <div className="p-4">
-                  <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-3 mb-3">
                     <img 
                       src={isSeahawks 
                         ? 'https://a.espncdn.com/i/teamlogos/nfl/500/sea.png'
                         : 'https://a.espncdn.com/i/teamlogos/nfl/500/ne.png'
                       } 
                       alt={prediction.pick}
-                      className="w-14 h-14"
+                      className="w-10 h-10"
                     />
-                    <div>
-                      <div className="text-xl font-bold">{prediction.pick}</div>
-                      <div className="flex gap-3 text-sm text-slate-400 mt-1">
-                        {prediction.spread && <span>📊 {prediction.spread}</span>}
-                        {prediction.total && <span>🎯 {prediction.total}</span>}
+                    <div className="flex-1">
+                      <div className="text-base font-semibold text-white">{prediction.pick}</div>
+                      <div className="flex gap-3 text-xs text-slate-500 mt-0.5">
+                        {prediction.spread && <span>{prediction.spread}</span>}
+                        {prediction.total && <span>{prediction.total}</span>}
                       </div>
                     </div>
                     {prediction.confidence && (
-                      <div className="ml-auto text-center">
-                        <div className={`text-2xl font-bold ${prediction.confidence >= 60 ? 'text-emerald-400' : prediction.confidence >= 50 ? 'text-amber-400' : 'text-slate-400'}`}>
+                      <div className="text-center">
+                        <div className={`text-lg font-bold ${prediction.confidence >= 60 ? 'text-emerald-400' : prediction.confidence >= 50 ? 'text-amber-400' : 'text-slate-400'}`}>
                           {prediction.confidence}%
                         </div>
-                        <div className="text-xs text-slate-500">Confidence</div>
+                        <div className="text-[10px] text-slate-600">Confidence</div>
                       </div>
                     )}
                   </div>
 
                   {/* Reasoning */}
-                  <p className="text-sm text-slate-300 leading-relaxed mb-4">
+                  <p className="text-xs text-slate-400 leading-relaxed mb-3">
                     {prediction.reasoning}
                   </p>
 
                   {/* Footer */}
-                  <div className="flex items-center justify-between text-xs text-slate-500">
+                  <div className="flex items-center justify-between text-[10px] text-slate-600 pt-3 border-t border-slate-700/50">
                     <span>Updated: {prediction.lastUpdated}</span>
                     {prediction.url && (
                       <a 
                         href={prediction.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-emerald-400 hover:text-emerald-300 font-medium"
+                        className="text-slate-500 hover:text-white font-medium transition-colors"
                       >
                         Read Full Analysis →
                       </a>
@@ -331,7 +331,7 @@ export function ExpertPredictions() {
         </div>
 
         {/* Disclaimer */}
-        <p className="text-center text-xs text-slate-500 mt-8 max-w-2xl mx-auto">
+        <p className="text-center text-[10px] text-slate-600 mt-6 max-w-2xl mx-auto">
           Predictions are aggregated from publicly available sources and updated regularly. 
           Links provided are for informational purposes. Always gamble responsibly.
         </p>

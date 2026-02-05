@@ -139,57 +139,57 @@ export function PredictionModels() {
   });
 
   return (
-    <section className="py-12 bg-[#0a0e14]">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold mb-3">Prediction Model Tracker</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">
+    <section className="py-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-semibold text-white mb-2">Prediction Model Tracker</h2>
+          <p className="text-slate-500 max-w-2xl mx-auto text-sm">
             Compare projections from the top prediction models and statistical systems.
           </p>
         </div>
 
         {/* Consensus Summary */}
-        <div className="bg-gradient-to-r from-[#69be28]/20 via-slate-800/50 to-[#002244]/30 rounded-xl p-6 mb-8 border border-slate-700">
-          <h3 className="text-lg font-semibold text-center mb-4">Model Consensus</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div className="bg-slate-800/50 rounded-xl p-5 mb-6 border border-slate-700">
+          <h3 className="text-sm font-semibold text-center mb-4 text-slate-400 uppercase tracking-wide">Model Consensus</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="flex items-center justify-center gap-2 mb-2">
+              <div className="flex items-center justify-center gap-2 mb-1">
                 <img 
                   src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" 
                   alt="Seahawks" 
-                  className="w-8 h-8"
+                  className="w-6 h-6"
                 />
-                <span className="text-2xl font-bold text-[#69be28]">{avgSeahawksProb}%</span>
+                <span className="text-xl font-bold text-[#69be28]">{avgSeahawksProb}%</span>
               </div>
-              <span className="text-sm text-slate-400">Seahawks Win Prob</span>
+              <span className="text-xs text-slate-500">Seahawks Win Prob</span>
             </div>
             <div>
-              <div className="flex items-center justify-center gap-2 mb-2">
+              <div className="flex items-center justify-center gap-2 mb-1">
                 <img 
                   src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" 
                   alt="Patriots" 
-                  className="w-8 h-8"
+                  className="w-6 h-6"
                 />
-                <span className="text-2xl font-bold text-[#c8102e]">{avgPatriotsProb}%</span>
+                <span className="text-xl font-bold text-[#c8102e]">{avgPatriotsProb}%</span>
               </div>
-              <span className="text-sm text-slate-400">Patriots Win Prob</span>
+              <span className="text-xs text-slate-500">Patriots Win Prob</span>
             </div>
             <div>
-              <div className="text-2xl font-bold text-slate-200 mb-2">
+              <div className="text-xl font-bold text-white mb-1">
                 {Number(avgSpread) < 0 ? `SEA ${avgSpread}` : `NE +${avgSpread}`}
               </div>
-              <span className="text-sm text-slate-400">Avg Projected Spread</span>
+              <span className="text-xs text-slate-500">Avg Projected Spread</span>
             </div>
             <div>
-              <div className="text-2xl font-bold text-amber-400 mb-2">{avgTotal}</div>
-              <span className="text-sm text-slate-400">Avg Projected Total</span>
+              <div className="text-xl font-bold text-amber-400 mb-1">{avgTotal}</div>
+              <span className="text-xs text-slate-500">Avg Projected Total</span>
             </div>
           </div>
         </div>
 
         {/* Sort Controls */}
-        <div className="flex justify-center gap-2 mb-6">
-          <span className="text-sm text-slate-400 mr-2">Sort by:</span>
+        <div className="flex justify-center gap-2 mb-4">
+          <span className="text-xs text-slate-500 mr-2">Sort by:</span>
           {[
             { key: 'seahawks', label: 'Seahawks %' },
             { key: 'patriots', label: 'Patriots %' },
@@ -198,10 +198,10 @@ export function PredictionModels() {
             <button
               key={option.key}
               onClick={() => setSortBy(option.key as typeof sortBy)}
-              className={`px-3 py-1 rounded text-sm transition-colors ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 sortBy === option.key
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  ? 'bg-slate-700 text-white'
+                  : 'bg-slate-800/50 text-slate-500 hover:text-white hover:bg-slate-700/50'
               }`}
             >
               {option.label}
@@ -210,20 +210,20 @@ export function PredictionModels() {
         </div>
 
         {/* Models Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto bg-slate-800/30 rounded-xl border border-slate-700">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-slate-700 text-sm text-slate-400">
+              <tr className="border-b border-slate-700 text-xs text-slate-500">
                 <th className="py-3 px-4">Model</th>
                 <th className="py-3 px-4 text-center">
                   <div className="flex items-center justify-center gap-1">
-                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" alt="" className="w-5 h-5" />
+                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" alt="" className="w-4 h-4" />
                     SEA %
                   </div>
                 </th>
                 <th className="py-3 px-4 text-center">
                   <div className="flex items-center justify-center gap-1">
-                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" alt="" className="w-5 h-5" />
+                    <img src="https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" alt="" className="w-4 h-4" />
                     NE %
                   </div>
                 </th>
@@ -237,38 +237,38 @@ export function PredictionModels() {
               {sortedModels.map((model, idx) => (
                 <tr 
                   key={model.name}
-                  className={`border-b border-slate-800 hover:bg-slate-800/30 transition-colors ${
-                    model.name.includes("Pete's") ? 'bg-emerald-900/10' : ''
+                  className={`border-b border-slate-800/50 hover:bg-slate-700/30 transition-colors ${
+                    model.name.includes("Pete's") ? 'bg-emerald-500/5' : ''
                   }`}
                 >
-                  <td className="py-4 px-4">
-                    <div className="font-medium">{model.name}</div>
-                    <div className="text-xs text-slate-500">{model.type}</div>
+                  <td className="py-3 px-4">
+                    <div className="font-medium text-white text-sm">{model.name}</div>
+                    <div className="text-[10px] text-slate-500">{model.type}</div>
                   </td>
-                  <td className="py-4 px-4 text-center">
-                    <span className={`font-semibold ${model.seahawksWinProb >= 50 ? 'text-[#69be28]' : 'text-slate-400'}`}>
+                  <td className="py-3 px-4 text-center">
+                    <span className={`font-semibold text-sm ${model.seahawksWinProb >= 50 ? 'text-[#69be28]' : 'text-slate-500'}`}>
                       {model.seahawksWinProb}%
                     </span>
                   </td>
-                  <td className="py-4 px-4 text-center">
-                    <span className={`font-semibold ${model.patriotsWinProb >= 50 ? 'text-[#c8102e]' : 'text-slate-400'}`}>
+                  <td className="py-3 px-4 text-center">
+                    <span className={`font-semibold text-sm ${model.patriotsWinProb >= 50 ? 'text-[#c8102e]' : 'text-slate-500'}`}>
                       {model.patriotsWinProb}%
                     </span>
                   </td>
-                  <td className="py-4 px-4 text-center">
-                    <span className="font-medium">
+                  <td className="py-3 px-4 text-center">
+                    <span className="font-medium text-white text-sm">
                       {model.projectedSpread < 0 ? `SEA ${model.projectedSpread}` : `NE +${model.projectedSpread}`}
                     </span>
                   </td>
-                  <td className="py-4 px-4 text-center">
-                    <span className="font-medium text-amber-400">{model.projectedTotal}</span>
+                  <td className="py-3 px-4 text-center">
+                    <span className="font-medium text-amber-400 text-sm">{model.projectedTotal}</span>
                   </td>
-                  <td className="py-4 px-4 text-center text-sm">
+                  <td className="py-3 px-4 text-center text-sm">
                     <span className="text-[#69be28]">{model.seahawksProjScore}</span>
-                    <span className="text-slate-500"> - </span>
+                    <span className="text-slate-600"> - </span>
                     <span className="text-[#c8102e]">{model.patriotsProjScore}</span>
                   </td>
-                  <td className="py-4 px-4 text-center text-xs text-slate-500 hidden sm:table-cell">
+                  <td className="py-3 px-4 text-center text-[10px] text-slate-600 hidden sm:table-cell">
                     {model.lastUpdated}
                   </td>
                 </tr>
@@ -278,22 +278,22 @@ export function PredictionModels() {
         </div>
 
         {/* Model Descriptions */}
-        <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {PREDICTION_MODELS.slice(0, 3).map((model) => (
             <div 
               key={model.name}
-              className="bg-[#151c28] rounded-lg border border-slate-800 p-4"
+              className="bg-slate-800/50 rounded-lg border border-slate-700 p-4"
             >
-              <h4 className="font-medium mb-1">{model.name}</h4>
-              <p className="text-xs text-slate-400 mb-2">{model.description}</p>
+              <h4 className="font-medium text-white text-sm mb-1">{model.name}</h4>
+              <p className="text-[11px] text-slate-500 mb-2">{model.description}</p>
               {model.accuracy && (
-                <span className="text-xs text-emerald-400">{model.accuracy}</span>
+                <span className="text-[10px] text-emerald-400">{model.accuracy}</span>
               )}
             </div>
           ))}
         </div>
 
-        <p className="text-center text-xs text-slate-500 mt-8">
+        <p className="text-center text-[10px] text-slate-600 mt-6">
           Models updated daily. Projections are for informational purposes only.
         </p>
       </div>

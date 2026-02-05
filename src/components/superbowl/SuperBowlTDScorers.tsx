@@ -121,13 +121,13 @@ const ANYTIME_TD_PICKS: TDPick[] = [
 
 export function SuperBowlTDScorers() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-3xl">🏈</span>
+          <span className="text-2xl">🏈</span>
           <div>
-            <h2 className="text-lg font-bold text-slate-800">TD Scorer Predictions</h2>
+            <h2 className="text-lg font-semibold text-white">TD Scorer Predictions</h2>
             <p className="text-xs text-slate-500">First TD & Anytime TD analysis for Super Bowl LX</p>
           </div>
         </div>
@@ -135,7 +135,7 @@ export function SuperBowlTDScorers() {
           href={REFERRAL_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="px-4 py-2 bg-[#1493FF] text-white text-sm font-semibold rounded-lg hover:bg-[#0D7FE8] transition-colors"
+          className="px-4 py-2 bg-slate-700 text-white text-sm font-medium rounded-lg hover:bg-slate-600 transition-colors"
         >
           Bet on FanDuel
         </a>
@@ -144,8 +144,8 @@ export function SuperBowlTDScorers() {
       {/* First TD Scorer Section */}
       <section>
         <div className="flex items-center gap-2 mb-4">
-          <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">
-            🎯 FIRST TD SCORER
+          <span className="px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full border border-amber-500/30">
+            FIRST TD SCORER
           </span>
           <span className="text-xs text-slate-500">Higher risk, higher reward</span>
         </div>
@@ -160,8 +160,8 @@ export function SuperBowlTDScorers() {
       {/* Anytime TD Scorer Section */}
       <section>
         <div className="flex items-center gap-2 mb-4">
-          <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">
-            ✅ ANYTIME TD SCORER
+          <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/30">
+            ANYTIME TD SCORER
           </span>
           <span className="text-xs text-slate-500">More consistent, better hit rate</span>
         </div>
@@ -174,15 +174,15 @@ export function SuperBowlTDScorers() {
       </section>
 
       {/* Betting Tips */}
-      <section className="p-5 bg-slate-50 rounded-xl border border-slate-200">
-        <h3 className="font-semibold text-slate-800 mb-3">💡 TD Scorer Betting Tips</h3>
-        <div className="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
+      <section className="p-5 bg-slate-800/50 rounded-xl border border-slate-700">
+        <h3 className="font-semibold text-white mb-3 text-sm">TD Scorer Betting Tips</h3>
+        <div className="grid md:grid-cols-2 gap-4 text-xs text-slate-400">
           <div>
-            <p className="font-medium text-slate-700 mb-1">First TD Strategy</p>
+            <p className="font-medium text-slate-300 mb-1">First TD Strategy</p>
             <p>Target players who get early red zone looks. RBs and TEs often score first as teams ease into the game. Look for +500 or better odds for value.</p>
           </div>
           <div>
-            <p className="font-medium text-slate-700 mb-1">Anytime TD Strategy</p>
+            <p className="font-medium text-slate-300 mb-1">Anytime TD Strategy</p>
             <p>Focus on volume and red zone usage. Star WRs and primary RBs are safest. Do not chase long odds unless there is a clear path to the end zone.</p>
           </div>
         </div>
@@ -193,20 +193,20 @@ export function SuperBowlTDScorers() {
         href={REFERRAL_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="block p-5 bg-gradient-to-r from-[#1493FF] to-[#0D7FE8] rounded-xl hover:from-[#0D7FE8] hover:to-[#0A6BC4] transition-all"
+        className="block p-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-slate-600 transition-all"
       >
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white text-lg font-bold">Bet TD Props on FanDuel</p>
-            <p className="text-white/80 text-sm">New users: Bet $5, Get $150 in Bonus Bets!</p>
+            <p className="text-white text-sm font-semibold">Bet TD Props on FanDuel</p>
+            <p className="text-slate-400 text-xs">New users: Bet $5, Get $150 in Bonus Bets!</p>
           </div>
-          <span className="px-5 py-2.5 bg-white text-[#1493FF] font-bold rounded-lg shadow-md">
+          <span className="px-4 py-2 bg-slate-700 text-white text-sm font-medium rounded-lg hover:bg-slate-600 transition-colors">
             Claim Bonus →
           </span>
         </div>
       </a>
 
-      <p className="text-xs text-slate-500 text-center">
+      <p className="text-[10px] text-slate-600 text-center">
         All odds subject to change. Please gamble responsibly. 21+ where legal.
       </p>
     </div>
@@ -214,30 +214,30 @@ export function SuperBowlTDScorers() {
 }
 
 function TDPickCard({ pick, type }: { pick: TDPick; type: 'first' | 'anytime' }) {
-  const confidenceColor = pick.confidence >= 80 ? 'text-emerald-600 bg-emerald-50 border-emerald-200' :
-                          pick.confidence >= 70 ? 'text-amber-600 bg-amber-50 border-amber-200' :
-                          'text-slate-600 bg-slate-50 border-slate-200';
+  const confidenceColor = pick.confidence >= 80 ? 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30' :
+                          pick.confidence >= 70 ? 'text-amber-400 bg-amber-500/20 border-amber-500/30' :
+                          'text-slate-400 bg-slate-700 border-slate-600';
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Image 
             src={pick.team === 'SEA' ? SEAHAWKS_LOGO : PATRIOTS_LOGO} 
             alt={pick.team} 
-            width={40} 
-            height={40} 
+            width={36} 
+            height={36} 
             unoptimized 
           />
           <div>
-            <p className="font-bold text-slate-800">{pick.player}</p>
-            <p className="text-xs text-slate-500">{pick.position} • {pick.team === 'SEA' ? 'Seahawks' : 'Patriots'}</p>
+            <p className="font-semibold text-white text-sm">{pick.player}</p>
+            <p className="text-[10px] text-slate-500">{pick.position} • {pick.team === 'SEA' ? 'Seahawks' : 'Patriots'}</p>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-xl font-bold text-[#1493FF]">{pick.odds}</p>
-          <span className={`inline-block px-2 py-0.5 rounded border text-xs font-semibold ${confidenceColor}`}>
+          <p className="text-lg font-bold text-emerald-400">{pick.odds}</p>
+          <span className={`inline-block px-2 py-0.5 rounded border text-[10px] font-semibold ${confidenceColor}`}>
             {pick.confidence}% conf
           </span>
         </div>
@@ -245,14 +245,14 @@ function TDPickCard({ pick, type }: { pick: TDPick; type: 'first' | 'anytime' })
 
       {/* Analysis */}
       <div className="p-4">
-        <p className="text-sm text-slate-600 leading-relaxed mb-4">{pick.analysis}</p>
+        <p className="text-xs text-slate-400 leading-relaxed mb-4">{pick.analysis}</p>
         
         {/* Key Stats */}
         <div className="mb-4">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Key Stats</p>
-          <div className="flex flex-wrap gap-2">
+          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Key Stats</p>
+          <div className="flex flex-wrap gap-1.5">
             {pick.keyStats.map((stat, i) => (
-              <span key={i} className="px-2 py-1 bg-slate-100 rounded text-xs text-slate-600">
+              <span key={i} className="px-2 py-1 bg-slate-900/50 rounded text-[10px] text-slate-400 border border-slate-700/50">
                 {stat}
               </span>
             ))}
@@ -260,9 +260,9 @@ function TDPickCard({ pick, type }: { pick: TDPick; type: 'first' | 'anytime' })
         </div>
 
         {/* Projection */}
-        <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-          <p className="text-xs font-semibold text-slate-700">
-            📊 {pick.projection}
+        <div className="p-3 bg-slate-900/50 rounded-lg border border-slate-700/50">
+          <p className="text-xs font-medium text-slate-300">
+            {pick.projection}
           </p>
         </div>
       </div>
@@ -272,9 +272,9 @@ function TDPickCard({ pick, type }: { pick: TDPick; type: 'first' | 'anytime' })
         href={REFERRAL_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="block p-3 bg-slate-800 text-center hover:bg-slate-700 transition-colors"
+        className="block p-3 bg-slate-700 text-center hover:bg-slate-600 transition-colors"
       >
-        <span className="text-white text-sm font-semibold">
+        <span className="text-white text-xs font-medium">
           Bet {pick.player} {type === 'first' ? 'First TD' : 'Anytime TD'} {pick.odds}
         </span>
       </a>

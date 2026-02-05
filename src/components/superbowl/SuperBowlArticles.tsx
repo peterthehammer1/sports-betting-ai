@@ -71,10 +71,10 @@ const ARTICLES: Article[] = [
 ];
 
 const CATEGORY_STYLES = {
-  guide: { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-200' },
-  analysis: { bg: 'bg-emerald-100', text: 'text-emerald-700', border: 'border-emerald-200' },
-  props: { bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-200' },
-  history: { bg: 'bg-amber-100', text: 'text-amber-700', border: 'border-amber-200' },
+  guide: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30' },
+  analysis: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', border: 'border-emerald-500/30' },
+  props: { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/30' },
+  history: { bg: 'bg-amber-500/20', text: 'text-amber-400', border: 'border-amber-500/30' },
 };
 
 // Full article content
@@ -312,11 +312,11 @@ export function SuperBowlArticles({ onNavigateToAnalysis }: SuperBowlArticlesPro
     const style = CATEGORY_STYLES[article.category];
     
     return (
-      <section className="py-8">
-        <div className="max-w-3xl mx-auto px-4">
+      <section className="py-6">
+        <div className="max-w-3xl mx-auto">
           <button 
             onClick={() => setSelectedArticle(null)}
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-800 mb-6 transition-colors font-medium"
+            className="flex items-center gap-2 text-slate-500 hover:text-white mb-6 transition-colors font-medium text-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -324,36 +324,36 @@ export function SuperBowlArticles({ onNavigateToAnalysis }: SuperBowlArticlesPro
             Back to All Guides
           </button>
           
-          <article className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <article className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
             {/* Article Header */}
-            <div className="p-6 sm:p-8 border-b border-slate-100">
+            <div className="p-5 sm:p-6 border-b border-slate-700">
               <div className="flex items-center gap-3 mb-4">
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${style.bg} ${style.text} border ${style.border}`}>
                   {article.category.charAt(0).toUpperCase() + article.category.slice(1)}
                 </span>
-                <span className="text-sm text-slate-400">{article.readTime}</span>
+                <span className="text-xs text-slate-500">{article.readTime}</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3 leading-tight">{article.title}</h1>
-              <p className="text-lg text-slate-600 leading-relaxed">{article.description}</p>
+              <h1 className="text-xl sm:text-2xl font-semibold text-white mb-2 leading-tight">{article.title}</h1>
+              <p className="text-sm text-slate-400 leading-relaxed">{article.description}</p>
             </div>
             
             {/* Article Content */}
-            <div className="p-6 sm:p-8">
+            <div className="p-5 sm:p-6">
               {content.sections.map((section, idx) => (
-                <div key={idx} className={idx > 0 ? 'mt-8 pt-8 border-t border-slate-100' : ''}>
-                  <h2 className="text-xl font-bold mb-4 text-slate-800">{section.title}</h2>
+                <div key={idx} className={idx > 0 ? 'mt-6 pt-6 border-t border-slate-700/50' : ''}>
+                  <h2 className="text-base font-semibold mb-3 text-white">{section.title}</h2>
                   {section.content.map((paragraph, pIdx) => (
-                    <p key={pIdx} className="text-slate-700 leading-relaxed mb-4 text-[15px]">
+                    <p key={pIdx} className="text-slate-400 leading-relaxed mb-3 text-sm">
                       {paragraph}
                     </p>
                   ))}
                   {section.tip && (
-                    <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4 mt-5">
+                    <div className="bg-amber-500/10 border-l-2 border-amber-500/50 rounded-r-lg p-4 mt-4">
                       <div className="flex items-start gap-3">
-                        <span className="text-amber-500 text-lg">💡</span>
+                        <span className="text-amber-400 text-base">💡</span>
                         <div>
-                          <span className="font-bold text-amber-800 text-sm uppercase tracking-wide">Pro Tip</span>
-                          <p className="text-slate-700 mt-1 text-[15px]">{section.tip}</p>
+                          <span className="font-semibold text-amber-400 text-xs uppercase tracking-wide">Pro Tip</span>
+                          <p className="text-slate-300 mt-1 text-sm">{section.tip}</p>
                         </div>
                       </div>
                     </div>
@@ -363,9 +363,9 @@ export function SuperBowlArticles({ onNavigateToAnalysis }: SuperBowlArticlesPro
             </div>
             
             {/* Article Footer */}
-            <div className="p-6 sm:p-8 border-t border-slate-100 bg-slate-50">
+            <div className="p-5 sm:p-6 border-t border-slate-700 bg-slate-900/30">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p className="text-sm text-slate-500">
+                <p className="text-xs text-slate-600">
                   Last updated: January 2026 • Pete&apos;s Super Bowl Coverage
                 </p>
                 <button
@@ -373,7 +373,7 @@ export function SuperBowlArticles({ onNavigateToAnalysis }: SuperBowlArticlesPro
                     setSelectedArticle(null);
                     onNavigateToAnalysis?.();
                   }}
-                  className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors shadow-sm"
+                  className="px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors"
                 >
                   Get AI Predictions →
                 </button>
@@ -390,40 +390,40 @@ export function SuperBowlArticles({ onNavigateToAnalysis }: SuperBowlArticlesPro
   const otherArticles = ARTICLES.filter(a => !a.featured);
 
   return (
-    <section className="py-8">
-      <div className="max-w-5xl mx-auto px-4">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">Super Bowl Betting Guides</h2>
-          <p className="text-slate-500">
+    <section className="py-6">
+      <div className="max-w-5xl mx-auto">
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold text-white mb-1">Super Bowl Betting Guides</h2>
+          <p className="text-slate-500 text-sm">
             Expert-written guides and analysis for Super Bowl LX
           </p>
         </div>
 
         {/* Featured Articles */}
-        <div className="grid md:grid-cols-2 gap-5 mb-6">
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
           {featuredArticles.map((article) => {
             const style = CATEGORY_STYLES[article.category];
             return (
               <button
                 key={article.id}
                 onClick={() => setSelectedArticle(article.id)}
-                className="bg-white rounded-xl border border-slate-200 p-5 text-left hover:border-slate-300 hover:shadow-md transition-all group"
+                className="bg-slate-800/50 rounded-xl border border-slate-700 p-4 text-left hover:border-slate-600 transition-all group"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-slate-700 flex items-center justify-center text-xl flex-shrink-0">
                     {article.icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className={`px-2 py-0.5 rounded text-xs font-semibold ${style.bg} ${style.text} border ${style.border}`}>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${style.bg} ${style.text} border ${style.border}`}>
                         Featured
                       </span>
-                      <span className="text-xs text-slate-400">{article.readTime}</span>
+                      <span className="text-[10px] text-slate-500">{article.readTime}</span>
                     </div>
-                    <h3 className="text-base font-bold text-slate-800 group-hover:text-blue-600 transition-colors mb-1.5 leading-snug">
+                    <h3 className="text-sm font-semibold text-white group-hover:text-slate-300 transition-colors mb-1 leading-snug">
                       {article.title}
                     </h3>
-                    <p className="text-sm text-slate-500 line-clamp-2">{article.description}</p>
+                    <p className="text-xs text-slate-500 line-clamp-2">{article.description}</p>
                   </div>
                 </div>
               </button>
@@ -432,25 +432,25 @@ export function SuperBowlArticles({ onNavigateToAnalysis }: SuperBowlArticlesPro
         </div>
 
         {/* Other Articles */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {otherArticles.map((article) => {
             const style = CATEGORY_STYLES[article.category];
             return (
               <button
                 key={article.id}
                 onClick={() => setSelectedArticle(article.id)}
-                className="bg-white rounded-xl border border-slate-200 p-4 text-left hover:border-slate-300 hover:shadow-sm transition-all group"
+                className="bg-slate-800/50 rounded-xl border border-slate-700 p-4 text-left hover:border-slate-600 transition-all group"
               >
-                <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-xl mb-3">
+                <div className="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center text-base mb-3">
                   {article.icon}
                 </div>
-                <span className={`px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text} border ${style.border}`}>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${style.bg} ${style.text} border ${style.border}`}>
                   {article.category}
                 </span>
-                <h3 className="text-sm font-semibold text-slate-800 mt-2 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                <h3 className="text-xs font-semibold text-white mt-2 group-hover:text-slate-300 transition-colors line-clamp-2 leading-snug">
                   {article.title}
                 </h3>
-                <span className="text-xs text-slate-400 mt-2 block">{article.readTime}</span>
+                <span className="text-[10px] text-slate-600 mt-2 block">{article.readTime}</span>
               </button>
             );
           })}
