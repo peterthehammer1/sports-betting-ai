@@ -42,12 +42,9 @@ export function RecentPicksScroller({ className = '' }: RecentPicksScrollerProps
 
   if (loading) {
     return (
-      <div className={`bg-slate-800/50 rounded-xl border border-slate-700 p-4 ${className}`}>
+      <div className={`bg-[#161b22] rounded border border-slate-800 p-4 ${className}`}>
         <div className="flex items-center justify-center py-8">
-          <div className="relative w-5 h-5">
-            <div className="absolute inset-0 rounded-full border-2 border-slate-600" />
-            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-emerald-500 animate-spin" />
-          </div>
+          <div className="w-4 h-4 border-2 border-slate-700 border-t-slate-400 rounded-full animate-spin" />
         </div>
       </div>
     );
@@ -58,132 +55,126 @@ export function RecentPicksScroller({ className = '' }: RecentPicksScrollerProps
   const recentTotal = settledPicks.length;
 
   return (
-    <div className={`bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden ${className}`}>
-      {/* Header with Stats */}
-      <div className="bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 px-4 py-3 border-b border-slate-700">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-            <span className="text-lg">🔥</span>
-            Live Results
+    <div className={`bg-[#161b22] rounded border border-slate-800 overflow-hidden ${className}`}>
+      {/* Header - ESPN Style */}
+      <div className="bg-[#1a1f26] px-3 py-2 border-b border-slate-800">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-semibold text-white uppercase tracking-wide">
+            Pick Results
           </h3>
-          {stats?.currentStreak && stats.currentStreak.type !== 'none' && (
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-              stats.currentStreak.type === 'W' 
-                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                : 'bg-red-500/20 text-red-400 border border-red-500/30'
+          {stats?.currentStreak && stats.currentStreak.type !== 'none' && stats.currentStreak.count >= 3 && (
+            <span className={`text-[10px] font-semibold ${
+              stats.currentStreak.type === 'W' ? 'text-green-500' : 'text-red-500'
             }`}>
-              {stats.currentStreak.count}{stats.currentStreak.type} Streak
+              {stats.currentStreak.count}{stats.currentStreak.type}
             </span>
           )}
         </div>
-        
-        {/* Win Rate Display */}
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-emerald-400">{stats?.winRate.toFixed(1)}%</span>
-              <span className="text-xs text-slate-500">Win Rate</span>
+      </div>
+
+      {/* Stats Bar */}
+      <div className="px-3 py-2 border-b border-slate-800 bg-[#1a1f26]/50">
+        <div className="flex items-center justify-between text-[11px]">
+          <div className="flex items-center gap-3">
+            <div>
+              <span className="text-slate-500">Record</span>
+              <span className="ml-1.5 font-semibold text-white">{stats?.wins}-{stats?.losses}</span>
             </div>
-            <div className="mt-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full transition-all duration-500"
-                style={{ width: `${stats?.winRate || 0}%` }}
-              />
+            <div>
+              <span className="text-slate-500">Win%</span>
+              <span className={`ml-1.5 font-semibold ${(stats?.winRate || 0) >= 55 ? 'text-green-500' : 'text-white'}`}>
+                {stats?.winRate.toFixed(1)}%
+              </span>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-lg font-bold text-white">{stats?.wins}-{stats?.losses}</p>
-            <p className={`text-xs font-mono font-semibold ${(stats?.netUnits || 0) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-              {(stats?.netUnits || 0) >= 0 ? '+' : ''}{stats?.netUnits.toFixed(1)}u
-            </p>
+          <div>
+            <span className="text-slate-500">Units</span>
+            <span className={`ml-1.5 font-semibold font-mono ${(stats?.netUnits || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+              {(stats?.netUnits || 0) >= 0 ? '+' : ''}{stats?.netUnits.toFixed(0)}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Scrolling Picks List */}
-      <div className="max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
-        <div className="divide-y divide-slate-700/50">
-          {picks.map((pick, idx) => (
-            <PickResultRow key={pick.id} pick={pick} index={idx} />
+      {/* Picks List */}
+      <div className="max-h-[450px] overflow-y-auto">
+        <div className="divide-y divide-slate-800/50">
+          {picks.map((pick) => (
+            <PickResultRow key={pick.id} pick={pick} />
           ))}
         </div>
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-2 bg-slate-900/30 border-t border-slate-700/50">
+      <div className="px-3 py-1.5 bg-[#1a1f26] border-t border-slate-800">
         <p className="text-[10px] text-slate-600 text-center">
-          Recent {recentTotal} settled: {recentWins}W-{recentTotal - recentWins}L • Updated live
+          {recentTotal} settled • {recentWins}W-{recentTotal - recentWins}L
         </p>
       </div>
     </div>
   );
 }
 
-function PickResultRow({ pick, index }: { pick: TrackedPick; index: number }) {
+function PickResultRow({ pick }: { pick: TrackedPick }) {
   const isPending = pick.status === 'pending';
   const isWin = pick.status === 'won';
   const isLoss = pick.status === 'lost';
   const isPush = pick.status === 'push';
 
-  const statusConfig = {
-    won: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', icon: '✓', iconBg: 'bg-emerald-500', text: 'text-emerald-400' },
-    lost: { bg: 'bg-red-500/10', border: 'border-red-500/30', icon: '✗', iconBg: 'bg-red-500', text: 'text-red-400' },
-    push: { bg: 'bg-slate-500/10', border: 'border-slate-500/30', icon: '−', iconBg: 'bg-slate-500', text: 'text-slate-400' },
-    pending: { bg: 'bg-amber-500/5', border: 'border-amber-500/20', icon: '⏳', iconBg: 'bg-amber-500/20', text: 'text-amber-400' },
-    void: { bg: 'bg-slate-500/10', border: 'border-slate-500/30', icon: '−', iconBg: 'bg-slate-500', text: 'text-slate-400' },
-  };
-
-  const config = statusConfig[pick.status] || statusConfig.pending;
   const gameDate = new Date(pick.gameTime);
   const isToday = new Date().toDateString() === gameDate.toDateString();
-
-  const sportEmoji = pick.sport === 'NHL' ? '🏒' : pick.sport === 'NBA' ? '🏀' : pick.sport === 'NFL' ? '🏈' : '⚽';
+  
+  // Short team names
+  const awayShort = pick.awayTeam.split(' ').pop() || pick.awayTeam;
+  const homeShort = pick.homeTeam.split(' ').pop() || pick.homeTeam;
 
   return (
-    <div className={`px-3 py-2.5 ${config.bg} hover:bg-white/[0.02] transition-colors`}>
-      <div className="flex items-start gap-2.5">
-        {/* Status Icon */}
-        <div className={`w-6 h-6 rounded-full ${config.iconBg} flex items-center justify-center flex-shrink-0 mt-0.5`}>
-          <span className="text-white text-xs">{config.icon}</span>
-        </div>
-
-        {/* Pick Details */}
+    <div className={`px-3 py-2 hover:bg-slate-800/30 transition-colors ${
+      isWin ? 'border-l-2 border-l-green-500' : 
+      isLoss ? 'border-l-2 border-l-red-500' : 
+      isPush ? 'border-l-2 border-l-slate-500' :
+      'border-l-2 border-l-amber-500/50'
+    }`}>
+      <div className="flex items-start justify-between gap-2">
+        {/* Left - Game & Pick Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 mb-0.5">
-            <span className="text-sm">{sportEmoji}</span>
-            <p className={`font-medium text-sm truncate ${isWin ? 'text-emerald-400' : isLoss ? 'text-red-400' : 'text-white'}`}>
-              {pick.pick}
-            </p>
+          {/* Matchup */}
+          <div className="flex items-center gap-1.5 text-[11px]">
+            <span className="text-slate-500">{pick.sport}</span>
+            <span className="text-slate-600">•</span>
+            <span className="text-slate-400">{awayShort} @ {homeShort}</span>
           </div>
-          <p className="text-[10px] text-slate-500 truncate">
-            {pick.awayTeam} @ {pick.homeTeam}
+          
+          {/* Pick */}
+          <p className={`text-xs font-medium mt-0.5 truncate ${
+            isWin ? 'text-green-500' : isLoss ? 'text-red-500' : isPush ? 'text-slate-400' : 'text-white'
+          }`}>
+            {pick.pick}
           </p>
-          <div className="flex items-center gap-2 mt-1">
-            <span className={`text-[10px] px-1.5 py-0.5 rounded ${config.border} border ${config.text}`}>
-              {pick.status.toUpperCase()}
-            </span>
-            <span className="text-[10px] text-slate-600">
-              {isToday ? 'Today' : gameDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-            </span>
+          
+          {/* Score & Date */}
+          <div className="flex items-center gap-2 mt-0.5 text-[10px] text-slate-600">
             {pick.result?.actualScore && (
-              <span className="text-[10px] text-slate-500">
-                Final: {pick.result.actualScore.away}-{pick.result.actualScore.home}
+              <span className="font-mono">
+                {pick.result.actualScore.away}-{pick.result.actualScore.home}
               </span>
             )}
+            <span>
+              {isToday ? 'Today' : gameDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+            </span>
           </div>
         </div>
 
-        {/* Odds & Result */}
+        {/* Right - Result & Odds */}
         <div className="text-right flex-shrink-0">
-          <p className={`font-mono text-xs font-semibold ${pick.odds > 0 ? 'text-emerald-400' : 'text-slate-400'}`}>
+          <div className={`text-xs font-semibold ${
+            isWin ? 'text-green-500' : isLoss ? 'text-red-500' : isPush ? 'text-slate-500' : 'text-amber-500'
+          }`}>
+            {isWin ? 'W' : isLoss ? 'L' : isPush ? 'P' : 'PEND'}
+          </div>
+          <div className="text-[10px] text-slate-500 font-mono">
             {pick.odds > 0 ? '+' : ''}{pick.odds}
-          </p>
-          {!isPending && (
-            <p className={`text-[10px] font-semibold mt-0.5 ${isWin ? 'text-emerald-400' : isLoss ? 'text-red-400' : 'text-slate-400'}`}>
-              {isWin ? '+1.0u' : isLoss ? '-1.0u' : '0u'}
-            </p>
-          )}
-          <p className="text-[10px] text-slate-600 mt-0.5">{pick.confidence}%</p>
+          </div>
         </div>
       </div>
     </div>
