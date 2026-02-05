@@ -16,6 +16,7 @@ import { SuperBowlCard } from '@/components/superbowl/SuperBowlCard';
 import { SuperBowlLanding } from '@/components/superbowl/SuperBowlLanding';
 import { PerformanceDashboard } from '@/components/tracker/PerformanceDashboard';
 import { OddsMovementChart } from '@/components/tracker/OddsMovementChart';
+import { RecentPicksScroller } from '@/components/tracker/RecentPicksScroller';
 import { InjuryReport } from '@/components/injuries/InjuryReport';
 import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
 import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
@@ -510,7 +511,11 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className={view === 'landing' ? '' : 'max-w-6xl mx-auto px-4 py-6 sm:px-6'}>
+      <main className={view === 'landing' ? '' : 'max-w-7xl mx-auto px-4 py-6 sm:px-6'}>
+        {/* Two-column layout for desktop */}
+        <div className={view === 'landing' ? '' : 'flex gap-6'}>
+          {/* Main content area */}
+          <div className={view === 'landing' ? '' : 'flex-1 min-w-0'}>
         {/* Error State - Modern glass card */}
         {error && view !== 'landing' && (
           <div className="mb-6 glass-card p-4 rounded-xl animate-slide-up border-l-4 border-red-500">
@@ -816,6 +821,17 @@ export default function Dashboard() {
             </p>
           </div>
         )}
+          </div>
+          
+          {/* Sidebar with Recent Picks Scroller - Hidden on mobile & landing */}
+          {view !== 'landing' && (
+            <aside className="hidden lg:block w-80 flex-shrink-0">
+              <div className="sticky top-24">
+                <RecentPicksScroller />
+              </div>
+            </aside>
+          )}
+        </div>
       </main>
 
       {/* Footer - hide on landing page which has its own footer */}
