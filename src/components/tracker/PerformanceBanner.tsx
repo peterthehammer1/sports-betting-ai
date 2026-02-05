@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import type { TrackedPick } from '@/types/tracker';
+import { getTeamLogoUrl } from '@/lib/utils/teamLogos';
 
 interface PerformanceBannerProps {
   className?: string;
@@ -151,32 +153,42 @@ export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
         </div>
       </div>
 
-      {/* Bottom Bar - Live Scores & Recent Results */}
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex items-stretch py-1.5 gap-4 overflow-x-auto">
-          {/* Live Scores Section */}
-          {liveScores.length > 0 && (
-            <div className="flex items-center gap-3 pr-4 border-r border-slate-700">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
-                <span className="text-[10px] text-slate-500 uppercase tracking-wide">Live</span>
-              </span>
+      {/* Bottom Bar - Live Scores Ticker */}
+      <div className="border-t border-slate-800/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-stretch overflow-x-auto scrollbar-hide">
+            {/* Scores Label */}
+            <div className="flex items-center px-4 py-2 border-r border-slate-700 bg-slate-800/30 flex-shrink-0">
               <div className="flex items-center gap-2">
-                {liveScores.slice(0, 4).map((score) => (
-                  <ScoreChip key={score.id} score={score} />
-                ))}
+                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                <span className="text-xs font-semibold text-white uppercase tracking-wide">Scores</span>
               </div>
             </div>
-          )}
-
-          {/* Recent Picks Results */}
-          <div className="flex items-center gap-3 flex-1">
-            <span className="text-[10px] text-slate-500 uppercase tracking-wide whitespace-nowrap">Recent Picks</span>
-            <div className="flex items-center gap-1.5">
-              {recentPicks.map((pick) => (
-                <RecentPickChip key={pick.id} pick={pick} />
-              ))}
+            
+            {/* Score Cards */}
+            <div className="flex items-stretch divide-x divide-slate-700/50">
+              {liveScores.length > 0 ? (
+                liveScores.map((score) => (
+                  <ScoreCard key={score.id} score={score} />
+                ))
+              ) : (
+                <div className="flex items-center px-6 py-3">
+                  <span className="text-xs text-slate-500">No games in progress</span>
+                </div>
+              )}
             </div>
+
+            {/* Recent Picks (compact) */}
+            {recentPicks.length > 0 && (
+              <div className="flex items-center gap-2 px-4 py-2 border-l border-slate-700 bg-slate-800/30 flex-shrink-0 ml-auto">
+                <span className="text-[10px] text-slate-500 uppercase tracking-wide">Recent</span>
+                <div className="flex items-center gap-1">
+                  {recentPicks.slice(0, 5).map((pick) => (
+                    <RecentPickChip key={pick.id} pick={pick} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -213,35 +225,100 @@ function Divider({ className = '' }: { className?: string }) {
   return <div className={`w-px h-4 bg-slate-700 ${className}`} />;
 }
 
-function ScoreChip({ score }: { score: LiveScore }) {
+function ScoreCard({ score }: { score: LiveScore }) {
   const isLive = score.status === 'live';
   const isFinal = score.status === 'final';
+  const awayWinning = score.awayScore > score.homeScore;
+  const homeWinning = score.homeScore > score.awayScore;
   
-  // Get short team names
-  const homeShort = score.homeTeam.split(' ').pop() || score.homeTeam;
+  // Get sport type for logo lookup
+  const sportType = score.sport === 'NHL' ? 'NHL' : 
+                    score.sport === 'NBA' ? 'NBA' : 
+                    score.sport === 'NFL' ? 'NFL' : 
+                    score.sport === 'MLB' ? 'MLB' : 'NHL';
+  
+  // Get logos
+  const awayLogo = getTeamLogoUrl(score.awayTeam, sportType as 'NHL' | 'NBA' | 'MLB' | 'NFL' | 'EPL');
+  const homeLogo = getTeamLogoUrl(score.homeTeam, sportType as 'NHL' | 'NBA' | 'MLB' | 'NFL' | 'EPL');
+  
+  // Get short team names (last word is usually the team name)
   const awayShort = score.awayTeam.split(' ').pop() || score.awayTeam;
+  const homeShort = score.homeTeam.split(' ').pop() || score.homeTeam;
+
+  // Format game time for scheduled games
+  const gameTimeStr = score.startTime ? new Date(score.startTime).toLocaleTimeString([], { 
+    hour: 'numeric', 
+    minute: '2-digit' 
+  }) : '';
 
   return (
-    <div className="flex items-center gap-2 px-2 py-1 bg-slate-800/50 rounded text-[10px] whitespace-nowrap">
-      <div className="flex items-center gap-1">
-        <span className="text-slate-400">{awayShort}</span>
-        <span className={`font-mono font-semibold ${score.awayScore > score.homeScore ? 'text-white' : 'text-slate-500'}`}>
+    <div className="flex flex-col px-4 py-2 min-w-[140px] hover:bg-slate-800/30 transition-colors cursor-pointer">
+      {/* Status */}
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-[10px] font-medium text-slate-500 uppercase">{score.sport}</span>
+        {isLive && (
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+            <span className="text-[10px] font-semibold text-red-500 uppercase">{score.period || 'LIVE'}</span>
+          </span>
+        )}
+        {isFinal && (
+          <span className="text-[10px] font-medium text-slate-500">Final</span>
+        )}
+        {score.status === 'scheduled' && (
+          <span className="text-[10px] text-slate-500">{gameTimeStr}</span>
+        )}
+      </div>
+      
+      {/* Away Team */}
+      <div className={`flex items-center justify-between gap-2 ${isFinal && !awayWinning ? 'opacity-60' : ''}`}>
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <TeamLogo url={awayLogo} teamName={score.awayTeam} />
+          <span className={`text-xs font-medium truncate ${awayWinning ? 'text-white' : 'text-slate-400'}`}>
+            {awayShort}
+          </span>
+        </div>
+        <span className={`text-sm font-bold font-mono tabular-nums ${awayWinning ? 'text-white' : 'text-slate-400'}`}>
           {score.awayScore}
         </span>
       </div>
-      <span className="text-slate-600">-</span>
-      <div className="flex items-center gap-1">
-        <span className={`font-mono font-semibold ${score.homeScore > score.awayScore ? 'text-white' : 'text-slate-500'}`}>
+      
+      {/* Home Team */}
+      <div className={`flex items-center justify-between gap-2 mt-1 ${isFinal && !homeWinning ? 'opacity-60' : ''}`}>
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <TeamLogo url={homeLogo} teamName={score.homeTeam} />
+          <span className={`text-xs font-medium truncate ${homeWinning ? 'text-white' : 'text-slate-400'}`}>
+            {homeShort}
+          </span>
+        </div>
+        <span className={`text-sm font-bold font-mono tabular-nums ${homeWinning ? 'text-white' : 'text-slate-400'}`}>
           {score.homeScore}
         </span>
-        <span className="text-slate-400">{homeShort}</span>
       </div>
-      {isLive && (
-        <span className="text-[8px] text-red-500 font-semibold uppercase">{score.period || 'LIVE'}</span>
-      )}
-      {isFinal && (
-        <span className="text-[8px] text-slate-600 uppercase">F</span>
-      )}
+    </div>
+  );
+}
+
+// Mini team logo for score cards
+function TeamLogo({ url, teamName }: { url: string | null; teamName: string }) {
+  if (!url) {
+    const initials = teamName.split(' ').map(w => w[0]).join('').substring(0, 2);
+    return (
+      <div className="w-5 h-5 rounded bg-slate-700 flex items-center justify-center flex-shrink-0">
+        <span className="text-[8px] font-semibold text-slate-400">{initials}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-5 h-5 rounded relative flex-shrink-0 bg-slate-800">
+      <Image
+        src={url}
+        alt={teamName}
+        fill
+        className="object-contain p-0.5"
+        unoptimized
+      />
     </div>
   );
 }
