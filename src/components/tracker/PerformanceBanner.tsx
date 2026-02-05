@@ -21,6 +21,14 @@ interface LiveScore {
   startTime?: string;
 }
 
+interface GameAnalysis {
+  winnerPick?: string;
+  winnerConfidence?: number;
+  bestBet?: { type: string; pick: string; confidence: number };
+  quickTake?: string;
+  loading?: boolean;
+}
+
 export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
   const [stats, setStats] = useState<{
     winRate: number;
@@ -33,6 +41,8 @@ export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
   const [recentPicks, setRecentPicks] = useState<TrackedPick[]>([]);
   const [liveScores, setLiveScores] = useState<LiveScore[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedGame, setSelectedGame] = useState<LiveScore | null>(null);
+  const [gameAnalysis, setGameAnalysis] = useState<GameAnalysis | null>(null);
 
   useEffect(() => {
     fetchStats();
@@ -41,6 +51,60 @@ export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
     const interval = setInterval(fetchLiveScores, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // Fetch AI analysis when a game is selected
+  const fetchAnalysis = async (game: LiveScore) => {
+    if (game.status === 'final') {
+      // For completed games, just show the result
+      setGameAnalysis(null);
+      return;
+    }
+    
+    setGameAnalysis({ loading: true });
+    try {
+      // Use the batch analysis endpoint to get quick picks
+      const res = await fetch('/api/analyze/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          sport: game.sport,
+          gameId: game.id 
+        }),
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        // Find the prediction for this specific game
+        const prediction = data.predictions?.find((p: { gameId?: string; homeTeam?: string }) => 
+          p.gameId === game.id || p.homeTeam === game.homeTeam
+        );
+        
+        if (prediction) {
+          setGameAnalysis({
+            winnerPick: prediction.winnerPick,
+            winnerConfidence: prediction.winnerConfidence,
+            bestBet: prediction.bestBet,
+            quickTake: prediction.quickTake,
+          });
+        } else {
+          setGameAnalysis(null);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch analysis:', error);
+      setGameAnalysis(null);
+    }
+  };
+
+  const handleGameClick = (game: LiveScore) => {
+    setSelectedGame(game);
+    fetchAnalysis(game);
+  };
+
+  const closeModal = () => {
+    setSelectedGame(null);
+    setGameAnalysis(null);
+  };
 
   const fetchStats = async () => {
     try {
@@ -169,7 +233,7 @@ export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
             <div className="flex items-stretch divide-x divide-slate-700/50">
               {liveScores.length > 0 ? (
                 liveScores.map((score) => (
-                  <ScoreCard key={score.id} score={score} />
+                  <ScoreCard key={score.id} score={score} onClick={() => handleGameClick(score)} />
                 ))
               ) : (
                 <div className="flex items-center px-6 py-3">
@@ -192,6 +256,15 @@ export function PerformanceBanner({ className = '' }: PerformanceBannerProps) {
           </div>
         </div>
       </div>
+
+      {/* Game Detail Modal */}
+      {selectedGame && (
+        <GameDetailModal 
+          game={selectedGame} 
+          analysis={gameAnalysis}
+          onClose={closeModal} 
+        />
+      )}
     </div>
   );
 }
@@ -225,9 +298,10 @@ function Divider({ className = '' }: { className?: string }) {
   return <div className={`w-px h-4 bg-slate-700 ${className}`} />;
 }
 
-function ScoreCard({ score }: { score: LiveScore }) {
+function ScoreCard({ score, onClick }: { score: LiveScore; onClick: () => void }) {
   const isLive = score.status === 'live';
   const isFinal = score.status === 'final';
+  const isScheduled = score.status === 'scheduled';
   const awayWinning = score.awayScore > score.homeScore;
   const homeWinning = score.homeScore > score.awayScore;
   
@@ -240,78 +314,104 @@ function ScoreCard({ score }: { score: LiveScore }) {
   // Get logos
   const awayLogo = getTeamLogoUrl(score.awayTeam, sportType as 'NHL' | 'NBA' | 'MLB' | 'NFL' | 'EPL');
   const homeLogo = getTeamLogoUrl(score.homeTeam, sportType as 'NHL' | 'NBA' | 'MLB' | 'NFL' | 'EPL');
-  
-  // Get short team names (last word is usually the team name)
-  const awayShort = score.awayTeam.split(' ').pop() || score.awayTeam;
-  const homeShort = score.homeTeam.split(' ').pop() || score.homeTeam;
 
   // Format game time for scheduled games
-  const gameTimeStr = score.startTime ? new Date(score.startTime).toLocaleTimeString([], { 
+  const gameTime = score.startTime ? new Date(score.startTime) : null;
+  const gameTimeStr = gameTime ? gameTime.toLocaleTimeString([], { 
     hour: 'numeric', 
     minute: '2-digit' 
   }) : '';
+  const gameDateStr = gameTime ? gameTime.toLocaleDateString([], {
+    month: 'short',
+    day: 'numeric'
+  }) : '';
 
   return (
-    <div className="flex flex-col px-4 py-2 min-w-[140px] hover:bg-slate-800/30 transition-colors cursor-pointer">
-      {/* Status */}
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-[10px] font-medium text-slate-500 uppercase">{score.sport}</span>
+    <div 
+      className="flex flex-col px-4 py-2.5 min-w-[180px] hover:bg-slate-800/50 transition-colors cursor-pointer"
+      onClick={onClick}
+    >
+      {/* Status Header */}
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">{score.sport}</span>
         {isLive && (
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1 px-1.5 py-0.5 bg-red-500/10 rounded">
             <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-[10px] font-semibold text-red-500 uppercase">{score.period || 'LIVE'}</span>
+            <span className="text-[10px] font-bold text-red-500 uppercase">{score.period || 'LIVE'}</span>
           </span>
         )}
         {isFinal && (
-          <span className="text-[10px] font-medium text-slate-500">Final</span>
+          <span className="text-[10px] font-semibold text-slate-400 px-1.5 py-0.5 bg-slate-800 rounded">Final</span>
         )}
-        {score.status === 'scheduled' && (
-          <span className="text-[10px] text-slate-500">{gameTimeStr}</span>
+        {isScheduled && (
+          <span className="text-[10px] text-slate-400">{gameDateStr} {gameTimeStr}</span>
         )}
       </div>
       
       {/* Away Team */}
-      <div className={`flex items-center justify-between gap-2 ${isFinal && !awayWinning ? 'opacity-60' : ''}`}>
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <TeamLogo url={awayLogo} teamName={score.awayTeam} />
-          <span className={`text-xs font-medium truncate ${awayWinning ? 'text-white' : 'text-slate-400'}`}>
-            {awayShort}
+      <div className={`flex items-center justify-between gap-3 ${isFinal && !awayWinning ? 'opacity-50' : ''}`}>
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          <TeamLogo url={awayLogo} teamName={score.awayTeam} size="md" />
+          <span className={`text-sm font-medium truncate ${awayWinning || isScheduled || isLive ? 'text-white' : 'text-slate-400'}`}>
+            {score.awayTeam}
           </span>
         </div>
-        <span className={`text-sm font-bold font-mono tabular-nums ${awayWinning ? 'text-white' : 'text-slate-400'}`}>
-          {score.awayScore}
-        </span>
+        {!isScheduled && (
+          <span className={`text-base font-bold font-mono tabular-nums ${awayWinning ? 'text-white' : 'text-slate-400'}`}>
+            {score.awayScore}
+          </span>
+        )}
       </div>
       
       {/* Home Team */}
-      <div className={`flex items-center justify-between gap-2 mt-1 ${isFinal && !homeWinning ? 'opacity-60' : ''}`}>
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <TeamLogo url={homeLogo} teamName={score.homeTeam} />
-          <span className={`text-xs font-medium truncate ${homeWinning ? 'text-white' : 'text-slate-400'}`}>
-            {homeShort}
+      <div className={`flex items-center justify-between gap-3 mt-1.5 ${isFinal && !homeWinning ? 'opacity-50' : ''}`}>
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          <TeamLogo url={homeLogo} teamName={score.homeTeam} size="md" />
+          <span className={`text-sm font-medium truncate ${homeWinning || isScheduled || isLive ? 'text-white' : 'text-slate-400'}`}>
+            {score.homeTeam}
           </span>
         </div>
-        <span className={`text-sm font-bold font-mono tabular-nums ${homeWinning ? 'text-white' : 'text-slate-400'}`}>
-          {score.homeScore}
+        {!isScheduled && (
+          <span className={`text-base font-bold font-mono tabular-nums ${homeWinning ? 'text-white' : 'text-slate-400'}`}>
+            {score.homeScore}
+          </span>
+        )}
+      </div>
+
+      {/* Click hint */}
+      <div className="mt-2 pt-1.5 border-t border-slate-700/50">
+        <span className="text-[9px] text-slate-500 uppercase tracking-wide">
+          {isScheduled ? 'Click for AI Analysis →' : 'Click for Details →'}
         </span>
       </div>
     </div>
   );
 }
 
-// Mini team logo for score cards
-function TeamLogo({ url, teamName }: { url: string | null; teamName: string }) {
+// Team logo component with size variants
+function TeamLogo({ url, teamName, size = 'sm' }: { url: string | null; teamName: string; size?: 'sm' | 'md' | 'lg' }) {
+  const sizeClasses = {
+    sm: 'w-5 h-5',
+    md: 'w-6 h-6',
+    lg: 'w-12 h-12',
+  };
+  const textSizes = {
+    sm: 'text-[8px]',
+    md: 'text-[10px]',
+    lg: 'text-sm',
+  };
+  
   if (!url) {
     const initials = teamName.split(' ').map(w => w[0]).join('').substring(0, 2);
     return (
-      <div className="w-5 h-5 rounded bg-slate-700 flex items-center justify-center flex-shrink-0">
-        <span className="text-[8px] font-semibold text-slate-400">{initials}</span>
+      <div className={`${sizeClasses[size]} rounded bg-slate-700 flex items-center justify-center flex-shrink-0`}>
+        <span className={`${textSizes[size]} font-semibold text-slate-400`}>{initials}</span>
       </div>
     );
   }
 
   return (
-    <div className="w-5 h-5 rounded relative flex-shrink-0 bg-slate-800">
+    <div className={`${sizeClasses[size]} rounded relative flex-shrink-0 bg-slate-800`}>
       <Image
         src={url}
         alt={teamName}
@@ -319,6 +419,215 @@ function TeamLogo({ url, teamName }: { url: string | null; teamName: string }) {
         className="object-contain p-0.5"
         unoptimized
       />
+    </div>
+  );
+}
+
+// Game Detail Modal
+function GameDetailModal({ 
+  game, 
+  analysis,
+  onClose 
+}: { 
+  game: LiveScore; 
+  analysis: GameAnalysis | null;
+  onClose: () => void;
+}) {
+  const isLive = game.status === 'live';
+  const isFinal = game.status === 'final';
+  const isScheduled = game.status === 'scheduled';
+  const awayWinning = game.awayScore > game.homeScore;
+  const homeWinning = game.homeScore > game.awayScore;
+  
+  // Get sport type for logo lookup
+  const sportType = game.sport === 'NHL' ? 'NHL' : 
+                    game.sport === 'NBA' ? 'NBA' : 
+                    game.sport === 'NFL' ? 'NFL' : 
+                    game.sport === 'MLB' ? 'MLB' : 'NHL';
+  
+  const awayLogo = getTeamLogoUrl(game.awayTeam, sportType as 'NHL' | 'NBA' | 'MLB' | 'NFL' | 'EPL');
+  const homeLogo = getTeamLogoUrl(game.homeTeam, sportType as 'NHL' | 'NBA' | 'MLB' | 'NFL' | 'EPL');
+  
+  // Format game time
+  const gameTime = game.startTime ? new Date(game.startTime) : null;
+  const gameTimeStr = gameTime ? gameTime.toLocaleTimeString([], { 
+    hour: 'numeric', 
+    minute: '2-digit' 
+  }) : '';
+  const gameDateStr = gameTime ? gameTime.toLocaleDateString([], {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric'
+  }) : '';
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-[#161b22] border border-slate-700 rounded-lg max-w-lg w-full shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-3 border-b border-slate-700">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-white">{game.sport}</span>
+            {isLive && (
+              <span className="flex items-center gap-1.5 px-2 py-0.5 bg-red-500/10 rounded text-xs font-semibold text-red-500">
+                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                {game.period || 'LIVE'}
+              </span>
+            )}
+            {isFinal && (
+              <span className="px-2 py-0.5 bg-slate-800 rounded text-xs font-semibold text-slate-400">Final</span>
+            )}
+            {isScheduled && (
+              <span className="text-xs text-slate-400">{gameDateStr} • {gameTimeStr}</span>
+            )}
+          </div>
+          <button 
+            onClick={onClose}
+            className="text-slate-500 hover:text-white p-1 hover:bg-slate-700 rounded transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Matchup */}
+        <div className="px-5 py-6">
+          <div className="flex items-center justify-between gap-4">
+            {/* Away Team */}
+            <div className={`flex-1 text-center ${isFinal && !awayWinning ? 'opacity-50' : ''}`}>
+              <div className="flex justify-center mb-3">
+                <TeamLogo url={awayLogo} teamName={game.awayTeam} size="lg" />
+              </div>
+              <p className={`text-lg font-bold ${awayWinning || isScheduled ? 'text-white' : 'text-slate-400'}`}>
+                {game.awayTeam}
+              </p>
+              {!isScheduled && (
+                <p className={`text-4xl font-bold font-mono mt-2 ${awayWinning ? 'text-white' : 'text-slate-500'}`}>
+                  {game.awayScore}
+                </p>
+              )}
+            </div>
+
+            {/* VS / Score divider */}
+            <div className="flex-shrink-0 text-center px-4">
+              {isScheduled ? (
+                <div>
+                  <p className="text-2xl font-bold text-slate-600">VS</p>
+                  <p className="text-xs text-slate-500 mt-1">{gameTimeStr}</p>
+                </div>
+              ) : (
+                <p className="text-slate-600 text-sm font-medium">—</p>
+              )}
+            </div>
+
+            {/* Home Team */}
+            <div className={`flex-1 text-center ${isFinal && !homeWinning ? 'opacity-50' : ''}`}>
+              <div className="flex justify-center mb-3">
+                <TeamLogo url={homeLogo} teamName={game.homeTeam} size="lg" />
+              </div>
+              <p className={`text-lg font-bold ${homeWinning || isScheduled ? 'text-white' : 'text-slate-400'}`}>
+                {game.homeTeam}
+              </p>
+              {!isScheduled && (
+                <p className={`text-4xl font-bold font-mono mt-2 ${homeWinning ? 'text-white' : 'text-slate-500'}`}>
+                  {game.homeScore}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* AI Analysis Section - Only for scheduled/live games */}
+        {(isScheduled || isLive) && (
+          <div className="px-5 py-4 border-t border-slate-700 bg-slate-800/30">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">🤖</span>
+              <h3 className="text-sm font-semibold text-white">AI Analysis</h3>
+            </div>
+            
+            {analysis?.loading ? (
+              <div className="flex items-center gap-3 py-4">
+                <div className="w-5 h-5 border-2 border-slate-600 border-t-slate-400 rounded-full animate-spin" />
+                <span className="text-sm text-slate-400">Generating analysis...</span>
+              </div>
+            ) : analysis ? (
+              <div className="space-y-3">
+                {/* Winner Pick */}
+                {analysis.winnerPick && (
+                  <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
+                    <span className="text-sm text-slate-400">Predicted Winner</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-white">{analysis.winnerPick}</span>
+                      {analysis.winnerConfidence && (
+                        <span className="text-xs font-medium text-green-500">
+                          {analysis.winnerConfidence}% conf
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Best Bet */}
+                {analysis.bestBet && (
+                  <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                    <p className="text-xs text-green-500 font-semibold uppercase mb-1">Best Bet</p>
+                    <p className="text-sm font-bold text-white">{analysis.bestBet.pick}</p>
+                    <p className="text-xs text-slate-400 mt-1">{analysis.bestBet.type}</p>
+                  </div>
+                )}
+                
+                {/* Quick Take */}
+                {analysis.quickTake && (
+                  <div className="p-3 bg-slate-800 rounded-lg">
+                    <p className="text-xs text-slate-500 uppercase mb-1">Quick Take</p>
+                    <p className="text-sm text-slate-300">{analysis.quickTake}</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500 py-2">
+                Analysis not available for this game.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Final Game Summary - For completed games */}
+        {isFinal && (
+          <div className="px-5 py-4 border-t border-slate-700 bg-slate-800/30">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-500 uppercase">Final Score</p>
+                <p className="text-lg font-bold text-white mt-1">
+                  {game.awayTeam} {game.awayScore} - {game.homeScore} {game.homeTeam}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-slate-500 uppercase">Winner</p>
+                <p className="text-lg font-bold text-green-500 mt-1">
+                  {awayWinning ? game.awayTeam : homeWinning ? game.homeTeam : 'Tie'}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="px-5 py-3 border-t border-slate-700 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
