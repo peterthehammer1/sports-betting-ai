@@ -13,24 +13,27 @@ export function PredictionCard({ prediction, onClose }: PredictionCardProps) {
   
   return (
     <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden max-w-2xl mx-auto">
-      {/* Compact Header */}
+      {/* Header with Back Button */}
       <div className="bg-slate-900/50 px-4 py-3 flex items-center justify-between border-b border-slate-700">
-        <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 text-[10px] font-bold text-cyan-400 bg-cyan-500/20 border border-cyan-500/30 rounded uppercase">
-            {prediction.sport}
-          </span>
-          <span className="text-xs text-slate-500">AI Analysis</span>
+        <div className="flex items-center gap-3">
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-700/50 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors text-sm font-medium"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back
+            </button>
+          )}
+          <div className="flex items-center gap-2">
+            <span className="px-2 py-0.5 text-[10px] font-bold text-cyan-400 bg-cyan-500/20 border border-cyan-500/30 rounded uppercase">
+              {prediction.sport}
+            </span>
+            <span className="text-xs text-slate-500">AI Analysis</span>
+          </div>
         </div>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-500 hover:text-white transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
       </div>
 
       {/* Matchup - Equal sizing for both teams */}
