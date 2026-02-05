@@ -71,23 +71,6 @@ export function PredictionCard({ prediction, onClose }: PredictionCardProps) {
           <p className="text-sm text-slate-400 mt-3 leading-relaxed">{prediction.winner.reasoning}</p>
         </div>
 
-        {/* Predicted Score - Compact */}
-        <div className="bg-slate-900/50 rounded-lg p-3 border border-slate-700/50">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Predicted Score</p>
-          <div className="flex items-center justify-center gap-6">
-            <div className="text-center">
-              <TeamLogo teamName={prediction.awayTeam} sport={prediction.sport.toLowerCase() as 'nba' | 'nhl'} size="sm" />
-              <p className="text-2xl font-bold text-white mt-1">{prediction.score.away}</p>
-            </div>
-            <span className="text-slate-600 font-medium">-</span>
-            <div className="text-center">
-              <TeamLogo teamName={prediction.homeTeam} sport={prediction.sport.toLowerCase() as 'nba' | 'nhl'} size="sm" />
-              <p className="text-2xl font-bold text-white mt-1">{prediction.score.home}</p>
-            </div>
-          </div>
-          <p className="text-xs text-slate-600 text-center mt-2">{prediction.score.confidence}% conf</p>
-        </div>
-
         {/* Spread & Total - Side by side */}
         <div className="grid grid-cols-2 gap-3">
           <CompactBetCard
