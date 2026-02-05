@@ -13,6 +13,7 @@ import { PredictionModels } from './PredictionModels';
 import { SuperBowlAIAnalysis } from './SuperBowlAIAnalysis';
 import { SuperBowlTDScorers } from './SuperBowlTDScorers';
 import { SuperBowlOddsWidget } from '@/components/widgets/OddsWidget';
+import { PerformanceBanner } from '@/components/tracker/PerformanceBanner';
 
 interface SuperBowlLandingProps {
   onNavigate: (view: string) => void;
@@ -140,6 +141,9 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
           </div>
         </div>
       </section>
+
+      {/* Performance Banner - Highlight win rate */}
+      <PerformanceBanner />
 
       {/* Navigation Tabs - Modern dark style */}
       <nav className="sticky top-[60px] z-30 bg-[rgba(10,14,20,0.95)] backdrop-blur-xl border-b border-white/5">
