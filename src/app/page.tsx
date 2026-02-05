@@ -538,8 +538,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Loading State - Modern spinner */}
-        {loadingOdds && games.length === 0 && view !== 'landing' && (
+        {/* Loading State - Modern spinner (only for views that need games data) */}
+        {loadingOdds && games.length === 0 && view !== 'landing' && view !== 'tracker' && view !== 'tools' && (
           <div className="flex flex-col justify-center items-center py-20">
             <div className="relative w-12 h-12">
               <div className="absolute inset-0 rounded-full border-2 border-cyan-500/20" />
