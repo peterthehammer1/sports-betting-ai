@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { 
   OrganizationSchema, 
@@ -10,14 +10,18 @@ import {
   SPORTS_BETTING_FAQS 
 } from "@/components/seo/StructuredData";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Inter - Professional, clean, highly readable font
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// JetBrains Mono - For odds and numbers
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 // SEO-optimized metadata targeting high-value keywords
@@ -219,15 +223,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://a.espncdn.com" />
         <link rel="dns-prefetch" href="https://a.espncdn.com" />
         
-        {/* Preload critical fonts */}
-        <link
-          rel="preload"
-          href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap"
-          as="style"
-        />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} ${jetbrainsMono.variable} antialiased font-sans`}
       >
         {children}
       </body>

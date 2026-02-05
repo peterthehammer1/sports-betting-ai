@@ -400,31 +400,28 @@ export default function Dashboard() {
       {/* FanDuel Promo Banner - hide on landing */}
       {view !== 'landing' && <FanDuelBanner />}
 
-      {/* Header - Sleek modern glassmorphism header */}
-      <header className={`sticky top-0 z-40 bg-[rgba(10,14,20,0.85)] backdrop-blur-xl border-b border-white/5 ${view === 'landing' ? 'py-2' : ''}`}>
+      {/* Header - Clean professional design */}
+      <header className={`sticky top-0 z-40 bg-[#0d1117] border-b border-slate-800 ${view === 'landing' ? 'py-2' : ''}`}>
         <div className="max-w-6xl mx-auto px-4 py-3 sm:px-6 sm:py-4">
           {/* Top Row - Logo, Title and Sport Toggle */}
           <div className="flex items-center justify-between gap-3">
             {/* Logo and Title */}
             <div className="flex items-center gap-3 min-w-0">
-              <div className="relative">
-                <img 
-                  src="/Pete/PeterCartoon1.png" 
-                  alt="Pete" 
-                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover flex-shrink-0 ring-2 ring-cyan-500/30"
-                />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0a0e14]" />
-              </div>
+              <img 
+                src="/Pete/PeterCartoon1.png" 
+                alt="Pete" 
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg object-cover flex-shrink-0"
+              />
               <div className="min-w-0">
-                <h1 className="text-base sm:text-lg font-bold gradient-text truncate">
+                <h1 className="text-base sm:text-lg font-semibold text-white tracking-tight truncate">
                   Pete&apos;s AI Sports Picks
                 </h1>
-                <p className="text-xs text-slate-500 hidden sm:block">AI-Powered Predictions</p>
+                <p className="text-[11px] text-slate-500 hidden sm:block tracking-wide uppercase">AI-Powered Predictions</p>
               </div>
             </div>
             
-            {/* Sport Toggle - Modern pill design */}
-            <div className="flex bg-white/5 rounded-xl p-1 flex-shrink-0 overflow-x-auto backdrop-blur-sm border border-white/5">
+            {/* Sport Toggle - Clean professional style */}
+            <div className="flex bg-slate-800/50 rounded-lg p-0.5 flex-shrink-0 overflow-x-auto">
               {(Object.keys(SPORTS_CONFIG) as Sport[]).map((s) => (
                 <button
                   key={s}
@@ -437,14 +434,14 @@ export default function Dashboard() {
                       setView('games');
                     }
                   }}
-                  className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-3 sm:px-4 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                     sport === s
-                      ? 'sport-pill-active text-white'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-slate-700 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
-                    <span className="text-base">{SPORTS_CONFIG[s].emoji}</span>
+                    <span>{SPORTS_CONFIG[s].emoji}</span>
                     <span className="hidden sm:inline">{SPORTS_CONFIG[s].label}</span>
                   </span>
                 </button>
@@ -497,17 +494,14 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* Status bar - Modern with glow */}
-          <div className="mt-3 flex items-center gap-4 text-xs text-slate-500">
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full" />
-                <div className="absolute inset-0 w-2 h-2 bg-emerald-500 rounded-full animate-ping opacity-75" />
-              </div>
-              <span className="text-emerald-400 font-medium">Live</span>
+          {/* Status bar - Clean and minimal */}
+          <div className="mt-3 flex items-center gap-4 text-[11px] text-slate-500 tracking-wide">
+            <div className="flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+              <span className="text-emerald-500 font-medium uppercase">Live</span>
             </div>
             {lastFetch && (
-              <span>
+              <span className="text-slate-600">
                 Updated {lastFetch.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
               </span>
             )}
