@@ -627,9 +627,9 @@ function Dashboard() {
                   injuries={getGameInjuryInfo(game.homeTeam, game.awayTeam)}
                   onSelect={handleGameSelect}
                   onPropsSelect={
-                    sport === 'NHL' ? fetchPlayerPropsAnalysis : 
                     sport === 'NBA' ? fetchNbaPlayerPropsAnalysis : 
                     undefined
+                    // NHL props temporarily disabled during Olympics break
                   }
                 />
               ))}
@@ -660,8 +660,8 @@ function Dashboard() {
           </div>
         )}
 
-        {/* Player Props View - NHL Goal Scorers */}
-        {view === 'props' && sport === 'NHL' && selectedPropsAnalysis && (
+        {/* Player Props View - NHL Goal Scorers (temporarily disabled during Olympics break) */}
+        {/* {view === 'props' && sport === 'NHL' && selectedPropsAnalysis && (
           <div className="animate-slide-up">
             <PlayerPropsCard
               analysis={selectedPropsAnalysis.analysis}
@@ -672,7 +672,7 @@ function Dashboard() {
               }}
             />
           </div>
-        )}
+        )} */}
 
         {/* Player Props View - NBA Points/Rebounds/Assists */}
         {view === 'props' && sport === 'NBA' && selectedNbaPropsAnalysis && (
@@ -717,7 +717,7 @@ function Dashboard() {
 
             {/* Selected Tool */}
             {selectedTool === 'betnow' && (
-              <OddsWidget sport={sport === 'NFL' ? 'americanfootball_nfl' : sport === 'NHL' ? 'icehockey_nhl' : 'basketball_nba'} />
+              <OddsWidget sport={sport === 'NFL' ? 'americanfootball_nfl' : 'basketball_nba'} />
             )}
             {selectedTool === 'compare' && (
               <OddsCompare 
@@ -809,7 +809,7 @@ function Dashboard() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-slate-800/50 flex items-center justify-center">
               <span className="text-3xl">{SPORTS_CONFIG[sport].emoji}</span>
             </div>
-            <p className="text-white font-medium">No {sport === 'NHL' ? 'hockey' : sport} games available</p>
+            <p className="text-white font-medium">No {sport} games available</p>
             <p className="text-slate-500 text-sm mt-1">Check back later for upcoming matchups</p>
           </div>
         )}
