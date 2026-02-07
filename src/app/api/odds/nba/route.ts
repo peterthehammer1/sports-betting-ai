@@ -43,13 +43,24 @@ export async function GET(request: Request) {
     
     const normalizedGames = games.map((game) => client.normalizeGameOdds(game));
     
+    // Filter to only show today's and tomorrow's games
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const dayAfterTomorrow = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000);
+    
+    const filteredGames = normalizedGames.filter(game => {
+      const gameDate = new Date(game.commenceTime);
+      return gameDate >= today && gameDate < dayAfterTomorrow;
+    });
+    
     const quota = client.getQuota();
 
     const responseData = {
-      games: normalizedGames,
+      games: filteredGames,
       meta: {
         sport: 'NBA',
-        gamesCount: normalizedGames.length,
+        gamesCount: filteredGames.length,
+        totalGames: normalizedGames.length,
         fetchedAt: new Date().toISOString(),
         quota,
       },
@@ -57,7 +68,7 @@ export async function GET(request: Request) {
 
     // Cache the result
     await cacheOdds('NBA', responseData);
-    console.log('Cached NBA odds, games:', normalizedGames.length);
+    console.log('Cached NBA odds, today/tomorrow games:', filteredGames.length);
 
     return NextResponse.json({
       ...responseData,

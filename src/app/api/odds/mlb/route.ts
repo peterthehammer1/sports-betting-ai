@@ -52,8 +52,18 @@ export async function GET() {
     const requestsRemaining = response.headers.get('x-requests-remaining');
     const requestsUsed = response.headers.get('x-requests-used');
 
+    // Filter to today's and tomorrow's games only
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const dayAfterTomorrow = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000);
+    
+    const todaysGames = games.filter((game: { commence_time: string }) => {
+      const gameDate = new Date(game.commence_time);
+      return gameDate >= today && gameDate < dayAfterTomorrow;
+    });
+
     // Normalize games
-    const normalizedGames = games.map((game: {
+    const normalizedGames = todaysGames.map((game: {
       id: string;
       home_team: string;
       away_team: string;
@@ -140,6 +150,7 @@ export async function GET() {
       meta: {
         sport: 'MLB',
         gamesCount: normalizedGames.length,
+        totalGames: games.length,
         fetchedAt: new Date().toISOString(),
         quota: {
           requestsRemaining: requestsRemaining ? parseInt(requestsRemaining) : null,
@@ -150,7 +161,7 @@ export async function GET() {
 
     // Cache the result
     await cacheOdds('MLB', responseData);
-    console.log('Cached MLB odds, games:', normalizedGames.length);
+    console.log('Cached MLB odds, today/tomorrow games:', normalizedGames.length);
 
     return NextResponse.json({
       ...responseData,

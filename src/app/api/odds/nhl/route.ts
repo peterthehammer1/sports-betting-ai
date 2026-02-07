@@ -44,13 +44,24 @@ export async function GET(request: Request) {
     // Normalize all games for easier frontend consumption
     const normalizedGames = games.map((game) => client.normalizeGameOdds(game));
     
+    // Filter to only show today's and tomorrow's games
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const dayAfterTomorrow = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000);
+    
+    const filteredGames = normalizedGames.filter(game => {
+      const gameDate = new Date(game.commenceTime);
+      return gameDate >= today && gameDate < dayAfterTomorrow;
+    });
+    
     const quota = client.getQuota();
 
     const responseData = {
-      games: normalizedGames,
+      games: filteredGames,
       meta: {
         sport: 'NHL',
-        gamesCount: normalizedGames.length,
+        gamesCount: filteredGames.length,
+        totalGames: normalizedGames.length,
         fetchedAt: new Date().toISOString(),
         quota,
       },
@@ -58,7 +69,7 @@ export async function GET(request: Request) {
 
     // Cache the result
     await cacheOdds('NHL', responseData);
-    console.log('Cached NHL odds, games:', normalizedGames.length);
+    console.log('Cached NHL odds, today/tomorrow games:', filteredGames.length);
 
     return NextResponse.json({
       ...responseData,

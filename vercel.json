@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/picks/daily",
+      "path": "/api/picks/daily?generate=true",
       "schedule": "0 15 * * *"
     },
     {

@@ -65,8 +65,20 @@ async function fetchGamesForSport(sport: Sport): Promise<GameForPicking[]> {
     
     console.log(`Fetched ${games.length} ${sport} games from Odds API`);
     
+    // Filter to today's and tomorrow's games only
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const dayAfterTomorrow = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000);
+    
+    const todaysGames = games.filter(game => {
+      const gameDate = new Date(game.commence_time);
+      return gameDate >= today && gameDate < dayAfterTomorrow;
+    });
+    
+    console.log(`Filtered to ${todaysGames.length} today/tomorrow ${sport} games`);
+    
     // Map to our format and take up to 6 games
-    return games.slice(0, 6).map(game => {
+    return todaysGames.slice(0, 6).map(game => {
       const normalized = oddsClient.normalizeGameOdds(game);
       return {
         gameId: normalized.gameId,
@@ -274,10 +286,77 @@ export async function POST(request: Request) {
 }
 
 /**
- * GET - Check today's picks status
+ * GET - Check today's picks status OR trigger generation (for Vercel cron)
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const generate = searchParams.get('generate') === 'true';
+    
+    // Check for cron secret in header or query param
+    const authHeader = request.headers.get('authorization');
+    const cronSecret = process.env.CRON_SECRET;
+    const isAuthorized = !cronSecret || authHeader === `Bearer ${cronSecret}`;
+    
+    // If generate=true and authorized, trigger pick generation
+    if (generate && isAuthorized) {
+      console.log('Generating daily picks via GET request...');
+      
+      if (!process.env.THE_ODDS_API_KEY || !process.env.ANTHROPIC_API_KEY) {
+        return NextResponse.json({ error: 'API keys not configured' }, { status: 500 });
+      }
+
+      if (!isRedisConfigured()) {
+        return NextResponse.json({ 
+          error: 'Redis not configured - picks cannot be saved',
+        }, { status: 500 });
+      }
+
+      const results: Record<Sport, TrackedPick[]> = {
+        NHL: [],
+        NBA: [],
+        NFL: [],
+      };
+
+      // Process each sport
+      for (const sport of ['NHL', 'NBA'] as Sport[]) {
+        console.log(`Processing ${sport} daily picks...`);
+        
+        const games = await fetchGamesForSport(sport);
+        console.log(`Found ${games.length} ${sport} games`);
+        
+        if (games.length === 0) continue;
+
+        const bestPicks = await selectBestPicks(games, PICKS_PER_SPORT);
+        
+        for (const { game, prediction } of bestPicks) {
+          const confidences = [
+            { type: 'spread' as const, conf: prediction.spread?.confidence || 0 },
+            { type: 'winner' as const, conf: prediction.winner?.confidence || 0 },
+            { type: 'total' as const, conf: prediction.total?.confidence || 0 },
+          ].sort((a, b) => b.conf - a.conf);
+
+          const bestType = confidences[0].type;
+          const savedPick = await saveDailyPick(game, prediction, bestType);
+          
+          if (savedPick) {
+            results[sport].push(savedPick);
+            console.log(`Saved ${sport} pick: ${savedPick.pick} (${savedPick.confidence}%)`);
+          }
+        }
+      }
+
+      const totalPicks = Object.values(results).flat().length;
+
+      return NextResponse.json({
+        success: true,
+        message: `Generated ${totalPicks} daily picks`,
+        picks: results,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    // Otherwise, just check today's picks status
     if (!isRedisConfigured()) {
       return NextResponse.json({ 
         hasPicks: false,
@@ -296,8 +375,10 @@ export async function GET() {
       hasPicks: todaysPicks.length > 0,
       count: todaysPicks.length,
       picks: todaysPicks,
+      hint: 'Add ?generate=true to trigger pick generation',
     });
   } catch (error) {
+    console.error('Daily picks GET error:', error);
     return NextResponse.json({ error: 'Failed to check picks' }, { status: 500 });
   }
 }
