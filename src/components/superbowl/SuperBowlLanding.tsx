@@ -1,6 +1,6 @@
 /**
  * Super Bowl LX Landing Page Component
- * Clean, professional design for petesbets.com
+ * Clean, professional design - fits within main page layout
  */
 
 'use client';
@@ -75,159 +75,127 @@ export function SuperBowlLanding({ onNavigate, onSportChange }: SuperBowlLanding
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--background)]">
-      {/* Compact Hero Section - Smaller matchup display */}
-      <section className="relative bg-[rgba(15,20,30,0.9)] border-b border-white/5">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-purple-500/5 to-cyan-500/5" />
-        
-        <div className="relative max-w-5xl mx-auto px-4 py-4 sm:py-5">
-          {/* Compact Matchup Row */}
+    <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6">
+      {/* Super Bowl Matchup Card */}
+      <div className="bg-[#161b22] rounded-xl border border-slate-800 overflow-hidden mb-6">
+        <div className="p-6">
+          {/* Matchup Header */}
           <div className="flex items-center justify-center gap-4 sm:gap-8">
             {/* Seahawks */}
             <div className="flex items-center gap-3">
               <Image
                 src={SEAHAWKS.logo}
                 alt={SEAHAWKS.name}
-                width={48}
-                height={48}
-                className="w-10 h-10 sm:w-12 sm:h-12"
+                width={56}
+                height={56}
+                className="w-12 h-12 sm:w-14 sm:h-14"
                 unoptimized
               />
-              <div className="hidden sm:block">
-                <h2 className="text-sm font-bold text-white">{SEAHAWKS.shortName}</h2>
-                <p className="text-[10px] text-slate-500">{SEAHAWKS.record}</p>
+              <div className="text-left hidden sm:block">
+                <h2 className="text-base font-bold text-white">{SEAHAWKS.shortName}</h2>
+                <p className="text-xs text-slate-500">{SEAHAWKS.record}</p>
               </div>
             </div>
 
             {/* Center - Lines */}
-            <div className="flex items-center gap-3 sm:gap-4 px-4 py-2 bg-white/5 rounded-xl border border-white/10">
-              <div className="text-center">
-                <div className="text-[10px] text-slate-500 uppercase">Spread</div>
-                <div className="text-xs sm:text-sm font-bold text-white">{LINES.spread.team} {LINES.spread.value}</div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex items-center gap-3 sm:gap-4 px-4 py-2 bg-slate-800/50 rounded-lg">
+                <div className="text-center">
+                  <div className="text-[10px] text-slate-500 uppercase">Spread</div>
+                  <div className="text-sm font-bold text-white">{LINES.spread.team} {LINES.spread.value}</div>
+                </div>
+                <div className="w-px h-8 bg-slate-700" />
+                <div className="text-center">
+                  <div className="text-[10px] text-slate-500 uppercase">Total</div>
+                  <div className="text-sm font-bold text-white">{LINES.total}</div>
+                </div>
+                <div className="w-px h-8 bg-slate-700" />
+                <div className="text-center">
+                  <div className="text-[10px] text-slate-500 uppercase">ML</div>
+                  <div className="text-sm font-bold text-emerald-400">{LINES.seahawksML}</div>
+                </div>
               </div>
-              <div className="w-px h-6 bg-white/10" />
-              <div className="text-center">
-                <div className="text-[10px] text-slate-500 uppercase">Total</div>
-                <div className="text-xs sm:text-sm font-bold text-white">{LINES.total}</div>
-              </div>
-              <div className="w-px h-6 bg-white/10 hidden sm:block" />
-              <div className="text-center hidden sm:block">
-                <div className="text-[10px] text-slate-500 uppercase">ML</div>
-                <div className="text-xs sm:text-sm font-bold text-emerald-400">{LINES.seahawksML}</div>
-              </div>
+              <p className="text-[11px] text-slate-500">
+                {GAME_INFO.date} • {GAME_INFO.time} • {GAME_INFO.venue}
+              </p>
             </div>
 
             {/* Patriots */}
-            <div className="flex items-center gap-3 flex-row-reverse sm:flex-row">
-              <div className="hidden sm:block text-right">
-                <h2 className="text-sm font-bold text-white">{PATRIOTS.shortName}</h2>
-                <p className="text-[10px] text-slate-500">{PATRIOTS.record}</p>
-              </div>
+            <div className="flex items-center gap-3 flex-row-reverse">
               <Image
                 src={PATRIOTS.logo}
                 alt={PATRIOTS.name}
-                width={48}
-                height={48}
-                className="w-10 h-10 sm:w-12 sm:h-12"
+                width={56}
+                height={56}
+                className="w-12 h-12 sm:w-14 sm:h-14"
                 unoptimized
               />
-            </div>
-          </div>
-
-          {/* Game Info - Single line */}
-          <div className="mt-2 text-center text-[10px] text-slate-500">
-            Super Bowl LX • {GAME_INFO.date} • {GAME_INFO.time} • {GAME_INFO.venue}
-          </div>
-        </div>
-      </section>
-
-      {/* Navigation Tabs - Modern dark style */}
-      <nav className="sticky top-[125px] z-30 bg-[rgba(10,14,20,0.95)] backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="flex gap-1 overflow-x-auto py-2 scrollbar-hide">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 text-sm font-medium rounded-xl transition-all whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500/20'
-                    : 'text-slate-500 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-            
-            {/* Divider */}
-            <div className="flex-1" />
-            
-            {/* Other Sports */}
-            <div className="flex items-center gap-1 pl-4 border-l border-white/10">
-              {[
-                { sport: 'NBA', label: '🏀', full: 'NBA' },
-                { sport: 'NHL', label: '🏒', full: 'NHL' },
-                { sport: 'MLB', label: '⚾', full: 'MLB' },
-              ].map((s) => (
-                <button
-                  key={s.sport}
-                  onClick={() => {
-                    onSportChange(s.sport);
-                    onNavigate('games');
-                  }}
-                  className="px-3 py-1.5 text-xs text-slate-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"
-                  title={s.full}
-                >
-                  {s.label}
-                </button>
-              ))}
+              <div className="text-right hidden sm:block">
+                <h2 className="text-base font-bold text-white">{PATRIOTS.shortName}</h2>
+                <p className="text-xs text-slate-500">{PATRIOTS.record}</p>
+              </div>
             </div>
           </div>
         </div>
-      </nav>
+      </div>
 
-      {/* Content */}
-      <main className="max-w-5xl mx-auto px-4 py-6">
+      {/* Content Tabs */}
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${
+              activeTab === tab.id
+                ? 'bg-white text-black'
+                : 'bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      <div>
         {activeTab === 'ai-analysis' && <SuperBowlAIAnalysis />}
         {activeTab === 'td-scorers' && <SuperBowlTDScorers />}
         {activeTab === 'overview' && <OverviewSection />}
         {activeTab === 'experts' && <ExpertPredictions />}
         {activeTab === 'models' && <PredictionModels />}
         {activeTab === 'articles' && <SuperBowlArticles onNavigateToAnalysis={() => setActiveTab('ai-analysis')} />}
-      </main>
+      </div>
 
-      {/* Footer - Dark theme */}
-      <footer className="border-t border-white/5 py-8 bg-[rgba(10,14,20,0.5)]">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-            <button
-              onClick={() => onNavigate('tools')}
-              className="px-4 py-2 text-sm text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-all"
-            >
-              🧮 Betting Calculator
-            </button>
-            <button
-              onClick={() => onNavigate('tracker')}
-              className="px-4 py-2 text-sm text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-all"
-            >
-              📊 Pick Tracker
-            </button>
-          </div>
-          <p className="text-center text-xs text-slate-600">
-            For entertainment purposes only. Please gamble responsibly.
-          </p>
+      {/* Footer Links */}
+      <div className="mt-8 pt-6 border-t border-slate-800">
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button
+            onClick={() => onNavigate('tools')}
+            className="px-4 py-2 text-sm text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-800 rounded-lg transition-all"
+          >
+            🧮 Betting Calculator
+          </button>
+          <button
+            onClick={() => onNavigate('tracker')}
+            className="px-4 py-2 text-sm text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-800 rounded-lg transition-all"
+          >
+            📊 Pick Tracker
+          </button>
         </div>
-      </footer>
+        <p className="text-center text-xs text-slate-600 mt-4">
+          For entertainment purposes only. Please gamble responsibly.
+        </p>
+      </div>
     </div>
   );
 }
 
-// Overview Section Component - Dark theme
+// Overview Section Component
 function OverviewSection() {
   return (
     <div className="space-y-6">
       {/* Context Banner */}
-      <div className="p-4 bg-amber-500/10 rounded-xl border border-amber-500/20">
+      <div className="p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
         <p className="text-sm text-slate-300 text-center">
           <span className="text-amber-400 font-semibold">Super Bowl XLIX Rematch</span>
           {' '}— The Patriots won 28-24 on Malcolm Butler&apos;s goal-line interception. Seattle returns to the Super Bowl for the first time since 2014.
@@ -236,16 +204,13 @@ function OverviewSection() {
 
       {/* Team Comparison */}
       <div className="grid md:grid-cols-2 gap-4">
-        <TeamCard team={SEAHAWKS} side="home" />
-        <TeamCard team={PATRIOTS} side="away" />
+        <TeamCard team={SEAHAWKS} />
+        <TeamCard team={PATRIOTS} />
       </div>
 
       {/* Key Stats */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <span className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-purple-500 rounded-full" />
-          Key Numbers
-        </h3>
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Key Numbers</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatCard label="Spread" value="SEA -4.5" sublabel="Consensus line" />
           <StatCard label="Total" value="46.5" sublabel="O/U points" />
@@ -256,10 +221,7 @@ function OverviewSection() {
 
       {/* MVP Odds */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <span className="w-1 h-4 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full" />
-          MVP Odds
-        </h3>
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">MVP Odds</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { name: 'Sam Darnold', team: 'SEA', odds: '+175' },
@@ -267,7 +229,7 @@ function OverviewSection() {
             { name: 'Jaxon Smith-Njigba', team: 'SEA', odds: '+1400' },
             { name: 'Kenneth Walker III', team: 'SEA', odds: '+2000' },
           ].map((player) => (
-            <div key={player.name} className="p-3 bg-white/5 rounded-xl border border-white/10 hover:border-white/20 transition-all">
+            <div key={player.name} className="p-3 bg-slate-800/50 rounded-lg border border-slate-700 hover:border-slate-600 transition-all">
               <div className="text-sm font-medium text-white">{player.name}</div>
               <div className="flex items-center justify-between mt-1">
                 <span className="text-xs text-slate-500">{player.team}</span>
@@ -280,20 +242,17 @@ function OverviewSection() {
 
       {/* FanDuel Betting Widget */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <span className="w-1 h-4 bg-gradient-to-b from-emerald-500 to-cyan-500 rounded-full" />
-          Bet on FanDuel
-        </h3>
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Bet on FanDuel</h3>
         <SuperBowlOddsWidget />
       </div>
     </div>
   );
 }
 
-// Team Card Component - Dark theme
-function TeamCard({ team, side }: { team: typeof SEAHAWKS; side: 'home' | 'away' }) {
+// Team Card Component
+function TeamCard({ team }: { team: typeof SEAHAWKS }) {
   return (
-    <div className="p-5 bg-white/5 rounded-xl border border-white/10 hover:border-white/20 transition-all">
+    <div className="p-5 bg-slate-800/50 rounded-lg border border-slate-700">
       <div className="flex items-center gap-3 mb-4">
         <Image src={team.logo} alt={team.name} width={40} height={40} unoptimized />
         <div>
@@ -303,7 +262,7 @@ function TeamCard({ team, side }: { team: typeof SEAHAWKS; side: 'home' | 'away'
       </div>
       <div className="space-y-2">
         {team.players.map((player) => (
-          <div key={player.name} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
+          <div key={player.name} className="flex items-center justify-between py-1.5 border-b border-slate-700 last:border-0">
             <div>
               <span className="text-sm text-slate-300">{player.name}</span>
               <span className="text-xs text-slate-500 ml-1.5">{player.pos}</span>
@@ -316,10 +275,10 @@ function TeamCard({ team, side }: { team: typeof SEAHAWKS; side: 'home' | 'away'
   );
 }
 
-// Stat Card Component - Dark theme
+// Stat Card Component
 function StatCard({ label, value, sublabel }: { label: string; value: string; sublabel: string }) {
   return (
-    <div className="p-4 bg-white/5 rounded-xl border border-white/10 text-center hover:border-white/20 transition-all">
+    <div className="p-4 bg-slate-800/50 rounded-lg border border-slate-700 text-center">
       <div className="text-xs text-slate-500 mb-1">{label}</div>
       <div className="text-xl font-bold text-white">{value}</div>
       <div className="text-xs text-slate-500 mt-0.5">{sublabel}</div>

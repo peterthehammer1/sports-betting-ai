@@ -53,29 +53,33 @@ export default function MLBPage() {
         { name: 'MLB Picks', url: 'https://petesbets.com/mlb' },
       ]} />
 
-      <main className="min-h-screen bg-[#0c1017] text-white">
-        <section className="relative py-16 px-4 sm:px-6 lg:px-8">
-          <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-transparent to-blue-900/20" />
-          <div className="relative max-w-4xl mx-auto text-center">
-            <span className="inline-block px-4 py-1 bg-red-500/20 text-red-400 rounded-full text-sm font-medium mb-4">
-              ⚾ MLB Betting Analysis
+      <main className="min-h-screen bg-[#0d1117] text-white">
+        {/* Hero */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+          <div className="max-w-4xl mx-auto text-center">
+            <span className="inline-block px-3 py-1 bg-slate-800 text-slate-300 rounded-full text-sm font-medium mb-4">
+              MLB Betting Analysis
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-white">
               MLB Betting Predictions Today
             </h1>
-            <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-8">
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-8">
               Free AI-powered MLB picks, batter props, pitcher strikeouts, and run line analysis.
             </p>
-            <Link href="/?sport=MLB" className="inline-flex items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl text-lg">
-              Get Today&apos;s MLB Picks <span>→</span>
+            <Link 
+              href="/?sport=MLB" 
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-slate-200 transition-colors"
+            >
+              Get Today&apos;s MLB Picks →
             </Link>
           </div>
         </section>
 
-        <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800">
+        {/* Tools */}
+        <section className="py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">MLB Betting Tools</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <h2 className="text-2xl font-bold text-center mb-8">MLB Betting Tools</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
                 { icon: '⚾', title: 'Batter Props', description: 'Hits, home runs, total bases, RBIs, and runs scored.' },
                 { icon: '🔥', title: 'Pitcher Props', description: 'Strikeouts, hits allowed, and earned runs analysis.' },
@@ -84,9 +88,9 @@ export default function MLBPage() {
                 { icon: '5️⃣', title: 'First 5 Innings', description: 'F5 picks based on starting pitcher matchups.' },
                 { icon: '🔄', title: 'Odds Comparison', description: 'Compare MLB odds across all sportsbooks.' },
               ].map((item) => (
-                <div key={item.title} className="bg-[#151c28] rounded-xl p-6 border border-slate-800">
-                  <span className="text-3xl mb-4 block">{item.icon}</span>
-                  <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                <div key={item.title} className="bg-[#161b22] rounded-lg p-5 border border-slate-800">
+                  <span className="text-2xl mb-3 block">{item.icon}</span>
+                  <h3 className="text-base font-semibold mb-1">{item.title}</h3>
                   <p className="text-slate-400 text-sm">{item.description}</p>
                 </div>
               ))}
@@ -94,39 +98,48 @@ export default function MLBPage() {
           </div>
         </section>
 
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[#0a0e14]">
+        {/* FAQ */}
+        <section className="py-12 px-4 sm:px-6 lg:px-8 border-t border-slate-800">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">MLB Betting FAQ</h2>
-            <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-center mb-8">MLB Betting FAQ</h2>
+            <div className="space-y-3">
               {MLB_FAQS.map((faq, index) => (
-                <details key={index} className="group bg-[#151c28] rounded-xl border border-slate-800">
-                  <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-slate-800/30">
-                    <h3 className="text-lg font-medium pr-4">{faq.question}</h3>
-                    <span className="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                <details key={index} className="group bg-[#161b22] rounded-lg border border-slate-800">
+                  <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-800/30">
+                    <h3 className="text-sm font-medium pr-4">{faq.question}</h3>
+                    <span className="text-slate-500 group-open:rotate-180 transition-transform text-xs">▼</span>
                   </summary>
-                  <div className="px-6 pb-6 text-slate-400">{faq.answer}</div>
+                  <div className="px-4 pb-4 text-slate-400 text-sm">{faq.answer}</div>
                 </details>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800">
+        {/* CTA */}
+        <section className="py-12 px-4 sm:px-6 lg:px-8 border-t border-slate-800">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl font-bold mb-4">Start Winning on MLB Today</h2>
-            <p className="text-slate-400 mb-8">Get AI-powered picks for every MLB game.</p>
-            <Link href="/?sport=MLB" className="px-6 py-3 bg-red-600 hover:bg-red-500 rounded-lg font-semibold">
+            <h2 className="text-xl font-bold mb-3">Start Winning on MLB Today</h2>
+            <p className="text-slate-400 text-sm mb-6">Get AI-powered picks for every MLB game.</p>
+            <Link 
+              href="/?sport=MLB" 
+              className="px-6 py-3 bg-white text-black rounded-lg font-medium hover:bg-slate-200 transition-colors inline-block"
+            >
               View MLB Picks
             </Link>
           </div>
         </section>
 
+        {/* Footer */}
         <footer className="py-8 px-4 border-t border-slate-800">
-          <nav className="flex flex-wrap justify-center gap-6 text-sm text-slate-400 max-w-4xl mx-auto">
-            <Link href="/nfl/super-bowl" className="hover:text-white">Super Bowl Picks</Link>
-            <Link href="/nba" className="hover:text-white">NBA Picks</Link>
-            <Link href="/nhl" className="hover:text-white">NHL Picks</Link>
+          <nav className="flex flex-wrap justify-center gap-6 text-sm text-slate-500 max-w-4xl mx-auto">
+            <Link href="/nfl/super-bowl" className="hover:text-white transition-colors">Super Bowl Picks</Link>
+            <Link href="/nba" className="hover:text-white transition-colors">NBA Picks</Link>
+            <Link href="/nhl" className="hover:text-white transition-colors">NHL Picks</Link>
           </nav>
+          <p className="text-center text-xs text-slate-600 mt-4">
+            For entertainment purposes only. Please gamble responsibly.
+          </p>
         </footer>
       </main>
     </>
