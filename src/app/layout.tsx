@@ -29,11 +29,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   // Primary title with main keywords
   title: {
-    default: "Pete's AI Sports Picks | Free NFL, NBA, NHL & MLB Betting Predictions 2025",
+    default: "Pete's AI Sports Picks | Free NFL, NBA, NHL & MLB Betting Predictions 2026",
     template: "%s | Pete's AI Sports Picks",
   },
   // Comprehensive description with keywords
-  description: "Get free AI-powered sports betting predictions for Super Bowl 2025, NFL, NBA, NHL, and MLB. Expert picks, player props, odds comparison, and betting analysis. Beat the sportsbooks with data-driven insights.",
+  description: "Get free AI-powered sports betting predictions for Super Bowl 2026, NFL, NBA, NHL, and MLB. Expert picks, player props, odds comparison, and betting analysis. Beat the sportsbooks with data-driven insights.",
   // Extended keyword list for search engines - Comprehensive coverage
   keywords: [
     // Super Bowl keywords (high search volume)
@@ -124,7 +124,7 @@ export const metadata: Metadata = {
   // Open Graph for social sharing
   openGraph: {
     title: "Pete's AI Sports Picks | Free Super Bowl, NFL, NBA & NHL Betting Predictions",
-    description: "AI-powered sports betting analysis with free picks for Super Bowl 2025, NFL, NBA, NHL, and MLB. Get expert player props, odds comparison, and win more bets.",
+    description: "AI-powered sports betting analysis with free picks for Super Bowl 2026, NFL, NBA, NHL, and MLB. Get expert player props, odds comparison, and win more bets.",
     type: "website",
     locale: "en_US",
     url: "https://petesaisportspicks.com",
