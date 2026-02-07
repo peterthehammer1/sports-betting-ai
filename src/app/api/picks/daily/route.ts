@@ -334,6 +334,49 @@ export async function GET(request: Request) {
         games: gamesDebug,
       });
     }
+    
+    // Test Claude API
+    if (searchParams.get('testai') === 'true') {
+      const apiKey = process.env.ANTHROPIC_API_KEY;
+      if (!apiKey) {
+        return NextResponse.json({ error: 'No Anthropic API key' });
+      }
+      
+      try {
+        // Get one NBA game to test
+        const games = await fetchGamesForSport('NBA');
+        if (games.length === 0) {
+          return NextResponse.json({ error: 'No games to test' });
+        }
+        
+        const game = games[0];
+        console.log('Testing Claude with game:', game.awayTeam, '@', game.homeTeam);
+        
+        const { createAnalysisClient } = await import('@/lib/analysis/claude');
+        const analysisClient = createAnalysisClient({ apiKey });
+        
+        console.log('Created analysis client, calling analyzeGame...');
+        const { prediction, meta } = await analysisClient.analyzeGame(game.normalizedOdds, 'NBA', '');
+        
+        return NextResponse.json({
+          success: true,
+          game: `${game.awayTeam} @ ${game.homeTeam}`,
+          prediction: {
+            winner: prediction.winner?.pick,
+            winnerConf: prediction.winner?.confidence,
+            spread: prediction.spread?.pick,
+            spreadConf: prediction.spread?.confidence,
+          },
+          meta,
+        });
+      } catch (e) {
+        console.error('Test AI error:', e);
+        return NextResponse.json({ 
+          error: e instanceof Error ? e.message : 'Unknown error',
+          stack: e instanceof Error ? e.stack : undefined,
+        });
+      }
+    }
 
     // If generate=true and authorized, trigger pick generation
     if (generate && isAuthorized) {
