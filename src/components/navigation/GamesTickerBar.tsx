@@ -23,7 +23,7 @@ interface GamesTickerBarProps {
   externalGames?: TickerGame[]; // Pass games from parent to avoid duplicate fetches
 }
 
-const SPORTS = ['NBA', 'NHL', 'NFL', 'EPL'];
+const SPORTS = ['NBA', 'NFL', 'EPL']; // NHL temporarily removed during Olympics break
 
 export function GamesTickerBar({ onGameClick, onSportChange, currentSport = 'NBA', externalGames }: GamesTickerBarProps) {
   const [games, setGames] = useState<TickerGame[]>([]);

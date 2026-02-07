@@ -58,12 +58,12 @@ interface QuickPick {
   };
 }
 
-type Sport = 'NHL' | 'NBA' | 'MLB' | 'EPL' | 'NFL';
+type Sport = 'NBA' | 'MLB' | 'EPL' | 'NFL'; // NHL temporarily removed during Olympics break
 type View = 'landing' | 'games' | 'picks' | 'analysis' | 'props' | 'tools' | 'superbowl' | 'tracker';
 
 // Sport configurations for the UI
 const SPORTS_CONFIG: Record<Sport, { emoji: string; label: string; hasProps: boolean }> = {
-  NHL: { emoji: '🏒', label: 'NHL', hasProps: true },
+  // NHL: { emoji: '🏒', label: 'NHL', hasProps: true }, // Temporarily removed during Olympics break
   NBA: { emoji: '🏀', label: 'NBA', hasProps: true },
   NFL: { emoji: '🏈', label: 'NFL', hasProps: true },
   MLB: { emoji: '⚾', label: 'MLB', hasProps: true },
@@ -109,7 +109,7 @@ function Dashboard() {
   const router = useRouter();
   const urlSport = searchParams.get('sport')?.toUpperCase() as Sport | null;
   
-  const [sport, setSport] = useState<Sport>(urlSport && ['NHL', 'NBA', 'MLB', 'EPL', 'NFL'].includes(urlSport) ? urlSport : 'NFL');
+  const [sport, setSport] = useState<Sport>(urlSport && ['NBA', 'MLB', 'EPL', 'NFL'].includes(urlSport) ? urlSport : 'NFL');
   const [view, setView] = useState<View>(urlSport && urlSport !== 'NFL' ? 'games' : 'landing');
   const [games, setGames] = useState<NormalizedOdds[]>([]);
   const [scores, setScores] = useState<Record<string, NormalizedScore>>({});
