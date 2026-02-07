@@ -11,7 +11,7 @@ import { NextResponse } from 'next/server';
 import { savePick, getPicks, isRedisConfigured } from '@/lib/cache/redis';
 import { createOddsApiClient } from '@/lib/api/odds';
 import type { TrackedPick, Sport } from '@/types/tracker';
-import type { SportKey } from '@/types/odds';
+import type { NormalizedOdds } from '@/types/odds';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120; // 2 minutes for multiple AI calls
@@ -24,6 +24,7 @@ interface GameForPicking {
   awayTeam: string;
   commenceTime: string;
   sport: Sport;
+  normalizedOdds: NormalizedOdds; // Store full odds data to avoid duplicate API calls
 }
 
 // Type for AI prediction response
@@ -77,7 +78,7 @@ async function fetchGamesForSport(sport: Sport): Promise<GameForPicking[]> {
     
     console.log(`${sport}: Found ${games.length} total, ${todaysGames.length} today/tomorrow`);
     
-    // Map to our format and take up to 6 games
+    // Map to our format and take up to 6 games - include full odds data
     return todaysGames.slice(0, 6).map(game => {
       const normalized = oddsClient.normalizeGameOdds(game);
       return {
@@ -86,6 +87,7 @@ async function fetchGamesForSport(sport: Sport): Promise<GameForPicking[]> {
         awayTeam: normalized.awayTeam,
         commenceTime: normalized.commenceTime.toISOString(),
         sport,
+        normalizedOdds: normalized, // Pass full odds to avoid duplicate API calls
       };
     });
   } catch (error) {
@@ -96,38 +98,31 @@ async function fetchGamesForSport(sport: Sport): Promise<GameForPicking[]> {
 
 /**
  * Get AI analysis for a game using Claude directly
+ * Uses pre-fetched odds data to avoid duplicate API calls
  */
 async function getGameAnalysis(game: GameForPicking) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  const oddsApiKey = process.env.THE_ODDS_API_KEY;
   
-  if (!apiKey || !oddsApiKey) {
-    console.error('API keys not configured');
+  if (!apiKey) {
+    console.error('ANTHROPIC_API_KEY not configured');
     return null;
   }
 
   try {
-    const sportKeys: Record<Sport, SportKey> = {
-      NHL: 'icehockey_nhl',
-      NBA: 'basketball_nba',
-      NFL: 'americanfootball_nfl',
-    };
+    // Use the already-fetched normalized odds
+    const normalizedGame = game.normalizedOdds;
     
-    const oddsClient = createOddsApiClient({ apiKey: oddsApiKey });
-    const gameData = await oddsClient.getGameOdds(sportKeys[game.sport], game.gameId, ['h2h', 'spreads', 'totals']);
-    
-    if (!gameData) {
-      console.log(`Game ${game.gameId} not found`);
+    if (!normalizedGame) {
+      console.log(`No odds data for ${game.gameId}`);
       return null;
     }
-    
-    const normalizedGame = oddsClient.normalizeGameOdds(gameData);
     
     // Import and use analysis client
     const { createAnalysisClient } = await import('@/lib/analysis/claude');
     const analysisClient = createAnalysisClient({ apiKey });
     
     const analysisSport = game.sport === 'NFL' ? 'NBA' : game.sport; // NFL uses NBA format
+    console.log(`Calling Claude for ${game.awayTeam} @ ${game.homeTeam}...`);
     const { prediction } = await analysisClient.analyzeGame(normalizedGame, analysisSport as 'NHL' | 'NBA', '');
     
     console.log(`Analyzed ${game.homeTeam} vs ${game.awayTeam}: ${prediction.winner?.pick} (${prediction.winner?.confidence}%)`);
@@ -146,20 +141,32 @@ async function selectBestPicks(
   count: number
 ): Promise<Array<{ game: GameForPicking; prediction: GamePredictionResult }>> {
   const analyzed: Array<{ game: GameForPicking; prediction: GamePredictionResult; confidence: number }> = [];
+  const errors: string[] = [];
 
   // Analyze games (limit to save API calls)
   for (const game of games.slice(0, 4)) {
-    const prediction = await getGameAnalysis(game);
-    if (prediction) {
-      // Get highest confidence pick from this game
-      const maxConfidence = Math.max(
-        prediction.winner?.confidence || 0,
-        prediction.spread?.confidence || 0,
-        prediction.total?.confidence || 0
-      );
-      analyzed.push({ game, prediction, confidence: maxConfidence });
-      console.log(`${game.sport}: ${game.awayTeam} @ ${game.homeTeam} - max conf: ${maxConfidence}%`);
+    try {
+      console.log(`Analyzing: ${game.awayTeam} @ ${game.homeTeam} (${game.gameId})`);
+      const prediction = await getGameAnalysis(game);
+      if (prediction) {
+        // Get highest confidence pick from this game
+        const maxConfidence = Math.max(
+          prediction.winner?.confidence || 0,
+          prediction.spread?.confidence || 0,
+          prediction.total?.confidence || 0
+        );
+        analyzed.push({ game, prediction, confidence: maxConfidence });
+        console.log(`${game.sport}: ${game.awayTeam} @ ${game.homeTeam} - max conf: ${maxConfidence}%`);
+      } else {
+        errors.push(`${game.awayTeam} @ ${game.homeTeam}: No prediction returned`);
+      }
+    } catch (e) {
+      errors.push(`${game.awayTeam} @ ${game.homeTeam}: ${e instanceof Error ? e.message : 'Unknown error'}`);
     }
+  }
+  
+  if (errors.length > 0) {
+    console.error('Analysis errors:', errors);
   }
 
   // Sort by confidence and take top picks
