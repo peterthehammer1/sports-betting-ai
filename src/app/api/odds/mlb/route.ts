@@ -52,14 +52,14 @@ export async function GET() {
     const requestsRemaining = response.headers.get('x-requests-remaining');
     const requestsUsed = response.headers.get('x-requests-used');
 
-    // Filter to today's and tomorrow's games only (use UTC)
+    // Filter to show games starting in the next 48 hours or started within last 4 hours
     const now = new Date();
-    const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-    const dayAfterTomorrowUTC = todayUTC + 2 * 24 * 60 * 60 * 1000;
+    const fourHoursAgo = now.getTime() - 4 * 60 * 60 * 1000;
+    const twoDaysFromNow = now.getTime() + 48 * 60 * 60 * 1000;
     
     const todaysGames = games.filter((game: { commence_time: string }) => {
       const gameTime = new Date(game.commence_time).getTime();
-      return gameTime >= todayUTC && gameTime < dayAfterTomorrowUTC;
+      return gameTime >= fourHoursAgo && gameTime < twoDaysFromNow;
     });
 
     // Normalize games

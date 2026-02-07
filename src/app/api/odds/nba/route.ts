@@ -43,14 +43,14 @@ export async function GET(request: Request) {
     
     const normalizedGames = games.map((game) => client.normalizeGameOdds(game));
     
-    // Filter to only show today's and tomorrow's games (use UTC)
+    // Filter to show games starting in the next 48 hours or started within last 4 hours (might still be live)
     const now = new Date();
-    const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-    const dayAfterTomorrowUTC = todayUTC + 2 * 24 * 60 * 60 * 1000;
+    const fourHoursAgo = now.getTime() - 4 * 60 * 60 * 1000;
+    const twoDaysFromNow = now.getTime() + 48 * 60 * 60 * 1000;
     
     const filteredGames = normalizedGames.filter(game => {
       const gameTime = new Date(game.commenceTime).getTime();
-      return gameTime >= todayUTC && gameTime < dayAfterTomorrowUTC;
+      return gameTime >= fourHoursAgo && gameTime < twoDaysFromNow;
     });
     
     const quota = client.getQuota();
