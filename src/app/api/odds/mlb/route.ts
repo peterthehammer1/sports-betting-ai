@@ -52,14 +52,14 @@ export async function GET() {
     const requestsRemaining = response.headers.get('x-requests-remaining');
     const requestsUsed = response.headers.get('x-requests-used');
 
-    // Filter to today's and tomorrow's games only
+    // Filter to today's and tomorrow's games only (use UTC)
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const dayAfterTomorrow = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000);
+    const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const dayAfterTomorrowUTC = todayUTC + 2 * 24 * 60 * 60 * 1000;
     
     const todaysGames = games.filter((game: { commence_time: string }) => {
-      const gameDate = new Date(game.commence_time);
-      return gameDate >= today && gameDate < dayAfterTomorrow;
+      const gameTime = new Date(game.commence_time).getTime();
+      return gameTime >= todayUTC && gameTime < dayAfterTomorrowUTC;
     });
 
     // Normalize games

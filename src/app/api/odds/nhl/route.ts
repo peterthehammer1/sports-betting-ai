@@ -44,14 +44,14 @@ export async function GET(request: Request) {
     // Normalize all games for easier frontend consumption
     const normalizedGames = games.map((game) => client.normalizeGameOdds(game));
     
-    // Filter to only show today's and tomorrow's games
+    // Filter to only show today's and tomorrow's games (use UTC)
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const dayAfterTomorrow = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000);
+    const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const dayAfterTomorrowUTC = todayUTC + 2 * 24 * 60 * 60 * 1000;
     
     const filteredGames = normalizedGames.filter(game => {
-      const gameDate = new Date(game.commenceTime);
-      return gameDate >= today && gameDate < dayAfterTomorrow;
+      const gameTime = new Date(game.commenceTime).getTime();
+      return gameTime >= todayUTC && gameTime < dayAfterTomorrowUTC;
     });
     
     const quota = client.getQuota();

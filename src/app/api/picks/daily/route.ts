@@ -65,17 +65,17 @@ async function fetchGamesForSport(sport: Sport): Promise<GameForPicking[]> {
     
     console.log(`Fetched ${games.length} ${sport} games from Odds API`);
     
-    // Filter to today's and tomorrow's games only
+    // Filter to today's and tomorrow's games only (use UTC to match API times)
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const dayAfterTomorrow = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000);
+    const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const dayAfterTomorrowUTC = todayUTC + 2 * 24 * 60 * 60 * 1000;
     
     const todaysGames = games.filter(game => {
-      const gameDate = new Date(game.commence_time);
-      return gameDate >= today && gameDate < dayAfterTomorrow;
+      const gameTime = new Date(game.commence_time).getTime();
+      return gameTime >= todayUTC && gameTime < dayAfterTomorrowUTC;
     });
     
-    console.log(`Filtered to ${todaysGames.length} today/tomorrow ${sport} games`);
+    console.log(`${sport}: Found ${games.length} total, ${todaysGames.length} today/tomorrow`);
     
     // Map to our format and take up to 6 games
     return todaysGames.slice(0, 6).map(game => {
