@@ -18,6 +18,7 @@ import { PerformanceDashboard } from '@/components/tracker/PerformanceDashboard'
 import { OddsMovementChart } from '@/components/tracker/OddsMovementChart';
 import { RecentPicksScroller } from '@/components/tracker/RecentPicksScroller';
 import { InjuryReport } from '@/components/injuries/InjuryReport';
+import { GamesTickerBar } from '@/components/navigation/GamesTickerBar';
 // Engagement components
 import { 
   SocialProofBanner,
@@ -451,6 +452,19 @@ export default function Dashboard() {
         <EmailCapture variant="modal" onClose={dismissExitModal} />
       )}
       
+      {/* ESPN-style Games Ticker at the very top */}
+      <GamesTickerBar 
+        currentSport={sport}
+        onSportChange={(newSport) => {
+          setSport(newSport as Sport);
+          if (newSport === 'NFL') {
+            setView('landing');
+          } else {
+            setView('games');
+          }
+        }}
+      />
+      
       {/* FanDuel Promo Banner - hide on landing */}
       {view !== 'landing' && <FanDuelBanner />}
       
@@ -462,111 +476,48 @@ export default function Dashboard() {
       {/* Live Activity Feed - floating component */}
       {view !== 'landing' && <LiveActivityFeed />}
 
-      {/* Header - Clean professional design */}
-      <header className={`sticky top-0 z-40 bg-[#0d1117] border-b border-slate-800 ${view === 'landing' ? 'py-2' : ''}`}>
-        <div className="max-w-6xl mx-auto px-4 py-3 sm:px-6 sm:py-4">
-          {/* Top Row - Logo, Title and Sport Toggle */}
-          <div className="flex items-center justify-between gap-3">
+      {/* Header - Simplified with just logo and nav */}
+      <header className={`sticky top-[73px] z-40 bg-[#0d1117] border-b border-slate-800`}>
+        <div className="max-w-6xl mx-auto px-4 py-2 sm:px-6">
+          {/* Single Row - Logo and Navigation */}
+          <div className="flex items-center justify-between gap-4">
             {/* Logo and Title */}
-            <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-2.5 min-w-0">
               <img 
                 src="/Pete/PeterCartoon1.png" 
                 alt="Pete" 
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg object-cover flex-shrink-0"
+                className="w-8 h-8 rounded-lg object-cover flex-shrink-0"
               />
-              <div className="min-w-0">
-                <h1 className="text-base sm:text-lg font-semibold text-white tracking-tight truncate">
-                  Pete&apos;s AI Sports Picks
-                </h1>
-                <p className="text-[11px] text-slate-500 hidden sm:block tracking-wide uppercase">AI-Powered Predictions</p>
-              </div>
+              <h1 className="text-sm sm:text-base font-semibold text-white tracking-tight">
+                Pete&apos;s AI Sports Picks
+              </h1>
             </div>
-            
-            {/* Sport Toggle - Clean professional style */}
-            <div className="flex bg-slate-800/50 rounded-lg p-0.5 flex-shrink-0 overflow-x-auto">
-              {(Object.keys(SPORTS_CONFIG) as Sport[]).map((s) => (
-                <button
-                  key={s}
-                  onClick={() => {
-                    setSport(s);
-                    // NFL goes to Super Bowl landing, other sports go to games
-                    if (s === 'NFL') {
-                      setView('landing');
-                    } else {
-                      setView('games');
-                    }
-                  }}
-                  className={`px-3 sm:px-4 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                    sport === s
-                      ? 'bg-slate-700 text-white shadow-sm'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <span className="flex items-center gap-1.5">
-                    <span>{SPORTS_CONFIG[s].emoji}</span>
-                    <span className="hidden sm:inline">{SPORTS_CONFIG[s].label}</span>
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
 
-          {/* Navigation Tabs - Modern underline style */}
-          <div className="mt-4 flex gap-1 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-            <NavTab 
-              active={view === 'landing'} 
-              onClick={() => setView('landing')}
-              label="🏈 Super Bowl LX"
-            />
-            {/* Hide Games tab for NFL since Super Bowl is the only game */}
-            {sport !== 'NFL' && (
+            {/* Navigation Tabs - Inline */}
+            <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
               <NavTab 
-                active={view === 'games'} 
-                onClick={() => setView('games')}
-                label="Games"
+                active={view === 'landing'} 
+                onClick={() => setView('landing')}
+                label="🏈 Super Bowl"
               />
-            )}
-            {/* Analysis - hide for NFL since it's in Super Bowl landing */}
-            {sport !== 'NFL' && (
+              {sport !== 'NFL' && (
+                <NavTab 
+                  active={view === 'games'} 
+                  onClick={() => setView('games')}
+                  label="Games"
+                />
+              )}
               <NavTab 
-                active={view === 'analysis'} 
-                onClick={() => setView('analysis')}
-                disabled={!selectedPrediction}
-                label="Analysis"
+                active={view === 'tracker'} 
+                onClick={() => setView('tracker')}
+                label="Tracker"
               />
-            )}
-            {/* Player Props - Available for sports with props, hide for NFL */}
-            {SPORTS_CONFIG[sport]?.hasProps && sport !== 'NFL' && (
               <NavTab 
-                active={view === 'props'} 
-                onClick={() => setView('props')}
-                disabled={sport === 'NHL' ? !selectedPropsAnalysis : !selectedNbaPropsAnalysis}
-                label={sport === 'NHL' ? 'Goal Scorers' : sport === 'MLB' ? 'Player Props' : sport === 'EPL' ? 'Goal Scorers' : 'Player Props'}
+                active={view === 'tools'} 
+                onClick={() => setView('tools')}
+                label="Tools"
               />
-            )}
-            <NavTab 
-              active={view === 'tracker'} 
-              onClick={() => setView('tracker')}
-              label="📊 Tracker"
-            />
-            <NavTab 
-              active={view === 'tools'} 
-              onClick={() => setView('tools')}
-              label="Tools"
-            />
-          </div>
-
-          {/* Status bar - Clean and minimal */}
-          <div className="mt-3 flex items-center gap-4 text-[11px] text-slate-500 tracking-wide">
-            <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-              <span className="text-emerald-500 font-medium uppercase">Live</span>
             </div>
-            {lastFetch && (
-              <span className="text-slate-600">
-                Updated {lastFetch.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-              </span>
-            )}
           </div>
         </div>
       </header>
