@@ -215,11 +215,14 @@ function GameTicket({
   return (
     <button
       onClick={onClick}
-      className={`flex-shrink-0 w-[140px] bg-[#161b22] hover:bg-[#1c2128] border-r border-slate-800 transition-colors ${
+      title="Click for AI Analysis"
+      className={`flex-shrink-0 w-[140px] bg-[#161b22] hover:bg-[#1c2128] border-r border-slate-800 transition-all hover:scale-[1.02] group ${
         isLast ? 'border-r-0' : ''
       }`}
     >
-      <div className="px-2.5 py-2">
+      <div className="px-2.5 py-2 relative">
+        {/* Hover indicator */}
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/5 to-cyan-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
         {/* Status */}
         <div className="flex items-center justify-between mb-1.5">
           {game.status === 'live' ? (

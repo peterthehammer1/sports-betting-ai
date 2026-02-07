@@ -463,6 +463,14 @@ export default function Dashboard() {
             setView('games');
           }
         }}
+        onGameClick={(game) => {
+          // Set sport to match the clicked game
+          if (game.sport && game.sport !== sport) {
+            setSport(game.sport as Sport);
+          }
+          // Trigger AI analysis for this game
+          fetchGameAnalysis(game.id);
+        }}
       />
       
       {/* FanDuel Promo Banner - hide on landing */}
