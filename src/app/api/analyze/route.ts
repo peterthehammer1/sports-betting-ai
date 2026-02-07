@@ -195,12 +195,17 @@ export async function POST(request: NextRequest) {
     // Save picks to tracker (for NBA, NHL, NFL)
     if (['NBA', 'NHL', 'NFL'].includes(sport)) {
       try {
+        // Handle commenceTime as either Date or string (from cache)
+        const gameTime = normalizedGame.commenceTime instanceof Date 
+          ? normalizedGame.commenceTime.toISOString()
+          : String(normalizedGame.commenceTime);
+        
         const gameInfo = {
           gameId,
           sport: sport as Sport,
           homeTeam: normalizedGame.homeTeam,
           awayTeam: normalizedGame.awayTeam,
-          gameTime: normalizedGame.commenceTime.toISOString(),
+          gameTime,
         };
         
         const savedPicks = await saveGameAnalysisPicks(gameInfo, {
