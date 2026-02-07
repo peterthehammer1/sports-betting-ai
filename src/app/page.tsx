@@ -11,25 +11,12 @@ import { BetCalculator } from '@/components/tools/BetCalculator';
 import { ParlayBuilder } from '@/components/tools/ParlayBuilder';
 import { BettingGuide } from '@/components/education/BettingGuide';
 import { OddsWidget } from '@/components/widgets/OddsWidget';
-import { FanDuelBanner } from '@/components/promo/FanDuelBanner';
 import { SuperBowlCard } from '@/components/superbowl/SuperBowlCard';
 import { SuperBowlLanding } from '@/components/superbowl/SuperBowlLanding';
 import { PerformanceDashboard } from '@/components/tracker/PerformanceDashboard';
 import { OddsMovementChart } from '@/components/tracker/OddsMovementChart';
-import { RecentPicksScroller } from '@/components/tracker/RecentPicksScroller';
 import { InjuryReport } from '@/components/injuries/InjuryReport';
 import { GamesTickerBar } from '@/components/navigation/GamesTickerBar';
-// Engagement components
-import { 
-  SocialProofBanner,
-  EmailCapture,
-  useExitIntent,
-  LiveActivityFeed,
-  MobileBottomNav,
-  StreakTracker,
-  MiniLeaderboard,
-  EmailCapture as InlineEmailCapture
-} from '@/components/engagement';
 import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
 import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
 import type { SportInjuries, TeamInjuries } from '@/types/injuries';
@@ -125,22 +112,14 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
   
-  // Performance stats for social proof
+  // Performance stats for header badge
   const [performanceStats, setPerformanceStats] = useState<{
     winRate: number;
     wins: number;
     losses: number;
-    netUnits: number;
-    currentStreak: { type: string; count: number };
   } | null>(null);
-
-  // Exit intent email modal
-  const { showModal: showExitModal, dismiss: dismissExitModal } = useExitIntent(5000);
   
-  // Mobile nav state
-  const [mobileTab, setMobileTab] = useState<'home' | 'picks' | 'tracker' | 'profile'>('home');
-  
-  // Fetch performance stats for social proof
+  // Fetch performance stats
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -151,8 +130,6 @@ export default function Dashboard() {
             winRate: data.stats.winRate || 0,
             wins: data.stats.wins || 0,
             losses: data.stats.losses || 0,
-            netUnits: data.stats.netUnits || 0,
-            currentStreak: data.stats.currentStreak || { type: 'none', count: 0 },
           });
         }
       } catch (err) {
@@ -446,12 +423,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] hero-gradient pb-16 md:pb-0">
-      {/* Exit Intent Email Modal */}
-      {showExitModal && (
-        <EmailCapture variant="modal" onClose={dismissExitModal} />
-      )}
-      
+    <div className="min-h-screen bg-[#0d1117]">
       {/* ESPN-style Games Ticker at the very top */}
       <GamesTickerBar 
         currentSport={sport}
@@ -472,49 +444,33 @@ export default function Dashboard() {
           fetchGameAnalysis(game.id);
         }}
       />
-      
-      {/* FanDuel Promo Banner - hide on landing */}
-      {view !== 'landing' && <FanDuelBanner />}
-      
-      {/* Social Proof Banner - show on main views */}
-      {view !== 'landing' && performanceStats && (
-        <SocialProofBanner stats={performanceStats} />
-      )}
-      
-      {/* Live Activity Feed - floating component */}
-      {view !== 'landing' && <LiveActivityFeed />}
 
-      {/* Header - Simplified with just logo and nav */}
-      <header className={`sticky top-[73px] z-40 bg-[#0d1117] border-b border-slate-800`}>
-        <div className="max-w-6xl mx-auto px-4 py-2 sm:px-6">
-          {/* Single Row - Logo and Navigation */}
-          <div className="flex items-center justify-between gap-4">
-            {/* Logo and Title */}
-            <div className="flex items-center gap-2.5 min-w-0">
+      {/* Clean Header */}
+      <header className="sticky top-[73px] z-40 bg-[#0d1117] border-b border-slate-800/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between h-12">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
               <img 
                 src="/Pete/PeterCartoon1.png" 
                 alt="Pete" 
-                className="w-8 h-8 rounded-lg object-cover flex-shrink-0"
+                className="w-8 h-8 rounded-lg object-cover"
               />
-              <h1 className="text-sm sm:text-base font-semibold text-white tracking-tight">
-                Pete&apos;s AI Sports Picks
-              </h1>
+              <span className="text-white font-semibold hidden sm:block">Pete&apos;s AI Picks</span>
             </div>
 
-            {/* Navigation Tabs - Inline */}
-            <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
+            {/* Navigation */}
+            <nav className="flex items-center gap-1">
               <NavTab 
                 active={view === 'landing'} 
                 onClick={() => setView('landing')}
-                label="🏈 Super Bowl"
+                label="Super Bowl"
               />
-              {sport !== 'NFL' && (
-                <NavTab 
-                  active={view === 'games'} 
-                  onClick={() => setView('games')}
-                  label="Games"
-                />
-              )}
+              <NavTab 
+                active={view === 'games'} 
+                onClick={() => setView('games')}
+                label="Games"
+              />
               <NavTab 
                 active={view === 'tracker'} 
                 onClick={() => setView('tracker')}
@@ -525,17 +481,22 @@ export default function Dashboard() {
                 onClick={() => setView('tools')}
                 label="Tools"
               />
-            </div>
+            </nav>
+
+            {/* Win Rate Badge */}
+            {performanceStats && (
+              <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                <span className="text-emerald-400 text-sm font-bold">{performanceStats.winRate.toFixed(1)}%</span>
+                <span className="text-slate-500 text-xs">Win Rate</span>
+              </div>
+            )}
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className={view === 'landing' ? '' : 'max-w-7xl mx-auto px-4 py-6 sm:px-6'}>
-        {/* Two-column layout for desktop */}
-        <div className={view === 'landing' ? '' : 'flex gap-6'}>
-          {/* Main content area */}
-          <div className={view === 'landing' ? '' : 'flex-1 min-w-0'}>
+      <main className={view === 'landing' ? '' : 'max-w-6xl mx-auto px-4 py-6 sm:px-6'}>
+        <div className={view === 'landing' ? '' : ''}>
         {/* Error State */}
         {error && view !== 'landing' && (
           <div className="mb-6 bg-[#161b22] border border-slate-700 p-4 rounded-lg animate-slide-up border-l-4 border-l-red-600">
@@ -600,19 +561,13 @@ export default function Dashboard() {
 
         {/* Games View */}
         {view === 'games' && games.length > 0 && (
-          <div className="animate-slide-up">
-            <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
+          <div>
+            {/* Page Header */}
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <span className="text-2xl">{SPORTS_CONFIG[sport].emoji}</span>
-                  {sport} Games
-                </h2>
-                <p className="text-sm text-slate-500 mt-1">
-                  {games.length} game{games.length !== 1 ? 's' : ''} with live odds
-                </p>
+                <h1 className="text-xl font-bold text-white">{sport} Games</h1>
+                <p className="text-sm text-slate-500">{games.length} games today</p>
               </div>
-              
-              {/* Compact Injury Badge - click to expand */}
               <InjuryReport 
                 sport={sport}
                 filterTeams={games.flatMap(g => [g.homeTeam, g.awayTeam])}
@@ -620,25 +575,8 @@ export default function Dashboard() {
               />
             </div>
 
-            {/* NFL Super Bowl Banner */}
-            {sport === 'NFL' && (
-              <div className="mb-6 bg-[#161b22] border border-slate-700 p-5 rounded-lg flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-white flex items-center gap-2">
-                    <span className="text-lg">🏈</span> Super Bowl LX Analysis
-                  </p>
-                  <p className="text-sm text-slate-500 mt-1">Expert picks, prediction models, and betting guides</p>
-                </div>
-                <button
-                  onClick={() => setView('landing')}
-                  className="btn-primary text-sm"
-                >
-                  View Analysis
-                </button>
-              </div>
-            )}
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {/* Games Grid */}
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {games.map((game) => (
                 <GameCard
                   key={game.gameId}
@@ -824,85 +762,27 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Empty State - Modern design */}
-        {!loadingOdds && games.length === 0 && !error && view !== 'landing' && (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/5 flex items-center justify-center">
-              <span className="text-4xl">{SPORTS_CONFIG[sport].emoji}</span>
+        {/* Empty State */}
+        {!loadingOdds && games.length === 0 && !error && view !== 'landing' && view !== 'tracker' && view !== 'tools' && (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-slate-800/50 flex items-center justify-center">
+              <span className="text-3xl">{SPORTS_CONFIG[sport].emoji}</span>
             </div>
-            <p className="text-white font-semibold text-lg">
-              No {sport} games available
-            </p>
-            <p className="text-slate-500 text-sm mt-2">
-              Check back later for upcoming matchups
-            </p>
+            <p className="text-white font-medium">No {sport} games today</p>
+            <p className="text-slate-500 text-sm mt-1">Check back later for upcoming matchups</p>
           </div>
         )}
-          </div>
-          
-          {/* Sidebar with Recent Picks Scroller - Hidden on mobile & landing */}
-          {view !== 'landing' && (
-            <aside className="hidden lg:block w-80 flex-shrink-0">
-              <div className="sticky top-24 space-y-6">
-                {/* Streak Tracker */}
-                {performanceStats?.currentStreak && performanceStats.currentStreak.type === 'W' && (
-                  <StreakTracker currentStreak={performanceStats.currentStreak.count} />
-                )}
-                
-                {/* Email Capture - Inline */}
-                <InlineEmailCapture variant="inline" />
-                
-                {/* Mini Leaderboard */}
-                <MiniLeaderboard />
-                
-                {/* Recent Picks */}
-                <RecentPicksScroller />
-              </div>
-            </aside>
-          )}
         </div>
       </main>
 
-      {/* Footer - hide on landing page which has its own footer */}
+      {/* Simple Footer */}
       {view !== 'landing' && (
-        <footer className="mt-auto py-8 border-t border-white/5 safe-area-bottom">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-              <p className="flex items-center gap-2">
-                <span className="text-amber-500">⚠️</span>
-                For entertainment purposes only. Please gamble responsibly.
-              </p>
-              <p className="flex items-center gap-1">
-                © 2026 
-                <span className="gradient-text font-medium">Pete&apos;s AI Sports Picks</span>
-              </p>
-            </div>
+        <footer className="py-6 border-t border-slate-800/50 mt-8">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center text-xs text-slate-500">
+            <p>For entertainment purposes only. Please gamble responsibly. © 2026 Pete&apos;s AI Sports Picks</p>
           </div>
         </footer>
       )}
-      
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav 
-        activeTab={
-          view === 'tracker' ? 'tracker' :
-          view === 'picks' || view === 'analysis' || view === 'props' ? 'picks' :
-          mobileTab
-        }
-        onTabChange={(tab) => {
-          setMobileTab(tab);
-          if (tab === 'home') {
-            setView(sport === 'NFL' ? 'landing' : 'games');
-          } else if (tab === 'picks') {
-            if (games.length > 0) {
-              fetchQuickPicks();
-            }
-          } else if (tab === 'tracker') {
-            setView('tracker');
-          }
-        }}
-        picksCount={quickPicks.length}
-        hasNewPicks={quickPicks.length > 0}
-      />
     </div>
   );
 }
