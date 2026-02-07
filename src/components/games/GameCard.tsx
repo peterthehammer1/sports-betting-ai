@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { formatAmericanOdds, formatProbability } from '@/lib/utils/odds';
 import { getTeamLogoUrl } from '@/lib/utils/teamLogos';
+import { CountdownTimer } from '@/components/engagement/CountdownTimer';
 import type { NormalizedOdds, NormalizedScore } from '@/types/odds';
 
 interface InjuryInfo {
@@ -59,9 +60,18 @@ export function GameCard({ game, sport, score, injuries, onSelect, onPropsSelect
         {/* Header - Time and Status */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500">
-              {isToday ? 'Today' : gameTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-            </span>
+            {/* Countdown Timer for upcoming games */}
+            {!score?.isLive && !score?.isCompleted && gameTime > new Date() ? (
+              <CountdownTimer 
+                targetDate={gameTime}
+                label={isToday ? 'Starts in' : gameTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                variant="compact"
+              />
+            ) : (
+              <span className="text-xs text-slate-500">
+                {isToday ? 'Today' : gameTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+              </span>
+            )}
             {/* Injury Badge */}
             {injuries && injuries.totalCount > 0 && (
               <span 

@@ -18,6 +18,17 @@ import { PerformanceDashboard } from '@/components/tracker/PerformanceDashboard'
 import { OddsMovementChart } from '@/components/tracker/OddsMovementChart';
 import { RecentPicksScroller } from '@/components/tracker/RecentPicksScroller';
 import { InjuryReport } from '@/components/injuries/InjuryReport';
+// Engagement components
+import { 
+  SocialProofBanner,
+  EmailCapture,
+  useExitIntent,
+  LiveActivityFeed,
+  MobileBottomNav,
+  StreakTracker,
+  MiniLeaderboard,
+  EmailCapture as InlineEmailCapture
+} from '@/components/engagement';
 import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
 import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
 import type { SportInjuries, TeamInjuries } from '@/types/injuries';
@@ -112,6 +123,43 @@ export default function Dashboard() {
   
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
+  
+  // Performance stats for social proof
+  const [performanceStats, setPerformanceStats] = useState<{
+    winRate: number;
+    wins: number;
+    losses: number;
+    netUnits: number;
+    currentStreak: { type: string; count: number };
+  } | null>(null);
+
+  // Exit intent email modal
+  const { showModal: showExitModal, dismiss: dismissExitModal } = useExitIntent(5000);
+  
+  // Mobile nav state
+  const [mobileTab, setMobileTab] = useState<'home' | 'picks' | 'tracker' | 'profile'>('home');
+  
+  // Fetch performance stats for social proof
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch('/api/tracker');
+        const data = await res.json();
+        if (data.stats) {
+          setPerformanceStats({
+            winRate: data.stats.winRate || 0,
+            wins: data.stats.wins || 0,
+            losses: data.stats.losses || 0,
+            netUnits: data.stats.netUnits || 0,
+            currentStreak: data.stats.currentStreak || { type: 'none', count: 0 },
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch performance stats:', err);
+      }
+    };
+    fetchStats();
+  }, []);
 
   // Fetch injuries for current sport
   const fetchInjuries = async () => {
@@ -397,9 +445,22 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] hero-gradient">
+    <div className="min-h-screen bg-[var(--background)] hero-gradient pb-16 md:pb-0">
+      {/* Exit Intent Email Modal */}
+      {showExitModal && (
+        <EmailCapture variant="modal" onClose={dismissExitModal} />
+      )}
+      
       {/* FanDuel Promo Banner - hide on landing */}
       {view !== 'landing' && <FanDuelBanner />}
+      
+      {/* Social Proof Banner - show on main views */}
+      {view !== 'landing' && performanceStats && (
+        <SocialProofBanner stats={performanceStats} />
+      )}
+      
+      {/* Live Activity Feed - floating component */}
+      {view !== 'landing' && <LiveActivityFeed />}
 
       {/* Header - Clean professional design */}
       <header className={`sticky top-0 z-40 bg-[#0d1117] border-b border-slate-800 ${view === 'landing' ? 'py-2' : ''}`}>
@@ -823,7 +884,19 @@ export default function Dashboard() {
           {/* Sidebar with Recent Picks Scroller - Hidden on mobile & landing */}
           {view !== 'landing' && (
             <aside className="hidden lg:block w-80 flex-shrink-0">
-              <div className="sticky top-24">
+              <div className="sticky top-24 space-y-6">
+                {/* Streak Tracker */}
+                {performanceStats?.currentStreak && performanceStats.currentStreak.type === 'W' && (
+                  <StreakTracker currentStreak={performanceStats.currentStreak.count} />
+                )}
+                
+                {/* Email Capture - Inline */}
+                <InlineEmailCapture variant="inline" />
+                
+                {/* Mini Leaderboard */}
+                <MiniLeaderboard />
+                
+                {/* Recent Picks */}
                 <RecentPicksScroller />
               </div>
             </aside>
@@ -848,6 +921,29 @@ export default function Dashboard() {
           </div>
         </footer>
       )}
+      
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav 
+        activeTab={
+          view === 'tracker' ? 'tracker' :
+          view === 'picks' || view === 'analysis' || view === 'props' ? 'picks' :
+          mobileTab
+        }
+        onTabChange={(tab) => {
+          setMobileTab(tab);
+          if (tab === 'home') {
+            setView(sport === 'NFL' ? 'landing' : 'games');
+          } else if (tab === 'picks') {
+            if (games.length > 0) {
+              fetchQuickPicks();
+            }
+          } else if (tab === 'tracker') {
+            setView('tracker');
+          }
+        }}
+        picksCount={quickPicks.length}
+        hasNewPicks={quickPicks.length > 0}
+      />
     </div>
   );
 }

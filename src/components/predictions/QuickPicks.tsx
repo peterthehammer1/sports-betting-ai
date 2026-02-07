@@ -1,5 +1,9 @@
 'use client';
 
+import { CircularConfidenceMeter, ConfidenceMeter } from '@/components/engagement/ConfidenceMeter';
+import { FollowPickButton } from '@/components/engagement/Gamification';
+import { CountdownTimer } from '@/components/engagement/CountdownTimer';
+
 interface QuickPick {
   gameIndex: number;
   gameId?: string;
@@ -105,46 +109,61 @@ function QuickPickRow({
 }) {
   const isTopPick = rank <= 3;
   const gameTime = pick.commenceTime ? new Date(pick.commenceTime) : null;
+  const isUpcoming = gameTime && gameTime > new Date();
 
   return (
     <div
-      onClick={onSelect}
-      className={`p-4 hover:bg-slate-700/30 cursor-pointer transition-colors ${
+      className={`p-4 hover:bg-slate-700/30 transition-colors ${
         isTopPick ? 'bg-amber-500/5' : ''
       }`}
     >
       <div className="flex items-start gap-3">
-        {/* Rank */}
-        <div className={`flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center font-semibold text-xs ${
-          rank === 1 
-            ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' 
-            : rank === 2 
-            ? 'bg-slate-600 text-slate-300'
-            : rank === 3
-            ? 'bg-amber-700/30 text-amber-500'
-            : 'bg-slate-700 text-slate-500'
-        }`}>
-          {rank}
+        {/* Confidence Meter instead of Rank */}
+        <div className="flex-shrink-0">
+          <CircularConfidenceMeter 
+            confidence={pick.winnerConfidence} 
+            size="sm" 
+            showLabel={false}
+            animated={rank <= 3}
+          />
         </div>
 
         {/* Game Info */}
-        <div className="flex-grow min-w-0">
+        <div className="flex-grow min-w-0 cursor-pointer" onClick={onSelect}>
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-white text-sm">
                 {pick.awayTeam} @ {pick.homeTeam}
               </p>
               {gameTime && (
-                <p className="text-[10px] text-slate-500">
-                  {gameTime.toLocaleDateString()} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                </p>
+                <div className="mt-1">
+                  {isUpcoming ? (
+                    <CountdownTimer 
+                      targetDate={gameTime}
+                      variant="inline"
+                      showUrgency={true}
+                    />
+                  ) : (
+                    <p className="text-[10px] text-slate-500">
+                      {gameTime.toLocaleDateString()} • {gameTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                    </p>
+                  )}
+                </div>
               )}
             </div>
             <div className="text-right">
               <p className="font-semibold text-white text-sm">
                 {pick.winnerPick}
               </p>
-              <ConfidencePill confidence={pick.winnerConfidence} />
+              {/* Confidence bar for visual impact */}
+              <div className="mt-1">
+                <ConfidenceMeter 
+                  confidence={pick.winnerConfidence} 
+                  size="sm" 
+                  showLabel={false}
+                  animated={false}
+                />
+              </div>
             </div>
           </div>
 
@@ -179,11 +198,17 @@ function QuickPickRow({
           </div>
         </div>
 
-        {/* Arrow */}
-        <div className="flex-shrink-0 text-slate-600">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+        {/* Follow Pick Button + Arrow */}
+        <div className="flex-shrink-0 flex flex-col items-end gap-2">
+          <FollowPickButton pickId={pick.gameId || `pick-${rank}`} />
+          <button 
+            onClick={onSelect}
+            className="text-slate-600 hover:text-white transition-colors p-1"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
