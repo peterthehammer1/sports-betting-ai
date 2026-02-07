@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { GameCard } from '@/components/games/GameCard';
 import { PredictionCard } from '@/components/predictions/PredictionCard';
 import { QuickPicks } from '@/components/predictions/QuickPicks';
@@ -85,9 +86,30 @@ interface NbaPlayerPropsData {
   };
 }
 
-export default function Dashboard() {
-  const [sport, setSport] = useState<Sport>('NFL');
-  const [view, setView] = useState<View>('landing');
+// Wrapper component to handle Suspense for useSearchParams
+export default function Page() {
+  return (
+    <Suspense fallback={<DashboardSkeleton />}>
+      <Dashboard />
+    </Suspense>
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-slate-700 border-t-slate-400 rounded-full animate-spin" />
+    </div>
+  );
+}
+
+function Dashboard() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const urlSport = searchParams.get('sport')?.toUpperCase() as Sport | null;
+  
+  const [sport, setSport] = useState<Sport>(urlSport && ['NHL', 'NBA', 'MLB', 'EPL', 'NFL'].includes(urlSport) ? urlSport : 'NFL');
+  const [view, setView] = useState<View>(urlSport && urlSport !== 'NFL' ? 'games' : 'landing');
   const [games, setGames] = useState<NormalizedOdds[]>([]);
   const [scores, setScores] = useState<Record<string, NormalizedScore>>({});
   const [quickPicks, setQuickPicks] = useState<QuickPick[]>([]);
@@ -399,6 +421,10 @@ export default function Dashboard() {
     prevSportRef.current = sport;
     
     if (sportChanged) {
+      // Update URL to reflect sport change
+      const newUrl = sport === 'NFL' ? '/' : `/?sport=${sport}`;
+      router.replace(newUrl, { scroll: false });
+      
       fetchOdds();
       fetchInjuries(); // Fetch injuries for the current sport
       setQuickPicks([]); // Clear picks when sport changes
@@ -416,7 +442,7 @@ export default function Dashboard() {
         setView('games');
       }
     }
-  }, [sport]);
+  }, [sport, router]);
 
   const handleGameSelect = (gameId: string) => {
     fetchGameAnalysis(gameId);
