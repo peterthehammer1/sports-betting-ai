@@ -15,7 +15,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createOddsApiClient } from '@/lib/api/odds';
 import { createAnalysisClient } from '@/lib/analysis/claude';
-import { getCachedGameAnalysis, cacheGameAnalysis, isRedisConfigured } from '@/lib/cache/redis';
+import { getCachedGameAnalysis, cacheGameAnalysis, isRedisConfigured, getCachedOdds } from '@/lib/cache/redis';
 import { fetchInjuries, getGameInjuries, formatInjuriesForAI } from '@/lib/api/injuries';
 import { saveGameAnalysisPicks } from '@/lib/tracking/savePicks';
 import type { SportKey } from '@/types/odds';
@@ -84,20 +84,36 @@ export async function POST(request: NextRequest) {
     // Fetch current odds for the game
     const oddsClient = createOddsApiClient({ apiKey: oddsApiKey });
     
+    let normalizedGame;
+    
+    // First try to get fresh game data from API
     const game = await oddsClient.getGameOdds(
       sportKey,
       gameId,
       ['h2h', 'spreads', 'totals']
     );
 
-    if (!game) {
+    if (game) {
+      normalizedGame = oddsClient.normalizeGameOdds(game);
+    } else {
+      // Game not in fresh API (may have started/ended) - try cached odds
+      const cachedOdds = await getCachedOdds(sport);
+      if (cachedOdds) {
+        const cachedData = typeof cachedOdds === 'string' ? JSON.parse(cachedOdds) : cachedOdds;
+        const cachedGame = cachedData.games?.find((g: { gameId: string }) => g.gameId === gameId);
+        if (cachedGame) {
+          console.log('Using cached game data for analysis:', gameId);
+          normalizedGame = cachedGame;
+        }
+      }
+    }
+    
+    if (!normalizedGame) {
       return NextResponse.json(
-        { error: 'Game not found' },
+        { error: 'Game not found. The game may have already ended.' },
         { status: 404 }
       );
     }
-
-    const normalizedGame = oddsClient.normalizeGameOdds(game);
 
     // Fetch injury data for context (only for sports with injury data)
     let injuryReport = '';
