@@ -22,7 +22,7 @@ interface GamesTickerBarProps {
   currentSport?: string;
 }
 
-const SPORTS = ['NBA', 'NHL', 'NFL', 'MLB', 'EPL'];
+const SPORTS = ['NBA', 'NHL', 'NFL', 'EPL'];
 
 export function GamesTickerBar({ onGameClick, onSportChange, currentSport = 'NBA' }: GamesTickerBarProps) {
   const [games, setGames] = useState<TickerGame[]>([]);
