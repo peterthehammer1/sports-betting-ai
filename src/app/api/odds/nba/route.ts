@@ -43,15 +43,8 @@ export async function GET(request: Request) {
     
     const normalizedGames = games.map((game) => client.normalizeGameOdds(game));
     
-    // Filter to show games starting in the next 48 hours or started within last 4 hours (might still be live)
-    const now = new Date();
-    const fourHoursAgo = now.getTime() - 4 * 60 * 60 * 1000;
-    const twoDaysFromNow = now.getTime() + 48 * 60 * 60 * 1000;
-    
-    const filteredGames = normalizedGames.filter(game => {
-      const gameTime = new Date(game.commenceTime).getTime();
-      return gameTime >= fourHoursAgo && gameTime < twoDaysFromNow;
-    });
+    // Show all games - no time filtering for now (API already returns upcoming games)
+    const filteredGames = normalizedGames;
     
     const quota = client.getQuota();
 
