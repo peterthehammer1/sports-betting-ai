@@ -5,15 +5,16 @@
  */
 
 import { NextResponse } from 'next/server';
+import { createOddsApiClient } from '@/lib/api/odds';
 import { getCachedOdds, cacheOdds, isRedisConfigured } from '@/lib/cache/redis';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-const ODDS_API_BASE = 'https://api.the-odds-api.com/v4';
-
-export async function GET() {
+export async function GET(request: Request) {
   const apiKey = process.env.THE_ODDS_API_KEY;
+  const { searchParams } = new URL(request.url);
+  const forceFresh = searchParams.get('fresh') === 'true';
 
   if (!apiKey) {
     return NextResponse.json(
@@ -23,145 +24,61 @@ export async function GET() {
   }
 
   try {
-    // Check cache first
-    const cached = await getCachedOdds('MLB');
-    if (cached) {
-      console.log('Returning cached MLB odds');
-      const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
-      return NextResponse.json({
-        ...cachedData,
-        fromCache: true,
-        cacheEnabled: true,
-      });
-    }
-
-    // Fetch fresh odds from The Odds API
-    const url = `${ODDS_API_BASE}/sports/baseball_mlb/odds?apiKey=${apiKey}&regions=us&markets=h2h,spreads,totals&oddsFormat=american`;
-    
-    const response = await fetch(url, {
-      headers: { 'Accept': 'application/json' },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Odds API returned ${response.status}`);
-    }
-
-    const games = await response.json();
-    
-    // Get quota info from headers
-    const requestsRemaining = response.headers.get('x-requests-remaining');
-    const requestsUsed = response.headers.get('x-requests-used');
-
-    // Filter to show games starting in the next 48 hours or started within last 4 hours
-    const now = new Date();
-    const fourHoursAgo = now.getTime() - 4 * 60 * 60 * 1000;
-    const twoDaysFromNow = now.getTime() + 48 * 60 * 60 * 1000;
-    
-    const todaysGames = games.filter((game: { commence_time: string }) => {
-      const gameTime = new Date(game.commence_time).getTime();
-      return gameTime >= fourHoursAgo && gameTime < twoDaysFromNow;
-    });
-
-    // Normalize games
-    const normalizedGames = todaysGames.map((game: {
-      id: string;
-      home_team: string;
-      away_team: string;
-      commence_time: string;
-      bookmakers: Array<{
-        key: string;
-        title: string;
-        markets: Array<{
-          key: string;
-          outcomes: Array<{
-            name: string;
-            price: number;
-            point?: number;
-          }>;
-        }>;
-      }>;
-    }) => {
-      // Extract best odds for each market
-      const moneylineHome: { bookmaker: string; odds: number }[] = [];
-      const moneylineAway: { bookmaker: string; odds: number }[] = [];
-      const spreadHome: { bookmaker: string; odds: number; line: number }[] = [];
-      const spreadAway: { bookmaker: string; odds: number; line: number }[] = [];
-      const totalOver: { bookmaker: string; odds: number; line: number }[] = [];
-      const totalUnder: { bookmaker: string; odds: number; line: number }[] = [];
-
-      for (const book of game.bookmakers) {
-        for (const market of book.markets) {
-          if (market.key === 'h2h') {
-            for (const outcome of market.outcomes) {
-              if (outcome.name === game.home_team) {
-                moneylineHome.push({ bookmaker: book.title, odds: outcome.price });
-              } else {
-                moneylineAway.push({ bookmaker: book.title, odds: outcome.price });
-              }
-            }
-          }
-          if (market.key === 'spreads') {
-            for (const outcome of market.outcomes) {
-              if (outcome.name === game.home_team) {
-                spreadHome.push({ bookmaker: book.title, odds: outcome.price, line: outcome.point || 0 });
-              } else {
-                spreadAway.push({ bookmaker: book.title, odds: outcome.price, line: -(outcome.point || 0) });
-              }
-            }
-          }
-          if (market.key === 'totals') {
-            for (const outcome of market.outcomes) {
-              if (outcome.name === 'Over') {
-                totalOver.push({ bookmaker: book.title, odds: outcome.price, line: outcome.point || 0 });
-              } else {
-                totalUnder.push({ bookmaker: book.title, odds: outcome.price, line: outcome.point || 0 });
-              }
-            }
-          }
-        }
+    // Check cache first (unless forceFresh)
+    if (!forceFresh) {
+      const cached = await getCachedOdds('MLB');
+      if (cached) {
+        console.log('Returning cached MLB odds');
+        const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
+        return NextResponse.json({
+          ...cachedData,
+          fromCache: true,
+          cacheEnabled: true,
+        });
       }
+    }
 
-      return {
-        gameId: game.id,
-        homeTeam: game.home_team,
-        awayTeam: game.away_team,
-        commenceTime: game.commence_time,
-        moneyline: {
-          home: moneylineHome,
-          away: moneylineAway,
-          bestHome: moneylineHome.length > 0 ? moneylineHome.reduce((a, b) => a.odds > b.odds ? a : b) : null,
-          bestAway: moneylineAway.length > 0 ? moneylineAway.reduce((a, b) => a.odds > b.odds ? a : b) : null,
-        },
-        spread: {
-          home: spreadHome,
-          away: spreadAway,
-          consensusLine: spreadHome.length > 0 ? spreadHome[0].line : null,
-        },
-        total: {
-          over: totalOver,
-          under: totalUnder,
-          consensusLine: totalOver.length > 0 ? totalOver[0].line : null,
-        },
-      };
+    const client = createOddsApiClient({ apiKey });
+    const games = await client.getMlbOdds(['h2h', 'spreads', 'totals']);
+    
+    const normalizedGames = games.map((game) => client.normalizeGameOdds(game));
+    
+    // Sort by commence time (soonest first)
+    normalizedGames.sort((a, b) => 
+      new Date(a.commenceTime).getTime() - new Date(b.commenceTime).getTime()
+    );
+    
+    // Filter to show games within the next 3 days (72 hours)
+    const now = new Date();
+    const threeDaysFromNow = now.getTime() + 72 * 60 * 60 * 1000;
+    const fourHoursAgo = now.getTime() - 4 * 60 * 60 * 1000; // Include recently started games
+    
+    let filteredGames = normalizedGames.filter(game => {
+      const gameTime = new Date(game.commenceTime).getTime();
+      return gameTime >= fourHoursAgo && gameTime <= threeDaysFromNow;
     });
+    
+    // If no games within 3 days (e.g., off-season), show next 15 upcoming games
+    if (filteredGames.length === 0 && normalizedGames.length > 0) {
+      filteredGames = normalizedGames.slice(0, 15);
+    }
+    
+    const quota = client.getQuota();
 
     const responseData = {
-      games: normalizedGames,
+      games: filteredGames,
       meta: {
         sport: 'MLB',
-        gamesCount: normalizedGames.length,
-        totalGames: games.length,
+        gamesCount: filteredGames.length,
+        totalGames: normalizedGames.length,
         fetchedAt: new Date().toISOString(),
-        quota: {
-          requestsRemaining: requestsRemaining ? parseInt(requestsRemaining) : null,
-          requestsUsed: requestsUsed ? parseInt(requestsUsed) : null,
-        },
+        quota,
       },
     };
 
     // Cache the result
     await cacheOdds('MLB', responseData);
-    console.log('Cached MLB odds, today/tomorrow games:', normalizedGames.length);
+    console.log('Cached MLB odds, games:', filteredGames.length);
 
     return NextResponse.json({
       ...responseData,
@@ -180,7 +97,7 @@ export async function GET() {
         ...cachedData,
         fromCache: true,
         cacheEnabled: true,
-        message: 'API quota may be exceeded, showing cached data',
+        warning: 'API error occurred, showing cached data',
       });
     }
     

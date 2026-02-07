@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import type { GamePrediction, ValueBet, RankedBet } from '@/types/prediction';
 import { TeamLogo } from '@/components/ui/TeamLogo';
 
@@ -8,7 +9,7 @@ interface PredictionCardProps {
   onClose?: () => void;
 }
 
-export function PredictionCard({ prediction, onClose }: PredictionCardProps) {
+export const PredictionCard = memo(function PredictionCard({ prediction, onClose }: PredictionCardProps) {
   const isHomePick = prediction.winner.pick === prediction.homeTeam;
   
   return (
@@ -128,7 +129,7 @@ export function PredictionCard({ prediction, onClose }: PredictionCardProps) {
       </div>
     </div>
   );
-}
+});
 
 // Sub-components
 

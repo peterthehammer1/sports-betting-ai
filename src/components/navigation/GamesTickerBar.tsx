@@ -20,21 +20,33 @@ interface GamesTickerBarProps {
   onGameClick?: (game: TickerGame) => void;
   onSportChange?: (sport: string) => void;
   currentSport?: string;
+  externalGames?: TickerGame[]; // Pass games from parent to avoid duplicate fetches
 }
 
 const SPORTS = ['NBA', 'NHL', 'NFL', 'EPL'];
 
-export function GamesTickerBar({ onGameClick, onSportChange, currentSport = 'NBA' }: GamesTickerBarProps) {
+export function GamesTickerBar({ onGameClick, onSportChange, currentSport = 'NBA', externalGames }: GamesTickerBarProps) {
   const [games, setGames] = useState<TickerGame[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!externalGames);
   const [activeSport, setActiveSport] = useState(currentSport);
   const scrollRef = useRef<HTMLDivElement>(null);
+  
+  // Use external games if provided
+  useEffect(() => {
+    if (externalGames && externalGames.length > 0) {
+      setGames(externalGames);
+      setLoading(false);
+    }
+  }, [externalGames]);
 
   useEffect(() => {
-    fetchGames();
-    const interval = setInterval(fetchGames, 60000); // Refresh every minute
-    return () => clearInterval(interval);
-  }, [activeSport]);
+    // Only fetch if no external games provided
+    if (!externalGames || externalGames.length === 0) {
+      fetchGames();
+      const interval = setInterval(fetchGames, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [activeSport, externalGames]);
 
   const fetchGames = async () => {
     try {

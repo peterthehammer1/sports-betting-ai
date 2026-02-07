@@ -1,5 +1,6 @@
 'use client';
 
+import { memo, useMemo, useCallback } from 'react';
 import { CircularConfidenceMeter, ConfidenceMeter } from '@/components/engagement/ConfidenceMeter';
 import { FollowPickButton } from '@/components/engagement/Gamification';
 import { CountdownTimer } from '@/components/engagement/CountdownTimer';
@@ -60,8 +61,11 @@ export function QuickPicks({ picks, sport, onGameSelect, loading }: QuickPicksPr
     );
   }
 
-  // Sort by confidence
-  const sortedPicks = [...picks].sort((a, b) => b.winnerConfidence - a.winnerConfidence);
+  // Sort by confidence (memoized to avoid re-sorting on every render)
+  const sortedPicks = useMemo(
+    () => [...picks].sort((a, b) => b.winnerConfidence - a.winnerConfidence),
+    [picks]
+  );
 
   return (
     <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
@@ -98,7 +102,7 @@ export function QuickPicks({ picks, sport, onGameSelect, loading }: QuickPicksPr
   );
 }
 
-function QuickPickRow({
+const QuickPickRow = memo(function QuickPickRow({
   pick,
   rank,
   onSelect,
@@ -213,7 +217,7 @@ function QuickPickRow({
       </div>
     </div>
   );
-}
+});
 
 function ConfidencePill({ confidence }: { confidence: number }) {
   const getColor = (conf: number) => {

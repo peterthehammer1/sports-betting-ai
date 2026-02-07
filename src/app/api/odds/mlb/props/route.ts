@@ -101,7 +101,7 @@ export async function GET(request: Request) {
       markets = [...MLB_BATTER_MARKETS, ...MLB_PITCHER_MARKETS];
     }
 
-    // Fetch props for each market
+    // Fetch props for all markets IN PARALLEL for better performance
     const allProps: Record<string, Array<{
       playerName: string;
       line?: number;
@@ -110,17 +110,18 @@ export async function GET(request: Request) {
       bookmaker: string;
     }>> = {};
 
-    for (const market of markets) {
+    // Create fetch promises for all markets
+    const marketFetches = markets.map(async (market) => {
       try {
         const url = `${ODDS_API_BASE}/sports/baseball_mlb/events/${eventId}/odds?apiKey=${apiKey}&regions=us&markets=${market}&oddsFormat=american`;
         
         const response = await fetch(url);
         
-        if (!response.ok) continue;
+        if (!response.ok) return { market, props: [] };
         
         const data = await response.json();
         
-        if (!data.bookmakers?.length) continue;
+        if (!data.bookmakers?.length) return { market, props: [] };
 
         const marketProps: Array<{
           playerName: string;
@@ -167,11 +168,20 @@ export async function GET(request: Request) {
           }
         }
 
-        if (marketProps.length > 0) {
-          allProps[market] = marketProps;
-        }
+        return { market, props: marketProps };
       } catch (marketError) {
         console.error(`Error fetching ${market}:`, marketError);
+        return { market, props: [] };
+      }
+    });
+
+    // Wait for all market fetches to complete in parallel
+    const results = await Promise.all(marketFetches);
+    
+    // Populate allProps from results
+    for (const { market, props } of results) {
+      if (props.length > 0) {
+        allProps[market] = props;
       }
     }
 

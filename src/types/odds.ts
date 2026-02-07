@@ -32,7 +32,8 @@ export interface GameOdds {
 // Supported sports - EXPANDED with premium features
 export type SportKey = 
   // US Sports
-  | 'icehockey_nhl' 
+  | 'icehockey_nhl'
+  | 'icehockey_ahl'  // American Hockey League (active during NHL breaks)
   | 'basketball_nba' 
   | 'basketball_wnba'
   | 'basketball_ncaab'

@@ -11,8 +11,10 @@ import { getCachedOdds, cacheOdds, isRedisConfigured } from '@/lib/cache/redis';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export async function GET() {
+export async function GET(request: Request) {
   const apiKey = process.env.THE_ODDS_API_KEY;
+  const { searchParams } = new URL(request.url);
+  const forceFresh = searchParams.get('fresh') === 'true';
 
   if (!apiKey) {
     return NextResponse.json(
@@ -22,16 +24,18 @@ export async function GET() {
   }
 
   try {
-    // Check cache first
-    const cached = await getCachedOdds('NFL');
-    if (cached) {
-      console.log('Returning cached NFL odds');
-      const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
-      return NextResponse.json({
-        ...cachedData,
-        fromCache: true,
-        cacheEnabled: true,
-      });
+    // Check cache first (unless forceFresh)
+    if (!forceFresh) {
+      const cached = await getCachedOdds('NFL');
+      if (cached) {
+        console.log('Returning cached NFL odds');
+        const cachedData = typeof cached === 'string' ? JSON.parse(cached) : cached;
+        return NextResponse.json({
+          ...cachedData,
+          fromCache: true,
+          cacheEnabled: true,
+        });
+      }
     }
 
     const client = createOddsApiClient({ apiKey });
@@ -40,13 +44,24 @@ export async function GET() {
     // Normalize all games for easier frontend consumption
     const normalizedGames = games.map((game) => client.normalizeGameOdds(game));
     
+    // Filter to show games within the next 7 days (NFL games are less frequent)
+    const now = new Date();
+    const oneWeekFromNow = now.getTime() + 7 * 24 * 60 * 60 * 1000;
+    const fourHoursAgo = now.getTime() - 4 * 60 * 60 * 1000;
+    
+    const filteredGames = normalizedGames.filter(game => {
+      const gameTime = new Date(game.commenceTime).getTime();
+      return gameTime >= fourHoursAgo && gameTime <= oneWeekFromNow;
+    });
+    
     const quota = client.getQuota();
 
     const responseData = {
-      games: normalizedGames,
+      games: filteredGames,
       meta: {
         sport: 'NFL',
-        gamesCount: normalizedGames.length,
+        gamesCount: filteredGames.length,
+        totalGames: normalizedGames.length,
         fetchedAt: new Date().toISOString(),
         quota,
       },

@@ -73,6 +73,29 @@ export function createOddsApiClient(config: OddsApiConfig) {
   }
 
   /**
+   * Get scheduled events for a sport (returns games even without odds)
+   */
+  async function getEvents(sport: SportKey): Promise<Array<{
+    id: string;
+    sport_key: string;
+    sport_title: string;
+    commence_time: string;
+    home_team: string;
+    away_team: string;
+  }>> {
+    const url = `${BASE_URL}/sports/${sport}/events?apiKey=${apiKey}`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to fetch events');
+    }
+
+    updateQuota(response.headers);
+    return response.json();
+  }
+
+  /**
    * Get odds for a specific sport
    */
   async function getOdds(options: FetchOddsOptions): Promise<GameOdds[]> {
@@ -117,12 +140,49 @@ export function createOddsApiClient(config: OddsApiConfig) {
   }
 
   /**
+   * Get AHL odds (American Hockey League - active during NHL breaks)
+   */
+  async function getAhlOdds(
+    markets: MarketType[] = ['h2h', 'spreads', 'totals']
+  ): Promise<GameOdds[]> {
+    return getOdds({ sport: 'icehockey_ahl', markets });
+  }
+
+  /**
    * Get NBA odds
    */
   async function getNbaOdds(
     markets: MarketType[] = ['h2h', 'spreads', 'totals']
   ): Promise<GameOdds[]> {
     return getOdds({ sport: 'basketball_nba', markets });
+  }
+
+  /**
+   * Get MLB odds
+   */
+  async function getMlbOdds(
+    markets: MarketType[] = ['h2h', 'spreads', 'totals']
+  ): Promise<GameOdds[]> {
+    return getOdds({ sport: 'baseball_mlb', markets });
+  }
+
+  /**
+   * Get Soccer odds for a specific league
+   */
+  async function getSoccerOdds(
+    league: 'epl' | 'mls' | 'laliga' | 'bundesliga' | 'seriea' | 'ligue1' | 'ucl' = 'epl',
+    markets: MarketType[] = ['h2h', 'spreads', 'totals']
+  ): Promise<GameOdds[]> {
+    const sportKeys: Record<string, SportKey> = {
+      epl: 'soccer_epl',
+      mls: 'soccer_usa_mls',
+      laliga: 'soccer_spain_la_liga',
+      bundesliga: 'soccer_germany_bundesliga',
+      seriea: 'soccer_italy_serie_a',
+      ligue1: 'soccer_france_ligue_one',
+      ucl: 'soccer_uefa_champs_league',
+    };
+    return getOdds({ sport: sportKeys[league] || 'soccer_epl', markets });
   }
 
   /**
@@ -571,10 +631,14 @@ export function createOddsApiClient(config: OddsApiConfig) {
 
   return {
     getSports,
+    getEvents,
     getOdds,
     getNhlOdds,
+    getAhlOdds,
     getNbaOdds,
+    getMlbOdds,
     getNflOdds,
+    getSoccerOdds,
     getGameOdds,
     getNhlPlayerProps,
     normalizePlayerProps,

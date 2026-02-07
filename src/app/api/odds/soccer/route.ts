@@ -2,26 +2,97 @@
  * API Route: GET /api/odds/soccer
  * Fetches soccer odds from The Odds API
  * Supports EPL, MLS, La Liga, Bundesliga, Serie A, Ligue 1, Champions League
+ * Note: Soccer has custom normalization for Draw outcomes
  */
 
 import { NextResponse } from 'next/server';
+import { createOddsApiClient } from '@/lib/api/odds';
 import { getCachedOdds, cacheOdds, isRedisConfigured } from '@/lib/cache/redis';
+import type { GameOdds } from '@/types/odds';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-const ODDS_API_BASE = 'https://api.the-odds-api.com/v4';
-
-// Available soccer leagues
-const SOCCER_LEAGUES: Record<string, { key: string; name: string; flag: string }> = {
-  epl: { key: 'soccer_epl', name: 'English Premier League', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
-  mls: { key: 'soccer_usa_mls', name: 'MLS', flag: '🇺🇸' },
-  laliga: { key: 'soccer_spain_la_liga', name: 'La Liga', flag: '🇪🇸' },
-  bundesliga: { key: 'soccer_germany_bundesliga', name: 'Bundesliga', flag: '🇩🇪' },
-  seriea: { key: 'soccer_italy_serie_a', name: 'Serie A', flag: '🇮🇹' },
-  ligue1: { key: 'soccer_france_ligue_one', name: 'Ligue 1', flag: '🇫🇷' },
-  ucl: { key: 'soccer_uefa_champs_league', name: 'Champions League', flag: '🇪🇺' },
+// Available soccer leagues with metadata
+const SOCCER_LEAGUES: Record<string, { key: 'epl' | 'mls' | 'laliga' | 'bundesliga' | 'seriea' | 'ligue1' | 'ucl'; name: string; flag: string }> = {
+  epl: { key: 'epl', name: 'English Premier League', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+  mls: { key: 'mls', name: 'MLS', flag: '🇺🇸' },
+  laliga: { key: 'laliga', name: 'La Liga', flag: '🇪🇸' },
+  bundesliga: { key: 'bundesliga', name: 'Bundesliga', flag: '🇩🇪' },
+  seriea: { key: 'seriea', name: 'Serie A', flag: '🇮🇹' },
+  ligue1: { key: 'ligue1', name: 'Ligue 1', flag: '🇫🇷' },
+  ucl: { key: 'ucl', name: 'Champions League', flag: '🇪🇺' },
 };
+
+// Soccer-specific normalization (includes Draw outcome)
+function normalizeSoccerGame(game: GameOdds) {
+  const moneylineHome: { bookmaker: string; odds: number }[] = [];
+  const moneylineAway: { bookmaker: string; odds: number }[] = [];
+  const moneylineDraw: { bookmaker: string; odds: number }[] = [];
+  const spreadHome: { bookmaker: string; odds: number; line: number }[] = [];
+  const spreadAway: { bookmaker: string; odds: number; line: number }[] = [];
+  const totalOver: { bookmaker: string; odds: number; line: number }[] = [];
+  const totalUnder: { bookmaker: string; odds: number; line: number }[] = [];
+
+  for (const book of game.bookmakers) {
+    for (const market of book.markets) {
+      if (market.key === 'h2h') {
+        for (const outcome of market.outcomes) {
+          if (outcome.name === game.home_team) {
+            moneylineHome.push({ bookmaker: book.title, odds: outcome.price });
+          } else if (outcome.name === game.away_team) {
+            moneylineAway.push({ bookmaker: book.title, odds: outcome.price });
+          } else if (outcome.name === 'Draw') {
+            moneylineDraw.push({ bookmaker: book.title, odds: outcome.price });
+          }
+        }
+      }
+      if (market.key === 'spreads') {
+        for (const outcome of market.outcomes) {
+          if (outcome.name === game.home_team) {
+            spreadHome.push({ bookmaker: book.title, odds: outcome.price, line: outcome.point || 0 });
+          } else if (outcome.name === game.away_team) {
+            spreadAway.push({ bookmaker: book.title, odds: outcome.price, line: -(outcome.point || 0) });
+          }
+        }
+      }
+      if (market.key === 'totals') {
+        for (const outcome of market.outcomes) {
+          if (outcome.name === 'Over') {
+            totalOver.push({ bookmaker: book.title, odds: outcome.price, line: outcome.point || 0 });
+          } else {
+            totalUnder.push({ bookmaker: book.title, odds: outcome.price, line: outcome.point || 0 });
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    gameId: game.id,
+    homeTeam: game.home_team,
+    awayTeam: game.away_team,
+    commenceTime: game.commence_time,
+    moneyline: {
+      home: moneylineHome,
+      away: moneylineAway,
+      draw: moneylineDraw, // Soccer-specific
+      bestHome: moneylineHome.length > 0 ? moneylineHome.reduce((a, b) => a.odds > b.odds ? a : b) : null,
+      bestAway: moneylineAway.length > 0 ? moneylineAway.reduce((a, b) => a.odds > b.odds ? a : b) : null,
+      bestDraw: moneylineDraw.length > 0 ? moneylineDraw.reduce((a, b) => a.odds > b.odds ? a : b) : null,
+    },
+    spread: {
+      home: spreadHome,
+      away: spreadAway,
+      consensusLine: spreadHome.length > 0 ? spreadHome[0].line : null,
+    },
+    total: {
+      over: totalOver,
+      under: totalUnder,
+      consensusLine: totalOver.length > 0 ? totalOver[0].line : null,
+    },
+  };
+}
 
 export async function GET(request: Request) {
   const apiKey = process.env.THE_ODDS_API_KEY;
@@ -65,124 +136,50 @@ export async function GET(request: Request) {
       }
     }
 
-    // Fetch odds - include draw for soccer
-    const url = `${ODDS_API_BASE}/sports/${leagueConfig.key}/odds?apiKey=${apiKey}&regions=us,uk&markets=h2h,spreads,totals&oddsFormat=american`;
+    // Use client to fetch (handles API details)
+    const client = createOddsApiClient({ apiKey });
+    const games = await client.getSoccerOdds(leagueConfig.key, ['h2h', 'spreads', 'totals']);
     
-    const response = await fetch(url, {
-      headers: { 'Accept': 'application/json' },
+    // Use soccer-specific normalization (includes Draw)
+    const normalizedGames = games.map(normalizeSoccerGame);
+    
+    // Sort by commence time (soonest first)
+    normalizedGames.sort((a, b) => 
+      new Date(a.commenceTime).getTime() - new Date(b.commenceTime).getTime()
+    );
+    
+    // Filter to show games within the next 7 days
+    const now = new Date();
+    const oneWeekFromNow = now.getTime() + 7 * 24 * 60 * 60 * 1000;
+    const fourHoursAgo = now.getTime() - 4 * 60 * 60 * 1000;
+    
+    let filteredGames = normalizedGames.filter(game => {
+      const gameTime = new Date(game.commenceTime).getTime();
+      return gameTime >= fourHoursAgo && gameTime <= oneWeekFromNow;
     });
-
-    if (!response.ok) {
-      throw new Error(`Odds API returned ${response.status}`);
+    
+    // If no games within a week, show next 10 upcoming games
+    if (filteredGames.length === 0 && normalizedGames.length > 0) {
+      filteredGames = normalizedGames.slice(0, 10);
     }
-
-    const games = await response.json();
     
-    const requestsRemaining = response.headers.get('x-requests-remaining');
-    const requestsUsed = response.headers.get('x-requests-used');
-
-    // Normalize games with draw support
-    const normalizedGames = games.map((game: {
-      id: string;
-      home_team: string;
-      away_team: string;
-      commence_time: string;
-      bookmakers: Array<{
-        key: string;
-        title: string;
-        markets: Array<{
-          key: string;
-          outcomes: Array<{
-            name: string;
-            price: number;
-            point?: number;
-          }>;
-        }>;
-      }>;
-    }) => {
-      const moneylineHome: { bookmaker: string; odds: number }[] = [];
-      const moneylineAway: { bookmaker: string; odds: number }[] = [];
-      const moneylineDraw: { bookmaker: string; odds: number }[] = [];
-      const spreadHome: { bookmaker: string; odds: number; line: number }[] = [];
-      const spreadAway: { bookmaker: string; odds: number; line: number }[] = [];
-      const totalOver: { bookmaker: string; odds: number; line: number }[] = [];
-      const totalUnder: { bookmaker: string; odds: number; line: number }[] = [];
-
-      for (const book of game.bookmakers) {
-        for (const market of book.markets) {
-          if (market.key === 'h2h') {
-            for (const outcome of market.outcomes) {
-              if (outcome.name === game.home_team) {
-                moneylineHome.push({ bookmaker: book.title, odds: outcome.price });
-              } else if (outcome.name === game.away_team) {
-                moneylineAway.push({ bookmaker: book.title, odds: outcome.price });
-              } else if (outcome.name === 'Draw') {
-                moneylineDraw.push({ bookmaker: book.title, odds: outcome.price });
-              }
-            }
-          }
-          if (market.key === 'spreads') {
-            for (const outcome of market.outcomes) {
-              if (outcome.name === game.home_team) {
-                spreadHome.push({ bookmaker: book.title, odds: outcome.price, line: outcome.point || 0 });
-              } else if (outcome.name === game.away_team) {
-                spreadAway.push({ bookmaker: book.title, odds: outcome.price, line: -(outcome.point || 0) });
-              }
-            }
-          }
-          if (market.key === 'totals') {
-            for (const outcome of market.outcomes) {
-              if (outcome.name === 'Over') {
-                totalOver.push({ bookmaker: book.title, odds: outcome.price, line: outcome.point || 0 });
-              } else {
-                totalUnder.push({ bookmaker: book.title, odds: outcome.price, line: outcome.point || 0 });
-              }
-            }
-          }
-        }
-      }
-
-      return {
-        gameId: game.id,
-        homeTeam: game.home_team,
-        awayTeam: game.away_team,
-        commenceTime: game.commence_time,
-        moneyline: {
-          home: moneylineHome,
-          away: moneylineAway,
-          draw: moneylineDraw, // Soccer-specific
-          bestHome: moneylineHome.length > 0 ? moneylineHome.reduce((a, b) => a.odds > b.odds ? a : b) : null,
-          bestAway: moneylineAway.length > 0 ? moneylineAway.reduce((a, b) => a.odds > b.odds ? a : b) : null,
-          bestDraw: moneylineDraw.length > 0 ? moneylineDraw.reduce((a, b) => a.odds > b.odds ? a : b) : null,
-        },
-        spread: {
-          home: spreadHome,
-          away: spreadAway,
-          consensusLine: spreadHome.length > 0 ? spreadHome[0].line : null,
-        },
-        total: {
-          over: totalOver,
-          under: totalUnder,
-          consensusLine: totalOver.length > 0 ? totalOver[0].line : null,
-        },
-      };
-    });
+    const quota = client.getQuota();
 
     const responseData = {
       league: {
         id: league,
-        ...leagueConfig,
+        key: leagueConfig.key,
+        name: leagueConfig.name,
+        flag: leagueConfig.flag,
       },
-      games: normalizedGames,
+      games: filteredGames,
       meta: {
         sport: 'Soccer',
         league: leagueConfig.name,
-        gamesCount: normalizedGames.length,
+        gamesCount: filteredGames.length,
+        totalGames: normalizedGames.length,
         fetchedAt: new Date().toISOString(),
-        quota: {
-          requestsRemaining: requestsRemaining ? parseInt(requestsRemaining) : null,
-          requestsUsed: requestsUsed ? parseInt(requestsUsed) : null,
-        },
+        quota,
       },
     };
 
@@ -205,7 +202,8 @@ export async function GET(request: Request) {
       return NextResponse.json({
         ...cachedData,
         fromCache: true,
-        message: 'Returning cached data',
+        cacheEnabled: true,
+        warning: 'API error occurred, showing cached data',
       });
     }
     

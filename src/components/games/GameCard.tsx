@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import Image from 'next/image';
 import { formatAmericanOdds, formatProbability } from '@/lib/utils/odds';
 import { getTeamLogoUrl } from '@/lib/utils/teamLogos';
@@ -24,7 +25,7 @@ interface GameCardProps {
   onPeriodMarketsSelect?: (gameId: string) => void;
 }
 
-export function GameCard({ game, sport, score, injuries, onSelect, onPropsSelect, onAlternateLinesSelect, onPeriodMarketsSelect }: GameCardProps) {
+export const GameCard = memo(function GameCard({ game, sport, score, injuries, onSelect, onPropsSelect, onAlternateLinesSelect, onPeriodMarketsSelect }: GameCardProps) {
   const gameTime = new Date(game.commenceTime);
   const isToday = gameTime.toDateString() === new Date().toDateString();
   
@@ -213,7 +214,7 @@ export function GameCard({ game, sport, score, injuries, onSelect, onPropsSelect
       </div>
     </div>
   );
-}
+});
 
 // Team Logo Component
 function TeamLogo({ url, teamName, size = 'md' }: { url: string | null; teamName: string; size?: 'sm' | 'md' }) {

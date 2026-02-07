@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, Suspense } from 'react';
+import { useEffect, useState, useRef, Suspense, useCallback, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { GameCard } from '@/components/games/GameCard';
 import { PredictionCard } from '@/components/predictions/PredictionCard';
@@ -18,6 +18,7 @@ import { PerformanceDashboard } from '@/components/tracker/PerformanceDashboard'
 import { OddsMovementChart } from '@/components/tracker/OddsMovementChart';
 import { InjuryReport } from '@/components/injuries/InjuryReport';
 import { GamesTickerBar } from '@/components/navigation/GamesTickerBar';
+import { useTracker } from '@/hooks/useTracker';
 import type { NormalizedOdds, NormalizedPlayerProp, NormalizedNbaPlayerProp, NormalizedScore } from '@/types/odds';
 import type { GamePrediction, GoalScorerAnalysis, NbaPlayerPropsAnalysis } from '@/types/prediction';
 import type { SportInjuries, TeamInjuries } from '@/types/injuries';
@@ -134,32 +135,16 @@ function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
   
-  // Performance stats for header badge
-  const [performanceStats, setPerformanceStats] = useState<{
-    winRate: number;
-    wins: number;
-    losses: number;
-  } | null>(null);
-  
-  // Fetch performance stats
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch('/api/tracker');
-        const data = await res.json();
-        if (data.stats) {
-          setPerformanceStats({
-            winRate: data.stats.winRate || 0,
-            wins: data.stats.wins || 0,
-            losses: data.stats.losses || 0,
-          });
-        }
-      } catch (err) {
-        console.error('Failed to fetch performance stats:', err);
-      }
-    };
-    fetchStats();
-  }, []);
+  // Use shared tracker hook for performance stats (avoids duplicate fetches)
+  const { stats: trackerStats } = useTracker();
+  const performanceStats = useMemo(() => 
+    trackerStats ? {
+      winRate: trackerStats.winRate || 0,
+      wins: trackerStats.wins || 0,
+      losses: trackerStats.losses || 0,
+    } : null,
+    [trackerStats]
+  );
 
   // Fetch injuries for current sport
   const fetchInjuries = async () => {
@@ -175,8 +160,8 @@ function Dashboard() {
     }
   };
 
-  // Helper to get injury info for a specific game
-  const getGameInjuryInfo = (homeTeam: string, awayTeam: string) => {
+  // Helper to get injury info for a specific game (memoized)
+  const getGameInjuryInfo = useCallback((homeTeam: string, awayTeam: string) => {
     if (!injuries?.teams) return undefined;
     
     const findTeam = (teamName: string) => 
@@ -199,7 +184,7 @@ function Dashboard() {
     if (totalCount === 0) return undefined;
     
     return { totalCount, homeCount, awayCount, hasKeyPlayersOut };
-  };
+  }, [injuries]);
 
   // Fetch odds and scores
   const fetchOdds = async () => {
@@ -412,6 +397,18 @@ function Dashboard() {
     }
   };
 
+  // Initial data fetch on mount
+  const initialFetchDone = useRef(false);
+  
+  useEffect(() => {
+    if (!initialFetchDone.current) {
+      initialFetchDone.current = true;
+      fetchOdds();
+      fetchInjuries();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
   // Track previous sport to detect actual sport changes
   const prevSportRef = useRef(sport);
   
@@ -469,6 +466,24 @@ function Dashboard() {
           // Trigger AI analysis for this game
           fetchGameAnalysis(game.id);
         }}
+        externalGames={games.length > 0 ? games.map(g => {
+          const score = scores[g.gameId];
+          const gameTime = new Date(g.commenceTime);
+          const now = new Date();
+          const isLive = score?.isLive || (gameTime <= now && !score?.isCompleted);
+          const isFinal = score?.isCompleted;
+          return {
+            id: g.gameId,
+            homeTeam: g.homeTeam,
+            awayTeam: g.awayTeam,
+            homeScore: score?.homeScore ?? null,
+            awayScore: score?.awayScore ?? null,
+            status: (isFinal ? 'final' : isLive ? 'live' : 'scheduled') as 'live' | 'final' | 'scheduled',
+            period: undefined, // Period not tracked in our score type
+            startTime: g.commenceTime?.toString(),
+            sport: sport,
+          };
+        }) : undefined}
       />
 
       {/* Clean Header */}
@@ -794,7 +809,7 @@ function Dashboard() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-slate-800/50 flex items-center justify-center">
               <span className="text-3xl">{SPORTS_CONFIG[sport].emoji}</span>
             </div>
-            <p className="text-white font-medium">No {sport} games today</p>
+            <p className="text-white font-medium">No {sport === 'NHL' ? 'hockey' : sport} games available</p>
             <p className="text-slate-500 text-sm mt-1">Check back later for upcoming matchups</p>
           </div>
         )}

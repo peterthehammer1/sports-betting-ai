@@ -1,6 +1,7 @@
 /**
  * API Route: GET /api/odds/nba
  * Fetches current NBA odds from The Odds API
+ * First fetches events (all scheduled games), then fetches odds
  * With Redis caching for when API quota is exceeded
  */
 
@@ -39,12 +40,53 @@ export async function GET(request: Request) {
     }
 
     const client = createOddsApiClient({ apiKey });
-    const games = await client.getNbaOdds(['h2h', 'spreads', 'totals']);
     
-    const normalizedGames = games.map((game) => client.normalizeGameOdds(game));
+    // First, get all scheduled events (includes games without odds)
+    const events = await client.getEvents('basketball_nba');
     
-    // Show all games - no time filtering for now (API already returns upcoming games)
-    const filteredGames = normalizedGames;
+    // Then get odds for games that have them
+    const gamesWithOdds = await client.getNbaOdds(['h2h', 'spreads', 'totals']);
+    
+    // Create a map of games with odds
+    const oddsMap = new Map(gamesWithOdds.map(g => [g.id, g]));
+    
+    // Merge: use odds data if available, otherwise create placeholder
+    const allGames = events.map(event => {
+      const gameWithOdds = oddsMap.get(event.id);
+      if (gameWithOdds) {
+        return client.normalizeGameOdds(gameWithOdds);
+      }
+      // Game without odds yet - create minimal entry
+      return {
+        gameId: event.id,
+        homeTeam: event.home_team,
+        awayTeam: event.away_team,
+        commenceTime: new Date(event.commence_time),
+        moneyline: { home: [], away: [], bestHome: null, bestAway: null },
+        spread: { home: [], away: [], consensusLine: null },
+        total: { over: [], under: [], consensusLine: null },
+      };
+    });
+    
+    // Sort by commence time (soonest first)
+    allGames.sort((a, b) => 
+      new Date(a.commenceTime).getTime() - new Date(b.commenceTime).getTime()
+    );
+    
+    // Filter to show games within the next 3 days
+    const now = new Date();
+    const threeDaysFromNow = now.getTime() + 3 * 24 * 60 * 60 * 1000;
+    const fourHoursAgo = now.getTime() - 4 * 60 * 60 * 1000;
+    
+    let filteredGames = allGames.filter(game => {
+      const gameTime = new Date(game.commenceTime).getTime();
+      return gameTime >= fourHoursAgo && gameTime <= threeDaysFromNow;
+    });
+    
+    // If no games within 3 days, show next 15 upcoming games
+    if (filteredGames.length === 0 && allGames.length > 0) {
+      filteredGames = allGames.slice(0, 15);
+    }
     
     const quota = client.getQuota();
 
@@ -53,7 +95,9 @@ export async function GET(request: Request) {
       meta: {
         sport: 'NBA',
         gamesCount: filteredGames.length,
-        totalGames: normalizedGames.length,
+        totalGames: allGames.length,
+        eventsCount: events.length,
+        gamesWithOdds: gamesWithOdds.length,
         fetchedAt: new Date().toISOString(),
         quota,
       },
@@ -61,7 +105,7 @@ export async function GET(request: Request) {
 
     // Cache the result
     await cacheOdds('NBA', responseData);
-    console.log('Cached NBA odds, today/tomorrow games:', filteredGames.length);
+    console.log('Cached NBA odds, showing:', filteredGames.length, 'of', allGames.length, 'total events');
 
     return NextResponse.json({
       ...responseData,
@@ -80,7 +124,7 @@ export async function GET(request: Request) {
         ...cachedData,
         fromCache: true,
         cacheEnabled: true,
-        message: 'API quota may be exceeded, showing cached data',
+        warning: 'API error occurred, showing cached data',
       });
     }
     
