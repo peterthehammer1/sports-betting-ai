@@ -298,6 +298,36 @@ export async function GET(request: Request) {
     const cronSecret = process.env.CRON_SECRET;
     const isAuthorized = !cronSecret || authHeader === `Bearer ${cronSecret}`;
     
+    // Debug mode - show what games are available
+    if (searchParams.get('debug') === 'true') {
+      const gamesDebug: Record<string, { count?: number; sample?: { teams: string; time: string }[]; error?: string }> = {};
+      
+      for (const sport of ['NHL', 'NBA'] as Sport[]) {
+        try {
+          const games = await fetchGamesForSport(sport);
+          gamesDebug[sport] = {
+            count: games.length,
+            sample: games.slice(0, 2).map(g => ({
+              teams: `${g.awayTeam} @ ${g.homeTeam}`,
+              time: g.commenceTime,
+            })),
+          };
+        } catch (e) {
+          gamesDebug[sport] = { error: e instanceof Error ? e.message : 'Unknown error' };
+        }
+      }
+      
+      return NextResponse.json({
+        timestamp: new Date().toISOString(),
+        env: {
+          hasOddsKey: !!process.env.THE_ODDS_API_KEY,
+          hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
+          redisConfigured: isRedisConfigured(),
+        },
+        games: gamesDebug,
+      });
+    }
+
     // If generate=true and authorized, trigger pick generation
     if (generate && isAuthorized) {
       console.log('Generating daily picks via GET request...');
@@ -317,17 +347,21 @@ export async function GET(request: Request) {
         NBA: [],
         NFL: [],
       };
+      
+      const debugInfo: Record<string, { gamesFound: number; analyzedPicks?: number }> = {};
 
       // Process each sport
       for (const sport of ['NHL', 'NBA'] as Sport[]) {
         console.log(`Processing ${sport} daily picks...`);
         
         const games = await fetchGamesForSport(sport);
+        debugInfo[sport] = { gamesFound: games.length };
         console.log(`Found ${games.length} ${sport} games`);
         
         if (games.length === 0) continue;
 
         const bestPicks = await selectBestPicks(games, PICKS_PER_SPORT);
+        debugInfo[sport].analyzedPicks = bestPicks.length;
         
         for (const { game, prediction } of bestPicks) {
           const confidences = [
@@ -352,6 +386,7 @@ export async function GET(request: Request) {
         success: true,
         message: `Generated ${totalPicks} daily picks`,
         picks: results,
+        debug: debugInfo,
         timestamp: new Date().toISOString(),
       });
     }
